@@ -1,10 +1,10 @@
 {
-  "name": "farmaunixvue",
+  "name": "portifolio",
   "version": "0.0.0",
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host 0.0.0.0",
     "build": "vite build",
     "preview": "vite preview",
     "test:unit": "vitest"
