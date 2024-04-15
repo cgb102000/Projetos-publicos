@@ -1,0 +1,32 @@
+
+:root {
+  --primary-color: #72298abd;
+  --secondary-light:#01dc819a;
+  --secondary: #345c4b7a;
+  --secondary-dark: #1e0d46;
+  --white:#ffffff;
+  --verde-claro:rgb(86, 243, 81);
+
+  font-family: "inter", sans-serif;
+  font-size: 14px;
+}
+@import "https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css";
+*{
+  margin: 0;
+  padding: 0;
+  
+}
+
+body{
+
+ 
+}
+video {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  z-index: -1; /* Mantém o vídeo atrás de outros elementos */
+}
