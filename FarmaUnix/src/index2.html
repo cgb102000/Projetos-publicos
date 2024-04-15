@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Finalização de Compra</title>
+  <link rel="stylesheet" href="assets/style.css">
+  <link rel="shortcut icon" href="assets/images/farmacia.png" type="image/x-icon">
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Estilos do Mapa */
+    #map {
+      height: 300px;
+      width: 50%;
+      margin: auto;
+      margin-top: 20px;
+      border: 1px solid black;
+    }
+
+    #distance {
+      margin-top: 10px;
+      font-size: 18px;
+      color: #333;
+    }
+
+    /* Estilos do Carrinho */
+    .cart {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 100%;
+      max-width: 400px;
+      height: 100%;
+      background-color: #f5f5f5;
+      overflow-y: auto;
+      padding: 20px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      display: flex; /* Exibir o carrinho por padrão */
+    }
+
+    .cart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .calculate-route-button {
+      background-color: #ff5555;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 10px;
+      width: 13%;
+      box-sizing: border-box;
+    }
+
+    .back-button,
+    .checkout-button,
+    .clear-button,
+    .update-cart-button {
+      background-color: #ff5555;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 10px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    
+
+    .checkout-button {
+      width: 20%;
+    }
+
+    .back-button:hover,
+    .calculate-route-button:hover,
+    .checkout-button:hover,
+    .clear-button:hover,
+    .update-cart-button:hover {
+      background-color: #ff3333;
+    }
+
+    .back-button {
+      background-color: #333;
+      color: white;
+      width: 20%;
+      
+    }
+
+    .back-button:hover {
+      background-color: #555;
+    }
+
+    .cart-title {
+      font-size: 20px;
+      margin: 0;
+    }
+
+    .close-button {
+      background-color: #ff5555;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 16px;
+      padding: 5px;
+    }
+
+    .close-button:hover {
+      background-color: #ff3333;
+    }
+
+    .cart-item {
+      border-bottom: 1px solid #ddd;
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+    }
+
+    /* Adicionando regras de mídia para telas menores */
+    @media only screen and (max-width: 600px) {
+      #map {
+        height: 200px;
+      }
+
+      .cart {
+        padding: 10px;
+      }
+
+      .back-button,
+      .calculate-route-button,
+      .checkout-button,
+      .clear-button,
+      .update-cart-button {
+        font-size: 14px;
+      }
+      
+    }
+    
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Farma Unix</h1>
+    <p>Explore nossa variedade de produtos e adicione ao carrinho.</p>
+  </header>
+  <br>
+  <!-- Adicione esses campos ao seu formulário existente -->
+  <label for="userAddress">Seu Endereço:</label>
+  <input type="text" id="userAddress" placeholder="Digite seu endereço" value="" onchange="calculateAndDisplayRoute()">
+
+  <!-- Botão dedicado para calcular a rota -->
+  <button class="calculate-route-button" onclick="calculateAndDisplayRoute()">Calcular Rota</button>
+
+  <!-- Endereço do local fixo -->
+  <label for="deliveryAddress">Endereço do local:</label>
+  <input type="text" id="deliveryAddress" value="Rua Dr Nelson Luiz Proença 121" readonly>
+
+  <div id="map"></div>
+  <div id="distance"></div>
+  <!-- Botão dedicado para calcular a rota -->
+  <button class="back-button" onclick="history.back()" >Voltar</button>
+  <button class="checkout-button" onclick="toggleCart()">Visualizar Carrinho</button>
+
+  <div class="cart">
+    <div class="cart-header">
+      <h2 class="cart-title">Carrinho</h2>
+      <button class="close-button" onclick="closeCart()">X</button>
+    </div>
+    <button class="update-cart-button" onclick="updateCartView()">Atualizar Carrinho</button>
+    <div id="cart-items"></div>
+    <div id="total-price"></div>
+    <div id="delivery-fee"></div>
+    <button class="clear-button" onclick="clearCart()">Limpar Carrinho</button>
+    <button class="checkout-button" onclick="checkout()" >Finalizar Compra</button>
+  </div>
+
+ 
+
+  <script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBONV_mFh1fA_-dJtszXT3drStcAGy8Jtg&callback=initMap"></script>
+  <script defer src="assets/script.js"></script>
+
+  <script>
+    function closeCart() {
+      document.querySelector('.cart').style.display = 'none';
+    }
+
+    function toggleCart() {
+      var cart = document.querySelector('.cart');
+      cart.style.display = (cart.style.display === 'none' || cart.style.display === '') ? 'flex' : 'none';
+    }
+  </script>
+
+</body>
+
+</html>

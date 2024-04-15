@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Farma Unix</title>
+  <link rel="stylesheet" href="assets/style.css">
+  <link rel="shortcut icon" href="assets/images/farmacia.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@900&display=swap" rel="stylesheet">
+  <style>
+    
+    #map {
+      height: 400px;
+      width: 60%;
+      margin-top: 20px;
+     
+    }
+
+    #distance {
+      margin-top: 10px;
+      font-size: 18px;
+      color: #333;
+    }
+
+    /* Estilos do Carrinho */
+    .cart {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 300px;
+      height: 100%;
+      background-color: #f5f5f5;
+      overflow-y: auto;
+      padding: 20px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      /* Alinha os elementos à direita */
+      display: none; /* Adicionado para ocultar o carrinho inicialmente */
+    }
+
+    .cart-item {
+      border-bottom: 1px solid #ddd;
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+    }
+
+    .back-button {
+      background-color: #e0e0e0;
+      color: #333;
+      padding: 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-bottom: 20px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .back-button:hover {
+      background-color: #d4d4d4;
+    }
+
+    .calculate-route-button {
+      /* Adicionado um estilo para o botão de calcular rota */
+      background-color: #ff5555;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 10px;
+      /* Espaçamento menor entre os botões */
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .calculate-route-button:hover {
+      /* Adicionado estilo de hover para consistência visual */
+      background-color: #ff3333;
+    }
+
+   
+    .checkout-button,
+    .clear-button,
+    .update-cart-button {
+      /* Estilos existentes */
+      background-color: #ff5555;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 10px;
+      /* Espaçamento menor entre os botões */
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .checkout-button:hover,
+    .clear-button:hover,
+    .update-cart-button:hover {
+      /* Estilos existentes de hover para consistência visual */
+      background-color: #ff3333;
+    }
+    
+    
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div>
+      
+      <App/>
+
+    </div>
+    
+    <h1>Farma Unix</h1>
+    <p>Explore nossa variedade de produtos e adicione ao carrinho.</p>
+  </header>
+    <!-- Botão de Finalizar Compra -->
+    <button class="checkout-button" onclick="toggleCart()">Visualizar Carrinho</button>
+
+  <!-- Seção de Produtos -->
+  <div class="products">
+    <!-- Produto 1 -->
+    <div class="product">
+      <img class="product-image" src="https://drogariaspacheco.vteximg.com.br/arquivos/ids/674497-1000-1000/75957---dipirona-sodica-500mgml-generico-ems-gotas-20ml.jpg?v=637539241978400000" alt="Produto 1">
+      <h3>Dipirona</h3>
+      <p>A dipirona é um anti-inflamatório não esteroidal (AINE) com ação antitérmica (alívio de febres) e analgésica (alívio de dores).</p>
+      <p>Preço: R$ 10,00</p>
+      <button onclick="addToCart('Produto 1', 10.00, 1)">Adicionar ao Carrinho</button>
+
+    </div>
+
+    <!-- Produto 2 -->
+    <div class="product">
+      <img class="product-image" src="https://global.cdn.magazord.com.br/farmamais/img/2023/03/produto/364/dorflex-dez.jpg?ims=600x600" alt="Produto 2">
+      <h3>Dorflex</h3>
+      <p>Dorflex é um medicamento que possui ação analgésica e relaxante muscular. É indicado para aliviar dores relacionadas à contratura muscular excessiva, como a dor de cabeça tensional .</p>
+      <p>Preço: R$ 15,00</p>
+      <button onclick="addToCart('Produto 2', 15.00, 1)">Adicionar ao Carrinho</button>
+    </div>
+
+    <!-- Produto 3 -->
+    <div class="product">
+      <img class="product-image" src="https://drogariaspacheco.vteximg.com.br/arquivos/ids/1028013-1000-1000/356239---benegrip-20-comprimidos-1.jpg?v=638113098633330000" alt="Produto 3">
+      <h3>Benegripe</h3>
+      <p>Ele é indicado para pessoas maiores de 12 anos de idade com o objetivo de aliviar os sintomas da gripe e do resfriado, tais como febre, dores de cabeça e processos alérgicos (congestão nasal e coriza).</p>
+      <p>Preço: R$ 20,00</p>
+      <button onclick="addToCart('Produto 3', 20.00, 1)">Adicionar ao Carrinho</button>
+    </div>
+
+    <!-- Produto 4 -->
+    <div class="product">
+      <img class="product-image" src="https://www.drogariaminasbrasil.com.br/media/catalog/product/4/2/428a_1.jpg" alt="Produto 4">
+      <h3>Buscopan</h3>
+      <p>Buscopan atua diretamente sob dores abdominais, aliviando-as de maneira rápida e prolongada.</p>
+      <p>Preço: R$ 25,00</p>
+      <button onclick="addToCart('Produto 4', 25.00, 1)">Adicionar ao Carrinho</button>
+    </div>
+
+   
+    <div class="product">
+      <img class="product-image" src="https://www.drogariaminasbrasil.com.br/media/product/049/engov-com-24-comprimidos-b9f.jpg" alt="Produto 5">
+      <h3>Engov</h3>
+      <p>Esse medicamento atua como analgésico (alivia as dores) e na melhora de sintomas alérgicos.</p>
+      <p>Preço: R$ 30,00</p>
+      <button onclick="addToCart('Produto 5', 30.00, 1)">Adicionar ao Carrinho</button>
+    </div>
+
+    <!-- Produto 6 -->
+    <div class="product">
+      <img class="product-image" src="https://www.drogariaminasbrasil.com.br/media/product/996/doril-dc-500-com-16-comprimidos-6a8.jpg" alt="Produto 6">
+      <h3>Doril</h3>
+      <p>Doril Enxaqueca é indicado para o alívio de dores leves a moderadas tais como: dor de cabeça, dores causadas por resfriados ou sinusite; artrite; dores musculares, dor de dente</p>
+      <p>Preço: R$ 35,00</p>
+      <button onclick="addToCart('Produto 6', 35.00, 1)">Adicionar ao Carrinho</button>
+    </div>
+
+    <!-- Produto 7 -->
+    <div class="product">
+      <img class="product-image" src="https://d1xdssnpeez8k0.cloudfront.net/Custom/Content/Products/19/97/19972_amoxicilina-capsula-ems-500mg-caixa-com-15-capsulas-gelatinosas-duras-p7896004700441_l1_637217825884250651.jpg" alt="Produto 7">
+      <h3>Amoxilina</h3>
+      <p>Amoxicilina é um antibiótico de amplo espectro indicado para o tratamento de infecções bacterianas causadas por germes sensíveis à ação da Amoxicilina.</p>
+      <p>Preço: R$ 40,00</p>
+      <button onclick="addToCart('Produto 7', 40.00, 1)">Adicionar ao Carrinho</button>
+    </div>
+
+    <!-- Produto 8 -->
+    <div class="product">
+      <img class="product-image" src="https://divf32e1br5es.cloudfront.net/Custom/Content/Products/59/82/59826_hemit-de-zolpidem-10mg-c-20-cpr-rev-p120167_l1_637763253125521053.jpg" alt="Produto 8">
+      <h3>Zolpiden</h3>
+      <p>O hemitartarato de zolpidem age sobre os centros do sono que estão localizados no cérebro. Por isso, o médico prescreve hemitartarato de zolpidem para o tratamento da insônia</p>
+      <p>Preço: R$ 45,00</p>
+      <button onclick="addToCart('Produto 8', 45.00, 1)">Adicionar ao Carrinho</button>
+    </div>
+
+    <!-- Produto 9 -->
+    <div class="product">
+      <img class="product-image" src="https://static.mobly.com.br/p/Nerderia-Pano-De-Prato-Nerderia-Rivotril-5419-073168-1-zoom.jpg" alt="Produto 9">
+      <h3>Rivotril</h3>
+      <p>Apesar de ser comumente prescrito para tratamentos de distúrbios de ansiedade, o clonazepam (Rivotril) também pode ser utilizado para crises de epilepsia e convulsões, para inquietação extrema e para vertigem e distúrbios do equilíbrio.</p>
+      <p>Preço: R$ 50,00</p>
+      <button onclick="addToCart('Produto 9', 50.00, 1)">Adicionar ao Carrinho</button>
+    </div>
+
+    <!-- Produto 10 -->
+    <div class="product">
+      <img class="product-image" src="https://d1xdssnpeez8k0.cloudfront.net/Custom/Content/Products/13/33/13334_astro-500mg-caixa-com-5-comprimidos-revestidos-p7891317420840_l1_637217822914878854.jpg" alt="Produto 10">
+      <h3>Astro</h3>
+      <p>Astro® (azitromicina di-hidratada) comprimidos revestidos é indicado no tratamento de infecções causadas por bactérias sensíveis à azitromicina; em infecções do trato respiratório inferior (brônquios e pulmões) e superior (nariz, faringe, laringe e traqueia), incluindo sinusite</p>
+      <p>Preço: R$ 55,00</p>
+      <button onclick="addToCart('Produto 10', 55.00, 1)">Adicionar ao Carrinho</button>
+    </div>
+  </div>
+
+
+
+  <!-- Carrinho de Compras -->
+  <div class="cart">
+    <button class="back-button" onclick="toggleCart()">Voltar</button>
+    <h2>Carrinho</h2>
+    <button class="update-cart-button" onclick="updateCartView()">Atualizar Carrinho</button>
+    <!-- Botão para atualizar o carrinho -->
+    <div id="cart-items"></div>
+    <div id="total-price"></div>
+    <div id="delivery-fee"></div>
+    <button class="clear-button" onclick="clearCart()">Limpar Carrinho</button>
+    <!-- Botão de Finalizar Compra -->
+<button class="checkout-button" onclick="window.location.href='index2.html'">Finalizar Compra</button>
+
+  </div>
+
+  <footer>
+    Site criado por &copy; Caio Gabriel
+  </footer>
+ <script src="components/Header.vue"></script>
+  <script src="assets/script.js"></script>
+  <script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBONV_mFh1fA_-dJtszXT3drStcAGy8Jtg&callback=initMap"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+</body>
+
+</html>
