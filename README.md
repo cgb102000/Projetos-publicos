@@ -5,12 +5,12 @@
 <ol>
 
   <li>
-    Projeto 1 - Portifólio - <a href="#">- Clique aqui para acessar </a>
+    Projeto 1 - Portifólio <a href="#">- Clique aqui para acessar </a>
     
   </li>
 
   <li>
-    Projeto 2 - FarmaUnix -  <a href="https://cgb102000.github.io/Projetos-publicos/FarmaUnix/src/" target="_blank">- Clique aqui para acessar </a>
+    Projeto 2 - FarmaUnix <a href="https://cgb102000.github.io/Projetos-publicos/FarmaUnix/src/" target="_blank">- Clique aqui para acessar </a>
   </li>
 </ol>
 
