@@ -21,7 +21,7 @@ export default{
     name:'Portifolio',
     data(){
         return{
-            imgUrl:'./public/imagens/eu.jpg'
+            imgUrl:'./imagens/eu.jpg',
         }
     }
 }

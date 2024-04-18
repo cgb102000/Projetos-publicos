@@ -1,0 +1,102 @@
+/* Estilização global */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Estilização do cabeçalho */
+.nav-wrapper {
+    background-color: #000; /* Cabeçalho preto */
+}
+
+/* Estilização dos botões */
+.btn {
+    background-color: #C70039; /* Vermelho escuro para os botões */
+    color: #fff;
+    border: 1px solid #000; /* Borda preta nos botões */
+    transition: background-color 0.2s ease-in-out; /* Transição suave na mudança de cor */
+}
+
+/* Estilização do hover nos botões */
+.btn:hover {
+    background-color: #8B0000; /* Vermelho bem escuro ao passar o mouse */
+}
+
+/* Sobrescreve o foco e o ativo padrão do Bootstrap */
+.btn:focus, .btn:active {
+    background-color: #8B0000; /* Vermelho bem escuro ao focar ou clicar */
+    color: #fff; /* Mantém a cor branca do texto */
+    border: 1px solid #000; /* Mantém a borda preta */
+    outline: none; /* Remove a borda de foco padrão */
+    box-shadow: none; /* Remove a sombra padrão */
+}
+
+/* Estilização do formulário de busca */
+#searchForm {
+    margin-bottom: 20px;
+}
+
+/* Estilização do card */
+.card {
+    width: 300px;
+    height: 500px;
+    margin: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s;
+    display: flex;
+    flex-direction: column;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+/* Estilização do conteúdo principal */
+main {
+    width: 80%;
+    margin: auto;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    border-radius: 8px;
+    background-color: #fff;
+}
+
+/* Estilização do conteúdo interno do card */
+.card-body {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.card-body h5,
+.card-body p {
+    margin-bottom: 10px;
+}
+
+.card-body .btn {
+    margin-top: auto;
+}
+
+/* Estilização do botão primário */
+.btn.btn-primary {
+    background-color: #C70039; /* Vermelho escuro */
+    color: #fff;
+    border-color: #000;
+    transition: background-color 0.2s ease-in-out;
+}
+
+/* Estilização de hover no botão primário */
+.btn.btn-primary:hover {
+    background-color: #8B0000; /* Vermelho bem escuro */
+}
+
+/* Estilização de foco no botão primário */
+.btn.btn-primary:focus,
+.btn.btn-primary:active {
+    background-color: #8B0000;
+    border-color: #000;
+    outline: none;
+    box-shadow: none;
+}
