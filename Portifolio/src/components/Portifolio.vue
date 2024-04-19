@@ -134,9 +134,7 @@ li:hover {
   background-color: var(--primary-color);
   color: var(--secondary);
 }
-#meuNome:hover{
-    
-}
+
 a{
     color: white;
 }
