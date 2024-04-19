@@ -36,7 +36,7 @@
     name: 'Cabecalho',
     data() {
       return {
-        urlLogo: './public/imagens/giphy.gif',
+        urlLogo: './imagens/giphy.gif',
       };
     },
     mounted() {
