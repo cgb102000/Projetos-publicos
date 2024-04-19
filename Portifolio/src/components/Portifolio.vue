@@ -21,7 +21,7 @@ export default{
     name:'Portifolio',
     data(){
         return{
-            imgUrl:'./imagens/eu.jpg',
+            imgUrl:'./imagens/eu.jpg'
         }
     }
 }
@@ -134,9 +134,7 @@ li:hover {
   background-color: var(--primary-color);
   color: var(--secondary);
 }
-#meuNome:hover{
-    
-}
+
 a{
     color: white;
 }

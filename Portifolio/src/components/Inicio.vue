@@ -1,6 +1,7 @@
 <template>
 <Portifolio/>
 
+
 </template>
 
 <script>
@@ -12,7 +13,7 @@ export default{
     name:'Inicio',
     data(){
         return{
-            urlTeste:'./public/imagens/eu.jpg'
+            
         };
     },
     components:{
