@@ -1,0 +1,63 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f0f0f0;
+}
+
+.container {
+  margin: auto;
+  text-align: center;
+}
+
+#pokemonCards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 10%;
+}
+#pokemonCards:hover{
+  scale: 1.1;
+  
+}
+#nomePokemon{
+  color: red;
+}
+
+/* Estilos para os cards */
+.card {
+  width: 100%;
+  max-width: 35rem; /* Alterando o tamanho máximo do card */
+}
+
+
+/* Estilos para o texto */
+.text-warning {
+  color: #ffc107; /* Amarelo */
+}
+
+.text-secondary {
+  color: #6c757d; /* Cinza */
+}
+
+.text-primary {
+  color: #007bff; /* Azul */
+}
+
+.text-danger {
+  color: #dc3545; /* Vermelho */
+}
+
+.text-dark {
+  color: #343a40; /* Cor padrão */
+}
+
+
+.card-title {
+  text-transform: uppercase; /* Transforma o texto em maiúsculas */
+}
+
+.card-title:first-letter {
+  font-size: 24px; /* Tamanho da fonte desejado para a primeira letra */
+}
+
