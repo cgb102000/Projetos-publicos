@@ -3,19 +3,23 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: Arial, sans-serif; /* Define uma fonte padrão */
+    font-size: 1rem; /* Define o tamanho base da fonte em 1rem (equivale a 16px) */
 }
 
 /* Estilização do cabeçalho */
 .nav-wrapper {
     background-color: #000; /* Cabeçalho preto */
+    padding: 1rem; /* Padding em rem */
 }
 
 /* Estilização dos botões */
 .btn {
     background-color: #C70039; /* Vermelho escuro para os botões */
     color: #fff;
-    border: 1px solid #000; /* Borda preta nos botões */
+    border: 0.0625rem solid #000; /* Borda preta nos botões (1px em rem) */
     transition: background-color 0.2s ease-in-out; /* Transição suave na mudança de cor */
+    font-size: 1rem; /* Define o tamanho da fonte para 1rem */
 }
 
 /* Estilização do hover nos botões */
@@ -27,22 +31,23 @@
 .btn:focus, .btn:active {
     background-color: #8B0000; /* Vermelho bem escuro ao focar ou clicar */
     color: #fff; /* Mantém a cor branca do texto */
-    border: 1px solid #000; /* Mantém a borda preta */
+    border: 0.0625rem solid #000; /* Mantém a borda preta (1px em rem) */
     outline: none; /* Remove a borda de foco padrão */
     box-shadow: none; /* Remove a sombra padrão */
 }
 
 /* Estilização do formulário de busca */
 #searchForm {
-    margin-bottom: 20px;
+    margin-bottom: 1.25rem; /* Margem inferior de 20px equivalente a 1.25rem */
 }
 
 /* Estilização do card */
 .card {
-    width: 300px;
-    height: 500px;
-    margin: 20px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    width: 100%; /* Ajusta a largura do card para 100% do contêiner pai */
+    max-width: 18.75rem; /* Limita a largura máxima do card a 300px (em rem) */
+    height: 31.25rem; /* Altura de 500px equivalente a 31.25rem */
+    margin: 0.625rem; /* Ajusta o espaçamento entre os cards para 10px equivalente a 0.625rem */
+    box-shadow: 0 0.125rem 0.3125rem rgba(0, 0, 0, 0.2); /* Sombra suave */
     transition: transform 0.2s;
     display: flex;
     flex-direction: column;
@@ -54,12 +59,16 @@
 
 /* Estilização do conteúdo principal */
 main {
-    width: 80%;
-    margin: auto;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    padding: 20px;
-    border-radius: 8px;
+    width: 80%; /* Largura do main ajustada */
+    margin: auto; /* Centraliza o main */
+    padding: 1.25rem; /* Padding de 20px equivalente a 1.25rem */
+    border-radius: 0.5rem; /* Borda arredondada de 8px equivalente a 0.5rem */
     background-color: #fff;
+    box-shadow: 0 0.125rem 0.3125rem rgba(0, 0, 0, 0.2); /* Sombra suave */
+    min-height: calc(100vh - 3.125rem); /* Ajusta a altura do main para 100% da tela menos o tamanho do footer */
+    display: flex;
+    flex-wrap: wrap; /* Permite que os cards sejam alinhados corretamente */
+    justify-content: center; /* Centraliza os cards */
 }
 
 /* Estilização do conteúdo interno do card */
@@ -72,7 +81,8 @@ main {
 
 .card-body h5,
 .card-body p {
-    margin-bottom: 10px;
+    margin-bottom: 0.625rem; /* Margem inferior de 10px equivalente a 0.625rem */
+    font-size: 1.125rem; /* Aumenta o tamanho da fonte para 1.125rem */
 }
 
 .card-body .btn {
@@ -85,6 +95,7 @@ main {
     color: #fff;
     border-color: #000;
     transition: background-color 0.2s ease-in-out;
+    font-size: 1.125rem; /* Aumenta o tamanho da fonte para 1.125rem */
 }
 
 /* Estilização de hover no botão primário */
@@ -99,4 +110,56 @@ main {
     border-color: #000;
     outline: none;
     box-shadow: none;
+}
+
+/* Estilização das imagens nos cards */
+.card-img-top,
+.card-img {
+    width: 100%; /* A largura da imagem será igual à largura do card */
+    height: 12.5rem; /* Altura de 200px equivalente a 12.5rem */
+    object-fit: cover; /* Ajusta a imagem para cobrir toda a área do card */
+}
+
+/* Estilização do footer */
+footer {
+    background-color: #000; /* Fundo preto */
+    color: #fff; /* Texto branco */
+    padding: 0.625rem 1.25rem; /* Padding para espaçamento */
+    text-align: center; /* Centraliza o texto */
+    position: fixed; /* Define a posição como fixa */
+    bottom: 0; /* Posiciona o footer na parte inferior da página */
+    width: 100%; /* Define a largura do footer para 100% */
+    font-size: 1.125rem; /* Aumenta o tamanho da fonte para 1.125rem */
+    box-shadow: 0 -0.125rem 0.3125rem rgba(0, 0, 0, 0.2); /* Sombra para o footer */
+}
+
+/* Estilização adicional para responsividade */
+@media (max-width: 768px) {
+    /* Ajuste para telas menores */
+    main {
+        width: 100%; /* Ajusta a largura de main para 100% */
+        padding: 0.625rem; /* Menor padding para telas menores */
+    }
+
+    /* Ajuste o tamanho da fonte para telas menores */
+    .card-body h5,
+    .card-body p {
+        font-size: 1.5rem; /* Aumenta o tamanho da fonte para 1.5rem */
+    }
+    
+    .btn {
+        font-size: 1.5rem; /* Aumenta o tamanho da fonte dos botões */
+    }
+
+    /* Ajusta o tamanho das imagens nos cards */
+    .card-img-top,
+    .card-img {
+        height: 9.375rem; /* Altura de 150px equivalente a 9.375rem */
+    }
+}
+
+.text-center mb-4 {
+    text-align: center;
+    margin-bottom: 1rem;
+    font-size: 10vh;
 }
