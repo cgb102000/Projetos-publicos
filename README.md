@@ -2,7 +2,7 @@
 
 <h1>Projetos</h1>
 
-<ol style='list-style:none'>
+<ol>
 
 
   <li>
