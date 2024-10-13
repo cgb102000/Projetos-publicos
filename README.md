@@ -6,7 +6,7 @@
 
 
   <li>
-    Projeto 1 - FarmaUnix <a href="https://cgb102000.github.io/Projetos-publicos/FarmaUnix/" target="_blank">- Clique aqui para acessar </a>
+    Projeto 1 - FarmaUnix <a href="https://cgb102000.github.io/Projetos-publicos/FarmaUnix/src" target="_blank">- Clique aqui para acessar </a>
   </li>
   <li>
     Projeto 2 - Spotify <a href="https://cgb102000.github.io/Projetos-publicos/Spotify/" target="_blank">- Clique aqui para acessar </a>
