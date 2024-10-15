@@ -1,0 +1,21 @@
+@media (max-width: 480px) {
+    .anime-card {
+        padding: 15px;
+        margin: 10px;
+    }
+
+    .anime-image {
+        height: 200px;
+        width: 100%;
+    }
+
+    .anime-card h2 {
+        font-size: 1.4em;
+        margin: 10px 0;
+    }
+
+    .anime-card p {
+        font-size: 0.9em;
+        margin: 5px 0;
+    }
+}
