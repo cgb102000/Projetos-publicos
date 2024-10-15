@@ -1,0 +1,11 @@
+{
+  "hosting": {
+    "site": "teste-8f37b-449c0",
+    "public": "public",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ]
+  }
+}

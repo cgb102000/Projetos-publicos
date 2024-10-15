@@ -1,0 +1,93 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 0;
+}
+
+/* Estilo para os cards */
+.anime-card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: left;
+    transition: transform 0.3s, box-shadow 0.3s;
+    flex: 1 1 30%; /* Garante que os cards tenham um comportamento responsivo */
+    max-width: 400px;
+    min-width: 280px; /* Largura mínima para dispositivos menores */
+}
+
+.anime-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+#anime-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly; /* Distribui os cards com espaço entre eles */
+}
+
+.anime-image {
+    max-width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+/* Estilo do título */
+h1 {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 1.8em;
+}
+
+/* Media query para telas pequenas */
+@media (max-width: 480px) {
+    .anime-card {
+        padding: 15px;
+        margin: 10px;
+    }
+
+    .anime-image {
+        height: 200px;
+        width: 100%;
+    }
+
+    .anime-card h2 {
+        font-size: 1.4em;
+        margin: 10px 0;
+    }
+
+    .anime-card p {
+        font-size: 0.9em;
+        margin: 5px 0;
+    }
+}
+
+/* Estilo para links */
+a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+a:hover {
+    color: green;
+    text-decoration: underline;
+}
+
+.card {
+    margin-top: 10%;
+    margin: auto;
+}
+
+/* Para evitar sobreposição */
+.container {
+    padding-top: 20px; /* Ajuste o padding para deixar espaço */
+}
+
+#navbar2 {
+    width: 100%;
+}
