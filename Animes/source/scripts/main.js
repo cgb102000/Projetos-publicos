@@ -1,7 +1,18 @@
 import { db } from './firebaseConfig.js'; // Importa a configuração do Firebase
 
 // Adiciona o evento de clique ao botão de busca
-document.getElementById('btn-buscar').addEventListener('click', function () {
+document.getElementById('btn-buscar').addEventListener('click', realizarBusca);
+
+// Adiciona o evento de tecla ao campo de busca
+document.getElementById('nome-anime').addEventListener('keydown', function (event) {
+    if (event.key === 'Enter') {
+        event.preventDefault(); // Evita o comportamento padrão do Enter
+        realizarBusca(); // Chama a função de busca
+    }
+});
+
+// Função que realiza a busca
+function realizarBusca() {
     const nomeConteudo = document.getElementById('nome-anime').value.trim(); // Obtém o valor do campo de busca e remove espaços
 
     if (nomeConteudo === "") {
@@ -11,7 +22,7 @@ document.getElementById('btn-buscar').addEventListener('click', function () {
     }
 
     fetchConteudos(nomeConteudo); // Chama a função com o nome do conteúdo
-});
+}
 
 // Função para capitalizar a primeira letra de uma string
 function capitalize(string) {
