@@ -19,6 +19,10 @@
     Projeto 4 - GeekHub <a href="https://cgb102000.github.io/Projetos-publicos/Animes/" target="_blank">- Clique aqui para acessar </a>
      
   </li>
+   <li>
+    Projeto 4 - Redimensionar imagens  <a href="https://cgb102000.github.io/Projetos-publicos/Redimensionar%20Imagem/" target="_blank">- Clique aqui para acessar </a>
+     
+  </li>
   
 </ol>
 
