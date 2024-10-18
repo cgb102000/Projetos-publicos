@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="source/styles/cards.css">
     <link rel="stylesheet" href="source/styles/responsive.css">
     <link rel="stylesheet" href="source/styles/navbar.css">
+    <link rel="stylesheet" href="source/styles/footer.css">
     
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
@@ -51,18 +52,26 @@
     </nav>
 
     <div class="container" style="margin-top: 80px;">
-        <h1 class="text-center mb-4">Lista de Animes e Filmes</h1>
+        <h1 class="text-center mb-4">Busque por Animes e Filmes</h1>
+        
+        <!-- Título para resultados -->
+        <h2 id="resultado-titulo" class="text-center mb-4" style="display: none;">Resultados</h2>
+        
         <div id="anime-list" class="row justify-content-center">
             <!-- Os cards serão inseridos aqui via JS -->
         </div>
 
-        <div class="container mt-4">
-            <h2 class="text-center">Relacionados</h2>
+        <div class="container mt-4" id="relacionados-container" style="display: none;">
+            <h2 id="relacionados-titulo" class="text-center">Assista também:</h2>
             <div id="relacionados-list" class="row justify-content-center">
                 <!-- Os cards relacionados serão inseridos aqui via JS -->
             </div>
         </div>
     </div>
+
+    <footer class="text-center mt-4">
+        Site criado por &copy; Caio Gabriel
+    </footer>
 
     <!-- Scripts do Bootstrap -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
@@ -72,9 +81,57 @@
     <script>
         $(document).ready(function () {
             $('[data-toggle="tooltip"]').tooltip();
+
+            $('#btn-buscar').click(function () {
+                // Aqui você deve adicionar a lógica de busca com Firebase ou outra fonte de dados.
+                
+                $('#resultado-titulo').show();
+                $('#anime-list').empty(); // Limpa os resultados anteriores
+                $('#relacionados-list').empty(); // Limpa os resultados anteriores da seção "Assista também"
+
+                // Simulando a lógica de busca
+                const resultados = []; // Deve ser preenchido com os resultados da busca
+                const todosOsAnimes = []; // Deve ser preenchido com todos os animes disponíveis
+
+                // Adicionando resultados (substitua pela lógica real de busca)
+                // Adicione os resultados ao anime-list
+                resultados.forEach(titulo => {
+                    $('#anime-list').append(`
+                        <div class="card col-md-3 m-2">
+                            <img src="imagem_exemplo_resultado.jpg" class="card-img-top" alt="${titulo}">
+                            <div class="card-body">
+                                <h5 class="card-title">${titulo}</h5>
+                                <p class="card-text">Descrição do ${titulo}.</p>
+                                <a href="#" class="btn btn-primary">Assistir</a>
+                            </div>
+                        </div>
+                    `);
+                });
+
+                // Mostrar a seção "Assista também"
+                $('#relacionados-container').show();
+                $('#relacionados-titulo').show();
+                
+                // Filtrando os animes para a seção "Assista também"
+                const resultadosSet = new Set(resultados);
+
+                // Adicionando animes aleatórios diferentes dos resultados
+                todosOsAnimes.forEach(titulo => {
+                    if (!resultadosSet.has(titulo)) {
+                        $('#relacionados-list').append(`
+                            <div class="card col-md-3 m-2">
+                                <img src="imagem_exemplo_relacionado.jpg" class="card-img-top" alt="${titulo}">
+                                <div class="card-body">
+                                    <h5 class="card-title">${titulo}</h5>
+                                    <p class="card-text">Descrição do ${titulo}.</p>
+                                    <a href="#" class="btn btn-primary">Assistir</a>
+                                </div>
+                            </div>
+                        `);
+                    }
+                });
+            });
         });
     </script>
-      </script>
-      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
