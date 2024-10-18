@@ -33,3 +33,15 @@ a:hover {
 #navbar2 {
     width: 100%;
 }
+
+a{
+    text-decoration: none;
+    color: white;
+}
+a:hover{
+    text-decoration: none;
+}
+.text-center{
+    color: red;
+    
+}

@@ -9,6 +9,7 @@
     flex: 1 1 30%;
     max-width: 400px;
     min-width: 280px;
+    border: 1px solid black;
 }
 
 .anime-card:hover {
