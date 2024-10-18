@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redimensionador de Imagem</title>
+    <link rel="stylesheet" href="source/styles/style.css">
+    <link rel="shortcut icon" href="source/images/icon.png" type="image/x-icon">
+</head>
+<body>
+    <div class="container">
+        <h1>Redimensionador de Imagem</h1>
+        
+        <label for="file-input">Selecione as Imagens:</label>
+        <input type="file" id="file-input" multiple accept="image/*">
+        
+        <label for="width">Novo Tamanho (Largura x Altura):</label>
+        <input type="number" id="width" placeholder="Largura (px)">
+        <span id="x">x</span>
+        <br>
+        <br>
+        <input type="number" id="height" placeholder="Altura (px)">
+        
+        <button id="resize-button">Redimensionar Imagens</button>
+        <p id="status"></p>
+        
+        <footer>
+            <p>Desenvolvido por Caio</p>
+        </footer>
+    </div>
+    
+    <script src="source/scripts/script.js"></script>
+</body>
+</html>
