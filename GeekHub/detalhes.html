@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalhes do Conteúdo</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="source/styles/detalhes.css">
+    <link rel="stylesheet" href="source/styles/main.css">
+    <link rel="stylesheet" href="source/styles/cards.css">
     <style>
         body {
             background-color: #141414;
@@ -37,24 +38,15 @@
             <a href="#" class="btn btn-success">Assistir</a>
         </div>
     </div>
-   
+    <!-- Firebase App (para inicializar o Firebase) -->
+<script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js"></script>
 
-    <script>
-        // Obtendo parâmetros da URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const titulo = urlParams.get('titulo');
+<!-- Firebase Firestore -->
+<script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-firestore.js"></script>
 
-        // Simulação de dados
-       
-
-        // Exibindo os detalhes do conteúdo
-        if (dados[titulo]) {
-            document.getElementById('titulo-detalhe').innerText = titulo;
-            document.getElementById('descricao-detalhe').innerText = dados[titulo].descricao;
-            document.getElementById('imagem-detalhe').src = dados[titulo].imagem;
-        } else {
-            document.getElementById('detalhes-card').innerHTML = "<h2>Conteúdo não encontrado</h2>";
-        }
-    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-firestore.js"></script>
+    <script src="source/scripts/firebaseConfig.js"></script> <!-- Configuração do Firebase -->
+    <script src="source/scripts/detalhes.js"></script> <!-- Script separado -->
 </body>
 </html>
