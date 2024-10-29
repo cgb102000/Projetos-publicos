@@ -14,7 +14,7 @@ Aqui estão alguns dos meus projetos públicos que você pode explorar:
    [🌐 Clique aqui para acessar](https://cgb102000.github.io/Projetos-publicos/Pokedex/)
 
 4. **Projeto 4 - GeekHub**  
-   [🌐 Clique aqui para acessar](https://cgb102000.github.io/Projetos-publicos/Animes/)
+   [🌐 Clique aqui para acessar](https://cgb102000.github.io/Projetos-publicos/GeekHub/)
 
 5. **Projeto 5 - Redimensionar Imagens**  
    [🌐 Clique aqui para acessar](https://cgb102000.github.io/Projetos-publicos/Redimensionar%20Imagem/)
