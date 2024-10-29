@@ -1,20 +1,20 @@
-# Projetos Públicos
+🔥 Projetos Públicos
+✨ Exploração dos Projetos
+Mergulhe em alguns dos meus projetos públicos! Cada um é uma criação única e está repleto de funcionalidades interessantes para você explorar.
 
-## ✨ Projetos
+🌌 Projetos Disponíveis:
+🔥 Projeto 1 - FarmaUnix
+🌐 Acesse Aqui
 
-Aqui estão alguns dos meus projetos públicos que você pode explorar:
+🎶 Projeto 2 - Spotify
+🌐 Acesse Aqui
 
-1. **Projeto 1 - FarmaUnix**  
-   [🌐 Clique aqui para acessar](https://cgb102000.github.io/Projetos-publicos/FarmaUnix/src)
+🐉 Projeto 3 - Pokedex
+🌐 Acesse Aqui
 
-2. **Projeto 2 - Spotify**  
-   [🌐 Clique aqui para acessar](https://cgb102000.github.io/Projetos-publicos/Spotify/)
+🕹️ Projeto 4 - GeekHub
+🌐 Acesse Aqui
 
-3. **Projeto 3 - Pokedex**  
-   [🌐 Clique aqui para acessar](https://cgb102000.github.io/Projetos-publicos/Pokedex/)
+⚒️ Projeto 5 - Redimensionar Imagens
+🌐 Acesse Aqui
 
-4. **Projeto 4 - GeekHub**  
-   [🌐 Clique aqui para acessar](https://cgb102000.github.io/Projetos-publicos/GeekHub/)
-
-5. **Projeto 5 - Redimensionar Imagens**  
-   [🌐 Clique aqui para acessar](https://cgb102000.github.io/Projetos-publicos/Redimensionar%20Imagem/)
