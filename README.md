@@ -1,35 +1,20 @@
-<h1>🔥 Projetos Públicos</h1>
+## ✨ Projetos
 
-<h2>✨ Exploração dos Projetos</h2>
-<p>Mergulhe em alguns dos meus projetos públicos! Cada um é uma criação única e está repleto de funcionalidades interessantes para você explorar.</p>
+Aqui estão alguns dos meus projetos públicos que você pode explorar:
 
-<hr>
+1. **Projeto 1 - FarmaUnix**  
+   [🌐 Clique aqui para acessar](https://cgb102000.github.io/Projetos-publicos/FarmaUnix/src)
 
-<h3>🌌 Projetos Disponíveis:</h3>
+2. **Projeto 2 - Spotify**  
+   [🌐 Clique aqui para acessar](https://cgb102000.github.io/Projetos-publicos/Spotify/)
 
-<ul>
-  <li>
-    <strong>🔥 Projeto 1 - FarmaUnix</strong><br>
-    🌐 <a href="https://cgb102000.github.io/Projetos-publicos/FarmaUnix/src">https://cgb102000.github.io/Projetos-publicos/FarmaUnix/src</a>
-  </li>
-  <li>
-    <strong>🎶 Projeto 2 - Spotify</strong><br>
-    🌐 <a href="https://cgb102000.github.io/Projetos-publicos/Spotify/">https://cgb102000.github.io/Projetos-publicos/Spotify/</a>
-  </li>
-  <li>
-    <strong>🐉 Projeto 3 - Pokedex</strong><br>
-    🌐 <a href="https://cgb102000.github.io/Projetos-publicos/Pokedex/">https://cgb102000.github.io/Projetos-publicos/Pokedex/</a>
-  </li>
-  <li>
-    <strong>🕹️ Projeto 4 - GeekHub</strong><br>
-    🌐 <a href="https://cgb102000.github.io/Projetos-publicos/GeekHub/">https://cgb102000.github.io/Projetos-publicos/GeekHub/</a>
-  </li>
-  <li>
-    <strong>⚒️ Projeto 5 - Redimensionar Imagens</strong><br>
-    🌐 <a href="https://cgb102000.github.io/Projetos-publicos/Redimensionar%20Imagem/">https://cgb102000.github.io/Projetos-publicos/Redimensionar%20Imagem/</a>
-  </li>
-</ul>
+3. **Projeto 3 - Pokedex**  
+   [🌐 Clique aqui para acessar](https://cgb102000.github.io/Projetos-publicos/Pokedex/)
 
-<hr>
+4. **Projeto 4 - GeekHub**  
+   [🌐 Clique aqui para acessar](https://cgb102000.github.io/Projetos-publicos/GeekHub/)
 
-<p>Desafie-se e aproveite a exploração em cada projeto! 🔥</p>
+5. **Projeto 5 - Redimensionar Imagens**  
+   [🌐 Clique aqui para acessar](https://cgb102000.github.io/Projetos-publicos/Redimensionar%20Imagem/)
+
+gostaria de algo com fogo, meio dark
