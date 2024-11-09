@@ -2,20 +2,17 @@
 
 Aqui estão alguns dos meus projetos públicos que você pode explorar:
 
-1. **🩺 Projeto 1 - FarmaUnix**  
-   🌐 [Clique aqui para acessar](https://cgb102000.github.io/Projetos-publicos/FarmaUnix/src)
-
-2. **🎧 Projeto 2 - Spotify**  
+1. **🎧 Projeto 1 - Spotify**  
    🌐 [Clique aqui para acessar](https://cgb102000.github.io/Projetos-publicos/Spotify/)
 
-3. **🐲 Projeto 3 - Pokedex**  
+2. **🐲 Projeto 2 - Pokedex**  
    🌐 [Clique aqui para acessar](https://cgb102000.github.io/Projetos-publicos/Pokedex/)
 
-4. **💻 Projeto 4 - GeekHub**  
+3. **💻 Projeto 3 - GeekHub**  
    🌐 [Clique aqui para acessar](https://cgb102000.github.io/Projetos-publicos/GeekHub/)
 
-5. **🖼️ Projeto 5 - Redimensionar Imagens**  
+4. **🖼️ Projeto 4 - Redimensionar Imagens**  
    🌐 [Clique aqui para acessar](https://cgb102000.github.io/Projetos-publicos/Redimensionar%20Imagem/)
 
-6. **🤖 Projeto 6 - Vertex AI App**  
+5. **🤖 Projeto 5 - Vertex AI App**  
    🌐 [Clique aqui para acessar](https://vertexapp-4399c9c295dd.herokuapp.com/)
