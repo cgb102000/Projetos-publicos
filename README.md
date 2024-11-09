@@ -17,5 +17,5 @@ Aqui estão alguns dos meus projetos públicos que você pode explorar:
 5. **🖼️ Projeto 5 - Redimensionar Imagens**  
    🌐 [Clique aqui para acessar](https://cgb102000.github.io/Projetos-publicos/Redimensionar%20Imagem/)
 
-6. **🌐 Projeto 6 - Vertex AI App**  
+6. **🤖 Projeto 6 - Vertex AI App**  
    🌐 [Clique aqui para acessar](https://vertexapp-4399c9c295dd.herokuapp.com/)
