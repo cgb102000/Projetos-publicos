@@ -25,4 +25,4 @@ Ferramenta prática para contar palavras e caracteres de forma rápida e eficien
 ### 6. **🤖 Vertex AI App - Consulta à API do Google para Respostas Inteligentes**  
 Aplicação que utiliza a API do Vertex AI para gerar respostas inteligentes para os usuários.  
 🌐 [Clique aqui para acessar](https://vertexapp-4399c9c295dd.herokuapp.com/)
-🌐 <a href="https://vertexapp-4399c9c295dd.herokuapp.com/" target="_blank">Clique aqui para acessar</a>
+
