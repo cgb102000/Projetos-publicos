@@ -20,7 +20,7 @@ Ferramenta simples e eficiente para redimensionar imagens de maneira prática e 
 
 ### 5. **🔢 Contador de Palavras e Caracteres**  
 Ferramenta prática para contar palavras e caracteres de forma rápida e eficiente.  
-🔗 [Repositório no GitHub](https://cgb102000.github.io/Projetos-publicos/Contador%20de%20caracteres%20e%20palavras/)
+🌐 [Clique aqui para acessar](https://cgb102000.github.io/Projetos-publicos/Contador%20de%20caracteres%20e%20palavras/)
 
 ### 6. **🤖 Vertex AI App - Consulta à API do Google para Respostas Inteligentes**  
 Aplicação que utiliza a API do Vertex AI para gerar respostas inteligentes para os usuários.  
