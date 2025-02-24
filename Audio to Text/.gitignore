@@ -1,0 +1,31 @@
+# Python
+*.pyc
+*.pyo
+__pycache__
+*.pdb
+*.log
+
+# Flask instance folder
+instance/
+
+# Flask config file
+.env
+
+# Virtualenv folder
+venv/
+env/
+.venv/
+
+# IDEs
+.vscode/
+.idea/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Uploads (diretório de uploads)
+static/uploads/
+
+# Arquivos de transcrição
+*.txt

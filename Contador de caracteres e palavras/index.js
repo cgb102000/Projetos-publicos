@@ -1,41 +1,27 @@
 const input = document.querySelector('#input');
-const counter = document.querySelector('.counter');
-const toggle = document.querySelector('#toggle');
+const charactersCount = document.querySelector('#characters-count');
+const wordsCount = document.querySelector('#words-count');
+const tokensCount = document.querySelector('#tokens-count');
 
-let mode = "characters"; // Modo inicial
-
-// Função para atualizar a contagem
+// Função para atualizar as contagens
 function updateCount() {
-    let count = 0;
+    const text = input.value;
     
-    if (mode === "characters") {
-        count = input.value.length;
-        counter.textContent = `${count} caractere(s)`;
-    } else {
-        count = input.value.trim().split(/\s+/).filter(word => word !== "").length;
-        counter.textContent = `${count} palavra(s)`;
-    }
+    // Contagem de caracteres
+    const characters = text.length;
+    charactersCount.textContent = `${characters} caractere(s)`;
+
+    // Contagem de palavras
+    const words = text.trim().split(/\s+/).filter(word => word !== "").length;
+    wordsCount.textContent = `${words} palavra(s)`;
+
+    // Contagem de tokens (estimativa de 1 token a cada 4 caracteres)
+    const tokens = Math.ceil(characters / 4);
+    tokensCount.textContent = `${tokens} token(s)`;
 }
 
 // Evento para atualizar a contagem ao digitar
 input.addEventListener("input", updateCount);
 
-// Função para alternar modo
-function toggleMode() {
-    mode = mode === "characters" ? "words" : "characters";
-    toggle.textContent = mode === "characters" ? "Contar Palavras" : "Contar Caracteres";
-    
-    // Atualizar a contagem ao alternar o modo
-    updateCount();
-}
-
-// Evento para alternar o modo ao clicar no botão
-toggle.addEventListener("click", toggleMode);
-
-// Evento para alternar o modo ao pressionar Enter no campo de entrada
-input.addEventListener("keydown", (event) => {
-    if (event.key === "Enter") {
-        event.preventDefault(); // Impede a quebra de linha no textarea
-        toggleMode();
-    }
-});
+// Inicializa a contagem ao carregar a página
+updateCount();

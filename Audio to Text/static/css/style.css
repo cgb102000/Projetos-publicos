@@ -1,0 +1,154 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #F2F2F2; /* Cor de fundo suave */
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    color: #333;
+}
+
+.container {
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 750px;
+    text-align: center;
+    box-sizing: border-box;
+    position: relative;
+}
+
+h1 {
+    font-size: 28px;
+    color: #0BD979; /* Cor verde */
+    margin-bottom: 30px;
+    font-weight: 600;
+}
+
+p {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.file-input-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+input[type="file"] {
+    display: block;
+    padding: 12px;
+    font-size: 16px;
+    background-color: #F2F2F2;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    width: 90%;
+    max-width: 400px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+input[type="file"]:hover {
+    border-color: #0BD979;
+    background-color: #E9F9E6; /* Verde claro para hover */
+}
+
+button {
+    display: block;
+    margin: 20px auto;
+    padding: 12px 25px;
+    font-size: 18px;
+    background-color: #0BD979;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+button:hover {
+    background-color: #1D591B; /* Verde escuro */
+    transform: translateY(-2px);
+}
+
+button:active {
+    transform: translateY(2px);
+}
+
+textarea {
+    width: 100%;
+    gap: 15px;
+    margin-top: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    resize: none;
+    font-size: 16px;
+    min-height: 200px;
+    background-color: #F9F9F9;
+    color: #333;
+    box-shadow: inset 0 1px 5px rgba(0, 0, 0, 0.1);
+    text-align: left;
+}
+
+#status {
+    
+    font-size: 16px;
+    color: #63F25E; /* Cor verde para sucesso */
+    font-weight: bold;
+}
+
+#loading {
+    font-size: 14px;
+    color: #d9534f; /* Cor vermelha para destaque */
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+#downloadLink {
+    display: block;
+    margin-top: 20px;
+    padding: 12px 25px;
+    text-align: center;
+    text-decoration: none;
+    background-color: #63F25E; /* Verde para download */
+    color: white;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+#downloadLink:hover {
+    background-color: #4ECB48;
+    transform: translateY(-2px);
+}
+
+#downloadLink:active {
+    transform: translateY(2px);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .container {
+        padding: 25px;
+    }
+
+    h1 {
+        font-size: 24px;
+    }
+
+    input[type="file"], button {
+        width: 100%;
+    }
+
+    textarea {
+        min-height: 180px;
+    }
+}
