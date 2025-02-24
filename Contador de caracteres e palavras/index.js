@@ -1,7 +1,6 @@
 const input = document.querySelector('#input');
 const charactersCount = document.querySelector('#characters-count');
 const wordsCount = document.querySelector('#words-count');
-const tokensCount = document.querySelector('#tokens-count');
 
 // Função para atualizar as contagens
 function updateCount() {
@@ -14,10 +13,6 @@ function updateCount() {
     // Contagem de palavras
     const words = text.trim().split(/\s+/).filter(word => word !== "").length;
     wordsCount.textContent = `${words} palavra(s)`;
-
-    // Contagem de tokens (estimativa de 1 token a cada 4 caracteres)
-    const tokens = Math.ceil(characters / 4);
-    tokensCount.textContent = `${tokens} token(s)`;
 }
 
 // Evento para atualizar a contagem ao digitar

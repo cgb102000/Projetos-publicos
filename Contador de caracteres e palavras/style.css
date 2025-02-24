@@ -103,7 +103,3 @@ textarea:focus {
     color: #d81b60; /* Cor mais vibrante para destacar as palavras */
 }
 
-#tokens-count {
-    background-color: #fff3e0; /* Cor de fundo mais quente para os tokens */
-    color: #ff6f00; /* Cor de texto mais forte para os tokens */
-}
