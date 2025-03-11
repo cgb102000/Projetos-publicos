@@ -7,7 +7,7 @@ UPLOAD_FOLDER = os.path.join('static', 'uploads')
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # Carrega o modelo Whisper apenas uma vez ao iniciar o servidor
-model = whisper.load_model("small")
+model = whisper.load_model("small", device="cpu")
 
 app = Flask(__name__)
 
