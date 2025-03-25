@@ -12,20 +12,35 @@ document.getElementById('searchInput').addEventListener('keypress', (e) => {
 
 function searchContent(query) {
     fetch(`http://localhost:3000/api/search?q=${query}`)
-      .then(response => response.json())
+      .then(response => {
+        if (!response.ok) {
+            throw new Error('Erro na resposta da API');
+        }
+        return response.json();
+      })
       .then(data => {
         console.log(data);  // Inspeciona os dados retornados
         displayResults(data);
       })
-      .catch(error => console.error('Erro:', error));
+      .catch(error => {
+        console.error('Erro:', error);
+        const contentDiv = document.getElementById('content');
+        contentDiv.innerHTML = '<p style="color: red; font-weight: bold;">Houve um erro ao buscar os dados. Tente novamente mais tarde.</p>';
+      });
 }
 
 function displayResults(data) {
     const contentDiv = document.getElementById('content');
     contentDiv.innerHTML = ''; // Limpar resultados anteriores
     
+    // Verifica se data é um array antes de usar forEach
+    if (!Array.isArray(data)) {
+        contentDiv.innerHTML = '<p style="color: red; font-weight: bold;">Houve um erro ao processar os dados. Tente novamente.</p>';
+        return;
+    }
+
     if (data.length === 0) {
-        contentDiv.innerHTML = '<p>Nenhum resultado encontrado.</p>';
+        contentDiv.innerHTML = '<p style="color: red; font-weight: bold;">Infelizmente, não encontramos nada. Tente digitar novamente e verifique os dados.</p>';
     } else {
         data.forEach(item => {
             const card = document.createElement('div');
@@ -40,7 +55,7 @@ function displayResults(data) {
             card.innerHTML = `
                 <img src="${coverImage}" alt="${title}">
                 <h3>${title}</h3>
-                <a href="detalhes.html?id=${item._id}&collection=${collection}">Assistir</a>  <!-- Passando o ID e a collection -->
+                <a href="detalhes.html?id=${item._id}&collection=${collection}">Assistir</a> <!-- Passando o ID e a collection -->
             `;
             contentDiv.appendChild(card);
         });

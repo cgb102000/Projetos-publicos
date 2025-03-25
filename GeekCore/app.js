@@ -37,7 +37,7 @@ app.get('/api/search', async (req, res) => {
 
   // Buscando nas coleções 'animes' e 'filmes'
   const validCollections = ['animes', 'filmes'];
-  
+
   try {
     // Usando Promise.all para buscar nas duas coleções de forma paralela
     const results = await Promise.all(validCollections.map(collection => {
@@ -47,7 +47,7 @@ app.get('/api/search', async (req, res) => {
     }));
 
     // Concatenando os resultados das duas coleções
-    const allResults = [].concat(...results); 
+    const allResults = [].concat(...results);
 
     if (allResults.length > 0) {
       res.json(allResults); // Envia os resultados encontrados
@@ -67,7 +67,6 @@ app.get('/api/item/:collection/:id', async (req, res) => {
   // Verificar se a coleção é válida
   const validCollections = ['animes', 'filmes'];
 
-  // Verificando a coleção
   if (!validCollections.includes(collection)) {
     return res.status(400).json({ message: 'Coleção inválida. Use "animes" ou "filmes".' });
   }
@@ -78,19 +77,45 @@ app.get('/api/item/:collection/:id', async (req, res) => {
   }
 
   try {
-    // Acessando a coleção no MongoDB dinamicamente
-    const item = await mongoose.connection.db.collection(collection).findOne({ _id: new mongoose.Types.ObjectId(id) });
-    
+    const item = await mongoose.connection.db.collection(collection)
+      .findOne({ _id: new mongoose.Types.ObjectId(id) });
+
     if (item) {
-      console.log(`Item encontrado na coleção ${collection}:`, item); // Log para depuração
-      res.json(item);  // Retorna os dados do item
+      console.log(`Item encontrado na coleção ${collection}:`, item);
+      res.json(item);
     } else {
-      console.log('Item não encontrado'); // Log para depuração
+      console.log('Item não encontrado');
       res.status(404).json({ message: 'Item não encontrado' });
     }
   } catch (err) {
     console.error('Erro ao buscar item:', err);
     res.status(500).json({ message: 'Erro ao buscar item. Tente novamente mais tarde.' });
+  }
+});
+
+// Rota para pegar filmes e animes aleatórios
+app.get('/api/random/:collection', async (req, res) => {
+  const { collection } = req.params;
+  const validCollections = ['animes', 'filmes'];
+
+  if (!validCollections.includes(collection)) {
+    return res.status(400).json({ message: 'Coleção inválida.' });
+  }
+
+  try {
+    // Alterado para retornar 50 itens aleatórios
+    const randomItems = await mongoose.connection.db.collection(collection).aggregate([
+      { $sample: { size: 16 } }  // Ajuste para retornar 50 itens
+    ]).toArray();
+
+    if (randomItems.length > 0) {
+      res.json(randomItems);
+    } else {
+      res.status(404).json({ message: 'Nenhum item encontrado.' });
+    }
+  } catch (err) {
+    console.error('Erro ao buscar itens aleatórios:', err);
+    res.status(500).json({ message: 'Erro ao buscar itens aleatórios. Tente novamente mais tarde.' });
   }
 });
 
