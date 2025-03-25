@@ -1,0 +1,83 @@
+.carousel-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    padding: 20px;
+    margin: 0 auto;
+    width: 100%;
+    max-width: 1200px;
+    justify-content: center;
+    position: relative; /* Necessário para posicionar as setas */
+    overflow: hidden; /* Esconde os itens fora da área visível */
+}
+
+.carousel {
+    display: flex;
+    transition: transform 0.5s ease-in-out; /* Animação para o movimento do carrossel */
+}
+
+.carousel .card {
+    flex: 0 0 200px; /* Largura fixa para cada card */
+    margin: 0 10px; /* Espaçamento entre os cards */
+    width: 150px;
+    height: 250px;
+}
+
+.carousel .card img {
+    height: 150px;
+}
+
+.carousel .card h3 {
+    font-size: 14px;
+}
+
+.carousel .card a {
+    font-size: 12px;
+    padding: 8px 12px;
+}
+
+.carousel-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    z-index: 10;
+    transition: background-color 0.3s;
+}
+
+.carousel-arrow:hover {
+    background-color: var(--primary-hover);
+}
+
+.carousel-arrow.left-arrow {
+    left: 10px;
+}
+
+.carousel-arrow.right-arrow {
+    right: 10px;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .carousel-container {
+        max-width: 600px;
+    }
+
+    .carousel .card img {
+        height: 80px;
+    }
+}
+
+@media (max-width: 480px) {
+    .carousel-container {
+        max-width: 400px;
+    }
+
+    .carousel .card img {
+        height: 70px;
+    }
+}

@@ -3,24 +3,43 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Busca de Filmes e Animes</title>
-  <link rel="stylesheet" href="style.css">
+  <title>GeekCore - Filmes e Animes</title>
+
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/header.css">
+  <link rel="stylesheet" href="css/banner.css">
+  <link rel="stylesheet" href="css/card.css">
+  <link rel="stylesheet" href="css/footer.css">
 </head>
 <body>
+  <!-- Header -->
+  <script src="js/header.js"></script>
 
-  <header>
-    <div class="logo">
-      <!-- Quando tiver a logo, coloque aqui: -->
-      <!-- <img src="sua-logo.png" alt="Logo"> -->
-      <h1><a href="index.html">GeekCore</a></h1>
+  <!-- Banner -->
+  <section id="banner">
+    <div class="banner-content">
+      <h1>Bem-vindo ao GeekCore</h1>
+      <p>Explore os melhores filmes e animes em um só lugar.</p>
+      <button onclick="window.location.href='#recent'">Ver Mais</button>
     </div>
-    <div class="search-area">
-      <input type="text" id="searchInput" placeholder="Buscar filmes ou animes...">
-      <button id="searchBtn">Buscar</button>
+  </section>
+
+  <!-- Recent Items -->
+  <section id="recent">
+    <h2>Enviados Recentemente</h2>
+    <div id="recentItems" class="recent-items">
+      <!-- Itens recentes serão carregados dinamicamente -->
     </div>
-  </header>
-  
-  <div id="content"></div>
+  </section>
+
+  <div id="content">
+    <!-- Os cards serão inseridos aqui -->
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2023 GeekCore. Todos os direitos reservados.</p>
+  </footer>
 
   <script src="script.js"></script>
 </body>

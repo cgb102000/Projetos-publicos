@@ -119,6 +119,37 @@ app.get('/api/random/:collection', async (req, res) => {
   }
 });
 
+// Rota para buscar categorias disponíveis
+app.get('/api/categories', async (req, res) => {
+  try {
+    const movieCategories = await mongoose.connection.db.collection('filmes').distinct('categoria');
+    const animeCategories = await mongoose.connection.db.collection('animes').distinct('categoria');
+    const allCategories = [...new Set([...movieCategories, ...animeCategories])]; // Remove duplicatas
+    res.json(allCategories);
+  } catch (err) {
+    console.error('Erro ao buscar categorias:', err);
+    res.status(500).json({ message: 'Erro ao buscar categorias.' });
+  }
+});
+
+// Rota para buscar itens enviados recentemente
+app.get('/api/recent', async (req, res) => {
+  try {
+    const recentMovies = await mongoose.connection.db.collection('filmes').find().sort({ createdAt: -1 }).limit(50).toArray();
+    const recentAnimes = await mongoose.connection.db.collection('animes').find().sort({ createdAt: -1 }).limit(50).toArray();
+
+    // Adicionar o campo 'collection' para diferenciar os itens
+    const moviesWithCollection = recentMovies.map(item => ({ ...item, collection: 'filmes' }));
+    const animesWithCollection = recentAnimes.map(item => ({ ...item, collection: 'animes' }));
+
+    const allRecentItems = [...moviesWithCollection, ...animesWithCollection].slice(0, 50); // Limita a 50 itens no total
+    res.json(allRecentItems);
+  } catch (err) {
+    console.error('Erro ao buscar itens recentes:', err);
+    res.status(500).json({ message: 'Erro ao buscar itens recentes.' });
+  }
+});
+
 // Rota inicial para verificar se o servidor está funcionando
 app.get('/', (req, res) => {
   res.send('Bem-vindo ao servidor de Filmes e Animes!');

@@ -13,6 +13,7 @@ function fetchItemDetails(collection, id) {
   fetch(url)
     .then(response => {
       if (!response.ok) {
+        console.error(`Erro ao carregar detalhes: ${response.status}`);
         throw new Error('Erro ao carregar os detalhes');
       }
       return response.json();
@@ -44,7 +45,7 @@ function fetchItemDetails(collection, id) {
       }
 
       // Carregar sugestões (até 100 itens, por exemplo)
-      fetchRandomItems(collection);
+      fetchRandomItems(collection).then(() => setupCarousel());
     })
     .catch(() => {
       document.getElementById('details').innerHTML = '<p>Não foi possível carregar os detalhes do item.</p>';
@@ -61,7 +62,7 @@ function isValidUrl(url) {
 }
 
 function fetchRandomItems(collection) {
-  fetch(`http://localhost:3000/api/random/${collection}?limit=100`) // Ajustado para buscar até 100 itens
+  return fetch(`http://localhost:3000/api/random/${collection}?limit=100`) // Ajustado para buscar até 100 itens
     .then(response => response.json())
     .then(data => {
       const carouselContainer = document.getElementById('carousel');
@@ -74,6 +75,8 @@ function fetchRandomItems(collection) {
           card.className = 'card';
           const title = item.titulo || 'Título não disponível';
           const coverImage = item.img_url || 'https://via.placeholder.com/150';
+
+          // Estrutura original do card
           card.innerHTML = `
             <img src="${coverImage}" alt="${title}">
             <h3>${title}</h3>
@@ -90,13 +93,65 @@ function fetchRandomItems(collection) {
     .catch(error => console.error('Erro ao carregar sugestões:', error));
 }
 
+function setupCarousel() {
+  const carousel = document.querySelector('.carousel');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  let scrollPosition = 0;
+
+  const updateButtons = () => {
+    const cardWidth = carousel.querySelector('.card').offsetWidth + 20; // Largura do card + margem
+    const maxScroll = carousel.scrollWidth - carousel.offsetWidth;
+
+    prevBtn.disabled = scrollPosition === 0;
+    nextBtn.disabled = scrollPosition >= maxScroll;
+  };
+
+  prevBtn.addEventListener('click', () => {
+    const cardWidth = carousel.querySelector('.card').offsetWidth + 20;
+    scrollPosition = Math.max(scrollPosition - cardWidth, 0);
+    carousel.style.transform = `translateX(-${scrollPosition}px)`;
+    updateButtons();
+  });
+
+  nextBtn.addEventListener('click', () => {
+    const cardWidth = carousel.querySelector('.card').offsetWidth + 20;
+    const maxScroll = carousel.scrollWidth - carousel.offsetWidth;
+    scrollPosition = Math.min(scrollPosition + cardWidth, maxScroll);
+    carousel.style.transform = `translateX(-${scrollPosition}px)`;
+    updateButtons();
+  });
+
+  updateButtons();
+}
+
 if (itemId && collection) {
   fetchItemDetails(collection, itemId);
 } else {
+  console.error('Parâmetros inválidos na URL: id ou collection ausentes.');
   document.getElementById('details').innerHTML = '<p>Item ou coleção não fornecidos na URL.</p>';
 }
 
-// Ação para o botão de Voltar
-document.getElementById('backBtn').addEventListener('click', () => {
-  window.location.href = 'index.html';
-});
+// Adiciona funcionalidade ao botão de busca, se os elementos existirem
+const searchBtn = document.getElementById('searchBtn');
+const searchInput = document.getElementById('searchInput');
+
+if (searchBtn && searchInput) {
+  searchBtn.addEventListener('click', () => {
+    const query = searchInput.value;
+    if (query) {
+      window.location.href = `index.html?q=${encodeURIComponent(query)}`;
+    }
+  });
+
+  searchInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      const query = searchInput.value;
+      if (query) {
+        window.location.href = `index.html?q=${encodeURIComponent(query)}`;
+      }
+    }
+  });
+} else {
+  console.warn('Elementos de busca não encontrados na página.');
+}

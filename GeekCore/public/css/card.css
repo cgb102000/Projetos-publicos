@@ -1,0 +1,66 @@
+.card {
+  background-color: #333;
+  color: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.card img {
+  width: 100%;
+  height: auto;
+}
+
+.card h3 {
+  font-size: 1.2rem;
+  margin: 10px;
+}
+
+.card a {
+  display: block;
+  text-align: center;
+  background-color: #ff4500;
+  color: #fff;
+  text-decoration: none;
+  padding: 10px;
+  border-radius: 0 0 10px 10px;
+}
+
+.card a:hover {
+  background-color: #e03e00;
+}
+
+.card:hover {
+  transform: scale(1.05);
+}
+
+/* Responsividade */
+@media screen and (max-width: 768px) {
+    .card {
+        width: 180px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .card {
+        width: 150px;
+    }
+}
+
+#content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Grid responsivo */
+    gap: 15px; /* Espaçamento entre os cards */
+    justify-items: center; /* Centraliza os cards no grid */
+    align-items: start; /* Alinha os cards ao topo */
+    width: 100%;
+    padding: 20px;
+}
+
+.recent-items {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-top: 20px;
+}

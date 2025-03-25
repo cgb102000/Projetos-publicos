@@ -4,46 +4,41 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Detalhes do Filme/Anime</title>
-  <link rel="stylesheet" href="detalhes.css"> 
-  <link rel="stylesheet" href="style.css"> <!-- Referência ao CSS antigo -->
+
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/header.css">
+  <link rel="stylesheet" href="css/details.css">
+  <link rel="stylesheet" href="css/card.css">
+  <link rel="stylesheet" href="css/carousel.css">
+  <link rel="stylesheet" href="css/footer.css">
 </head>
 <body>
-  <header>
-    <div class="logo">
-      <!-- Quando tiver a logo, coloque aqui: -->
-      <!-- <img src="sua-logo.png" alt="Logo"> -->
-      <h1><a href="index.html">GeekCore</a></h1>
-    </div>
-    <div class="search-area">
-      <input type="text" id="searchInput" placeholder="Buscar filmes ou animes...">
-      <button id="searchBtn">Buscar</button>
-    </div>
-  </header>
+  <script src="js/header.js"></script>
 
-  <button id="backBtn">Voltar</button>
- 
   <div id="details">
     <h2 id="title"></h2>
-    <!-- Definindo tamanho fixo para padronização -->
-    <img id="image" src="" alt="Imagem do item">
-    <p id="description"></p>
-    <p id="category"></p>
-    <a id="downloadLink" href="" target="_blank">Baixar</a>
+    <div class="details-container">
+      <img id="image" src="" alt="Imagem do item">
+      <div class="details-info">
+        <p id="description"></p>
+        <p id="category"></p>
+        <a id="downloadLink" href="" target="_blank">Baixar</a>
+      </div>
+    </div>
   </div>
 
   <div id="suggestions">
     <h3>Assista também:</h3>
     <div class="carousel-container">
-        <div class="carousel" id="carousel">
-            <!-- Os cards do carrossel serão inseridos aqui -->
-        </div>
-        <!-- Botões de navegação -->
-        <button class="carousel-arrow left-arrow" id="prevBtn">&#8592;</button>
-        <button class="carousel-arrow right-arrow" id="nextBtn">&#8594;</button>
+      <div class="carousel" id="carousel">
+        <!-- Os cards do carrossel serão inseridos aqui -->
+      </div>
+      <button class="carousel-arrow left-arrow" id="prevBtn" disabled>&#8592;</button>
+      <button class="carousel-arrow right-arrow" id="nextBtn">&#8594;</button>
     </div>
   </div>
 
-  <!-- Referência ao arquivo JS separado -->
-  <script src="scriptdetalhes.js"></script>
+  <script src="js/header.js"></script>
+  <script src="scriptDetalhes.js"></script>
 </body>
 </html>
