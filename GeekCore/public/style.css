@@ -1,0 +1,175 @@
+/* Resetando alguns estilos para uma base mais limpa */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Definindo o estilo do body */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #121212; /* Fundo escuro */
+    color: #fff;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
+}
+
+/* Estilo do header e título */
+header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+h1 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    color: #f1f1f1;
+}
+
+/* Estilo do input e botão de busca */
+input, button {
+    padding: 12px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: none;
+    margin-top: 20px;
+    outline: none;
+}
+
+input {
+    width: 100%;
+    max-width: 400px;
+    background-color: #333;
+    color: #fff;
+    border-radius: 5px;
+    padding-left: 15px;
+}
+
+button {
+    background-color: #ff4757;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #e84118;
+}
+
+/* Estilo da área de resultados */
+#content {
+    margin-top: 30px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    width: 100%;
+    transition: all 0.3s ease;
+}
+
+/* Estilo dos cards de filmes/animes */
+.card {
+    background-color: #1e1e1e;
+    border-radius: 10px;
+    overflow: hidden;
+    width: 200px;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.card img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    border-bottom: 2px solid #333;
+}
+
+.card h3 {
+    margin: 10px 0;
+    font-size: 18px;
+    color: #fff;
+}
+
+.card a {
+    display: block;
+    padding: 10px;
+    background-color: #ff4757;
+    color: #fff;
+    text-decoration: none;
+    font-size: 14px;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    transition: background-color 0.3s;
+}
+
+.card a:hover {
+    background-color: #e84118;
+}
+
+/* Efeito hover para os cards */
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsividade: Ajustando o layout para telas menores */
+@media screen and (max-width: 768px) {
+    input, button {
+        width: 100%;
+    }
+
+    #content {
+        justify-content: space-around;
+    }
+
+    .card {
+        width: 180px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .card {
+        width: 150px;
+    }
+
+    input, button {
+        font-size: 14px;
+    }
+}
+
+/* Efeito de fade-in nos resultados da busca */
+.card {
+    opacity: 0;
+    animation: fadeIn 0.3s forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Animação suave para o conteúdo da página */
+#content {
+    animation: contentFadeIn 0.5s ease-in-out;
+}
+
+@keyframes contentFadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+

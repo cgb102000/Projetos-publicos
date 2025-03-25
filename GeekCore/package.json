@@ -1,0 +1,30 @@
+{
+  "name": "projeto",
+  "version": "1.0.0",
+  "description": "API para fornecer filmes e animes para assistir e baixar",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "keywords": [
+    "express",
+    "mongoose",
+    "api",
+    "filmes",
+    "animes",
+    "download",
+    "streaming"
+  ],
+  "author": "Seu Nome",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "mongoose": "^8.13.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
