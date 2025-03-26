@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Categoria - GeekCore</title>
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/card.css">
+</head>
+<body>
+    <div id="category-content">
+        <h2 id="category-title">Itens da Categoria</h2>
+        <div id="content" class="cards-container">
+            <!-- Os resultados serão inseridos aqui -->
+        </div>
+    </div>
+
+    <script src="js/header.js"></script>
+    <script src="js/search.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const category = params.get('category');
+            if (category) {
+                document.getElementById('category-title').textContent = `Categoria: ${category}`;
+                searchByCategory(category);
+            }
+        });
+    </script>
+</body>
+</html>

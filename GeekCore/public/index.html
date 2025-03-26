@@ -4,43 +4,55 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GeekCore - Filmes e Animes</title>
-
-  <link rel="stylesheet" href="css/global.css">
-  <link rel="stylesheet" href="css/header.css">
-  <link rel="stylesheet" href="css/banner.css">
-  <link rel="stylesheet" href="css/card.css">
-  <link rel="stylesheet" href="css/footer.css">
+  <link href="/css/tailwind.css" rel="stylesheet">
+  <link href="/css/global.css" rel="stylesheet">
+  <link href="/css/card.css" rel="stylesheet">
+  <link href="/css/header.css" rel="stylesheet">
+  <link href="/css/button.css" rel="stylesheet">
 </head>
-<body>
+<body class="bg-darker text-light min-h-screen">
+  <div id="header-container"></div>
   <!-- Header -->
   <script src="js/header.js"></script>
 
-  <!-- Banner -->
-  <section id="banner">
-    <div class="banner-content">
-      <h1>Bem-vindo ao GeekCore</h1>
-      <p>Explore os melhores filmes e animes em um só lugar.</p>
-      <button onclick="window.location.href='#recent'">Ver Mais</button>
+  <!-- Hero Section -->
+  <section class="relative h-[80vh] flex items-center mt-8">
+    <div class="absolute inset-0 bg-gradient-to-r from-darker to-transparent z-10"></div>
+    <div class="container mx-auto px-4 relative z-20 text-center md:text-left">
+      <h1 class="text-5xl font-bold mb-4">Bem-vindo ao GeekCore</h1>
+      <p class="text-xl mb-8">Explore os melhores filmes e animes em um só lugar.</p>
+      <button onclick="window.location.href='#recent'" 
+              class="bg-primary hover:bg-red-700 text-white font-bold py-3 px-8 rounded">
+        Explorar
+      </button>
     </div>
   </section>
 
   <!-- Recent Items -->
-  <section id="recent">
-    <h2>Enviados Recentemente</h2>
-    <div id="recentItems" class="recent-items">
-      <!-- Itens recentes serão carregados dinamicamente -->
+  <section id="recent" class="py-16">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold mb-8">Enviados Recentemente</h2>
+      <div id="recentItems" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+        <!-- Cards -->
+        <div class="card">
+          <img src="/images/sample.jpg" alt="Título do Card">
+          <a href="/detalhes.html?id=1&collection=animes" 
+             class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-70 opacity-0 hover:opacity-100 transition-all duration-300">
+            <span class="transform hover:scale-110 transition-transform duration-300 bg-primary hover:bg-red-600 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:shadow-xl flex items-center space-x-2">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <span>Assistir</span>
+            </span>
+          </a>
+        </div>
+        <!-- Repita o padrão acima para outros cards -->
+      </div>
     </div>
   </section>
-
-  <div id="content">
-    <!-- Os cards serão inseridos aqui -->
-  </div>
-
-  <!-- Footer -->
-  <footer>
-    <p>&copy; 2023 GeekCore. Todos os direitos reservados.</p>
-  </footer>
-
+  <script src="js/components.js"></script>
+  <script src="js/search.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

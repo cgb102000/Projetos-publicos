@@ -1,0 +1,29 @@
+#carousel {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+}
+
+#carousel::-webkit-scrollbar {
+  display: none; /* Oculta a barra de rolagem */
+}
+
+#carousel > div {
+  scroll-snap-align: start;
+}
+
+button {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: var(--hover-color);
+}

@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Suas customizações aqui */
+@layer components {
+  .btn-primary {
+    @apply bg-primary text-white px-4 py-2 rounded hover:bg-hover transition-colors;
+  }
+}

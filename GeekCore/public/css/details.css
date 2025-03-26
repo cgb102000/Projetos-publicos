@@ -3,8 +3,8 @@
     text-align: center;
     margin-top: 5%;
     padding: 20px;
-    background-color: #222;
-    color: #fff;
+    background-color: var(--card-bg);
+    color: var(--text-color);
 }
 
 .details-container {
@@ -31,14 +31,14 @@
     display: inline-block;
     margin-top: 10px;
     padding: 10px 20px;
-    background-color: #ff4500;
+    background-color: var(--primary-color);
     color: #fff;
     text-decoration: none;
     border-radius: 5px;
 }
 
 .details-info a:hover {
-    background-color: #e03e00;
+    background-color: var(--hover-color);
 }
 
 #suggestions {

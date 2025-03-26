@@ -15,11 +15,18 @@ app.use(express.static('public'));
 // Função para conectar ao MongoDB com tentativas de reconexão
 const connectDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URI, { dbName: 'conteudo' });
+    if (!process.env.MONGO_URI) {
+      throw new Error('MONGO_URI não definida no arquivo .env');
+    }
+
+    await mongoose.connect(process.env.MONGO_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
     console.log('Conectado ao MongoDB - Banco de dados: conteudo');
   } catch (err) {
-    console.error('Erro ao conectar no MongoDB:', err);
-    setTimeout(connectDB, 5000); // Tenta reconectar após 5 segundos
+    console.error('Erro ao conectar no MongoDB:', err.message);
+    setTimeout(connectDB, 5000);
   }
 };
 
@@ -122,13 +129,26 @@ app.get('/api/random/:collection', async (req, res) => {
 // Rota para buscar categorias disponíveis
 app.get('/api/categories', async (req, res) => {
   try {
-    const movieCategories = await mongoose.connection.db.collection('filmes').distinct('categoria');
-    const animeCategories = await mongoose.connection.db.collection('animes').distinct('categoria');
-    const allCategories = [...new Set([...movieCategories, ...animeCategories])]; // Remove duplicatas
+    const db = mongoose.connection.db;
+    if (!db) {
+      throw new Error('Conexão com o banco de dados não estabelecida');
+    }
+
+    const [movieCategories, animeCategories] = await Promise.all([
+      db.collection('filmes').distinct('categoria'),
+      db.collection('animes').distinct('categoria')
+    ]);
+
+    const allCategories = [...new Set([...movieCategories, ...animeCategories])];
+    
+    if (!allCategories.length) {
+      return res.status(404).json({ message: 'Nenhuma categoria encontrada' });
+    }
+
     res.json(allCategories);
   } catch (err) {
-    console.error('Erro ao buscar categorias:', err);
-    res.status(500).json({ message: 'Erro ao buscar categorias.' });
+    console.error('Erro ao buscar categorias:', err.message);
+    res.status(500).json({ message: 'Erro ao buscar categorias', error: err.message });
   }
 });
 
@@ -150,6 +170,36 @@ app.get('/api/recent', async (req, res) => {
   }
 });
 
+// Rota para buscar itens por categoria
+app.get('/api/category/:category', async (req, res) => {
+  const { category } = req.params;
+
+  try {
+    const results = await Promise.all([
+      mongoose.connection.db.collection('filmes')
+        .find({ categoria: { $regex: new RegExp(category, 'i') } })
+        .toArray(),
+      mongoose.connection.db.collection('animes')
+        .find({ categoria: { $regex: new RegExp(category, 'i') } })
+        .toArray()
+    ]);
+
+    const allResults = results.flat().map(item => ({
+      ...item,
+      collection: item.categoria.toLowerCase().includes('anime') ? 'animes' : 'filmes'
+    }));
+
+    if (allResults.length > 0) {
+      res.json(allResults);
+    } else {
+      res.status(404).json({ message: 'Nenhum item encontrado nesta categoria.' });
+    }
+  } catch (err) {
+    console.error('Erro ao buscar por categoria:', err);
+    res.status(500).json({ message: 'Erro ao buscar itens por categoria.' });
+  }
+});
+
 // Rota inicial para verificar se o servidor está funcionando
 app.get('/', (req, res) => {
   res.send('Bem-vindo ao servidor de Filmes e Animes!');
@@ -160,8 +210,68 @@ app.use((req, res) => {
   res.status(404).send('Página não encontrada!');
 });
 
-// Porta para o servidor
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
-});
+// Função para encontrar uma porta disponível
+function findAvailablePort(startPort) {
+  return new Promise((resolve, reject) => {
+    const server = require('net').createServer();
+    
+    server.on('error', (err) => {
+      if (err.code === 'EADDRINUSE') {
+        resolve(findAvailablePort(startPort + 1));
+      } else {
+        reject(err);
+      }
+    });
+
+    server.listen(startPort, () => {
+      server.once('close', () => {
+        resolve(startPort);
+      });
+      server.close();
+    });
+  });
+}
+
+// Função para matar processo em uma porta específica (Windows)
+async function killProcessOnPort(port) {
+  return new Promise((resolve, reject) => {
+    const exec = require('child_process').exec;
+    exec(`taskkill /F /PID ${port}`, (err, stdout, stderr) => {
+      if (err) {
+        console.log(`Nenhum processo precisou ser finalizado na porta ${port}`);
+      }
+      resolve();
+    });
+  });
+}
+
+// Função para iniciar o servidor
+const startServer = async () => {
+  try {
+    const desiredPort = parseInt(process.env.PORT) || 3001;
+    let port = desiredPort;
+
+    const server = app.listen(port, () => {
+      console.log(`Servidor rodando na porta ${port}`);
+    });
+
+    server.on('error', async (err) => {
+      if (err.code === 'EADDRINUSE') {
+        console.log(`Porta ${port} em uso, tentando próxima porta...`);
+        port++;
+        server.close();
+        app.listen(port, () => {
+          console.log(`Servidor rodando na porta ${port}`);
+        });
+      } else {
+        console.error('Erro ao iniciar o servidor:', err);
+        process.exit(1);
+      }
+    });
+  } catch (err) {
+    console.error('Erro ao iniciar o servidor:', err);
+    process.exit(1);
+  }
+};
+
+startServer();

@@ -2,8 +2,8 @@
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 15px;
-    padding: 20px;
-    margin: 0 auto;
+    padding: 0 40px;
+    margin: 0 -40px;
     width: 100%;
     max-width: 1200px;
     justify-content: center;
@@ -11,9 +11,28 @@
     overflow: hidden; /* Esconde os itens fora da área visível */
 }
 
+.carousel-wrapper {
+    position: relative;
+    overflow: hidden;
+    padding: 0 40px;
+}
+
 .carousel {
     display: flex;
     transition: transform 0.5s ease-in-out; /* Animação para o movimento do carrossel */
+}
+
+#carousel {
+    display: flex;
+    transition: transform 0.3s ease-out;
+}
+
+.carousel-track {
+    display: flex;
+    gap: 20px;
+    transition: transform 0.5s ease;
+    margin: 0 40px;
+    padding: 20px 0;
 }
 
 .carousel .card {
@@ -21,6 +40,11 @@
     margin: 0 10px; /* Espaçamento entre os cards */
     width: 150px;
     height: 250px;
+}
+
+.card {
+    flex: 0 0 calc(25% - 1rem);
+    margin-right: 1rem;
 }
 
 .carousel .card img {
@@ -49,16 +73,103 @@
     transition: background-color 0.3s;
 }
 
+.carousel-button {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 40px;
+    background: rgba(0, 0, 0, 0.5);
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+}
+
+.carousel-container:hover .carousel-button {
+    opacity: 1;
+}
+
+.carousel-button:hover {
+    background: rgba(229, 9, 20, 0.8);
+}
+
 .carousel-arrow:hover {
-    background-color: var(--primary-hover);
+    background-color: var(--hover-color);
 }
 
 .carousel-arrow.left-arrow {
     left: 10px;
 }
 
+.carousel-prev {
+    left: 0;
+}
+
 .carousel-arrow.right-arrow {
     right: 10px;
+}
+
+.carousel-next {
+    right: 0;
+}
+
+/* Esconder scrollbar mas manter funcionalidade */
+.carousel-track::-webkit-scrollbar {
+    display: none;
+}
+
+.carousel-track {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Cards dentro do carrossel */
+.carousel-track .card {
+    flex: 0 0 200px;
+    margin: 0 4px;
+    transition: transform 0.3s;
+    position: relative;
+}
+
+.carousel-track .card:hover {
+    transform: scale(1.1); /* Zoom no card ao passar o mouse */
+    z-index: 1;
+}
+
+.carousel-track .card a {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.6); /* Fundo escuro semitransparente */
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.carousel-track .card:hover a {
+    opacity: 1; /* Mostra o botão ao passar o mouse */
+}
+
+.carousel-track .card span {
+    display: inline-block;
+    background-color: var(--primary-color);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.carousel-track .card span:hover {
+    background-color: var(--hover-color);
+    transform: scale(1.1); /* Aumenta o botão ao passar o mouse */
 }
 
 /* Responsividade */
@@ -69,6 +180,12 @@
 
     .carousel .card img {
         height: 80px;
+    }
+}
+
+@media (max-width: 640px) {
+    .carousel-track .card {
+        flex: 0 0 150px;
     }
 }
 

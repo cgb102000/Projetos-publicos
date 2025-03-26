@@ -1,41 +1,49 @@
 /* Variáveis principais */
 :root {
-    --bg-color: #1e1e2f;
-    --text-color: #ffffff;
-    --input-bg: #2a2a40;
-    --primary-color: #ff6f61;
-    --primary-hover: #ff4a3d;
-    --card-bg: #29293d;
-    --card-border: #3a3a50;
-    --shadow-color: rgba(0, 0, 0, 0.3);
-    --header-bg: rgba(30, 30, 47, 0.9);
+  --background: #141414;
+  --header-bg: #000000;
+  --card-bg: #181818;
+  --primary-color: #e50914;
+  --text-color: #ffffff;
+  --secondary-text: #cccccc;
+  --hover-color: #b2070f;
+  --shadow-color: rgba(0, 0, 0, 0.75);
 }
 
 /* Reset básico */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-    font-family: 'Arial', sans-serif;
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    padding-top: 80px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 100vh;
+  background-color: var(--background);
+  color: var(--text-color);
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  padding-top: 120px; /* Espaçamento maior para evitar sobreposição */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.6; /* Melhor espaçamento entre linhas */
 }
 
 a {
-    text-decoration: none;
-    color: white;
+  text-decoration: none;
+  color: var(--primary-color);
 }
 
 /* Animações */
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media screen and (max-width: 768px) {
+  body {
+    padding-top: 120px; /* Espaçamento maior para header fixo */
+  }
 }
