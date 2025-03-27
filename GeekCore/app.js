@@ -1,16 +1,37 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const path = require('path');
 require('dotenv').config();
 
 const app = express();
 
 // Middlewares
-app.use(cors());
+app.use(cors({
+  origin: ['http://localhost:3000', 'http://localhost:3001'],
+  credentials: true
+}));
 app.use(express.json()); // Para analisar o corpo das requisições como JSON
 
 // Servir arquivos estáticos (front-end)
 app.use(express.static('public'));
+
+// Servir arquivos estáticos do React build
+app.use(express.static(path.join(__dirname, 'build')));
+
+// Middleware de log para debug
+const logMiddleware = (req, res, next) => {
+  console.log(`${req.method} ${req.url}`);
+  next();
+};
+
+app.use(logMiddleware);
+
+// Importar rotas de autenticação
+const authRoutes = require('./routes/authRoutes');
+
+// Adicionar rotas de autenticação
+app.use('/api/auth', authRoutes);
 
 // Função para conectar ao MongoDB com tentativas de reconexão
 const connectDB = async () => {
@@ -32,6 +53,52 @@ const connectDB = async () => {
 
 // Conectar ao MongoDB
 connectDB();
+
+// Middleware para validar ObjectId
+const validateObjectId = (req, res, next) => {
+  const { id } = req.params;
+  try {
+    if (!id || typeof id !== 'string') {
+      return res.status(400).json({ message: 'ID inválido ou não fornecido' });
+    }
+
+    // Tenta converter para ObjectId
+    try {
+      new mongoose.Types.ObjectId(id);
+    } catch (err) {
+      return res.status(400).json({ 
+        message: 'Formato de ID inválido',
+        details: 'O ID deve ser um ObjectId válido do MongoDB'
+      });
+    }
+
+    next();
+  } catch (error) {
+    console.error('Erro ao validar ObjectId:', error);
+    res.status(400).json({ message: 'ID inválido' });
+  }
+};
+
+// Middleware para validar coleção
+const validateCollection = (req, res, next) => {
+  const { collection } = req.params;
+  const validCollections = ['animes', 'filmes'];
+  
+  if (!validCollections.includes(collection)) {
+    return res.status(400).json({ message: 'Coleção inválida' });
+  }
+  next();
+};
+
+// Adicionar rota de health check
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date() });
+});
+
+// Mover rota inicial para antes das outras rotas
+app.get('/', (req, res) => {
+  res.json({ message: 'Bem-vindo ao servidor de Filmes e Animes!' });
+});
 
 // Rota para buscar itens com base no parâmetro de pesquisa
 app.get('/api/search', async (req, res) => {
@@ -67,62 +134,65 @@ app.get('/api/search', async (req, res) => {
   }
 });
 
-// Rota para obter detalhes de um item específico
-app.get('/api/item/:collection/:id', async (req, res) => {
+// Corrigir rota de busca de item específico
+app.get('/api/item/:collection/:id', validateCollection, validateObjectId, async (req, res) => {
   const { collection, id } = req.params;
-
-  // Verificar se a coleção é válida
-  const validCollections = ['animes', 'filmes'];
-
-  if (!validCollections.includes(collection)) {
-    return res.status(400).json({ message: 'Coleção inválida. Use "animes" ou "filmes".' });
-  }
-
-  // Verificar se o ID é um ObjectId válido
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(400).json({ message: 'ID inválido.' });
-  }
-
+  
   try {
-    const item = await mongoose.connection.db.collection(collection)
-      .findOne({ _id: new mongoose.Types.ObjectId(id) });
+    const db = mongoose.connection.db;
+    let item;
 
-    if (item) {
-      console.log(`Item encontrado na coleção ${collection}:`, item);
-      res.json(item);
-    } else {
-      console.log('Item não encontrado');
-      res.status(404).json({ message: 'Item não encontrado' });
+    try {
+      const objectId = new mongoose.Types.ObjectId(id);
+      item = await db.collection(collection).findOne({ _id: objectId });
+    } catch (err) {
+      // Tenta buscar usando o ID como string se a conversão falhar
+      item = await db.collection(collection).findOne({ _id: id });
     }
+
+    if (!item) {
+      return res.status(404).json({
+        message: `Item não encontrado na coleção ${collection}`,
+        details: { collection, id }
+      });
+    }
+
+    const response = {
+      ...item,
+      tipo: collection === 'animes' ? 'anime' : 'filme',
+      collection
+    };
+
+    res.json(response);
   } catch (err) {
     console.error('Erro ao buscar item:', err);
-    res.status(500).json({ message: 'Erro ao buscar item. Tente novamente mais tarde.' });
+    res.status(500).json({ message: 'Erro interno do servidor' });
   }
 });
 
-// Rota para pegar filmes e animes aleatórios
-app.get('/api/random/:collection', async (req, res) => {
+// Rota para pegar recomendações
+app.get('/api/random/:collection', validateCollection, async (req, res) => {
   const { collection } = req.params;
-  const validCollections = ['animes', 'filmes'];
-
-  if (!validCollections.includes(collection)) {
-    return res.status(400).json({ message: 'Coleção inválida.' });
-  }
+  console.log(`Buscando recomendações para: ${collection}`);
 
   try {
-    // Alterado para retornar 50 itens aleatórios
-    const randomItems = await mongoose.connection.db.collection(collection).aggregate([
-      { $sample: { size: 16 } }  // Ajuste para retornar 50 itens
-    ]).toArray();
+    const db = mongoose.connection.db;
+    const items = await db.collection(collection)
+      .aggregate([
+        { $sample: { size: 6 } },
+        { 
+          $addFields: {
+            tipo: collection === 'animes' ? 'anime' : 'filme',
+            collection: collection
+          }
+        }
+      ]).toArray();
 
-    if (randomItems.length > 0) {
-      res.json(randomItems);
-    } else {
-      res.status(404).json({ message: 'Nenhum item encontrado.' });
-    }
+    console.log(`Encontrados ${items.length} itens para recomendação`);
+    res.json(items);
   } catch (err) {
-    console.error('Erro ao buscar itens aleatórios:', err);
-    res.status(500).json({ message: 'Erro ao buscar itens aleatórios. Tente novamente mais tarde.' });
+    console.error('Erro ao buscar recomendações:', err);
+    res.status(500).json({ message: 'Erro ao buscar recomendações' });
   }
 });
 
@@ -155,14 +225,25 @@ app.get('/api/categories', async (req, res) => {
 // Rota para buscar itens enviados recentemente
 app.get('/api/recent', async (req, res) => {
   try {
-    const recentMovies = await mongoose.connection.db.collection('filmes').find().sort({ createdAt: -1 }).limit(50).toArray();
-    const recentAnimes = await mongoose.connection.db.collection('animes').find().sort({ createdAt: -1 }).limit(50).toArray();
+    const recentMovies = await mongoose.connection.db.collection('filmes')
+      .find()
+      .sort({ createdAt: -1 })
+      .limit(50)
+      .toArray();
+      
+    const recentAnimes = await mongoose.connection.db.collection('animes')
+      .find()
+      .sort({ createdAt: -1 })
+      .limit(50)
+      .toArray();
 
-    // Adicionar o campo 'collection' para diferenciar os itens
     const moviesWithCollection = recentMovies.map(item => ({ ...item, collection: 'filmes' }));
     const animesWithCollection = recentAnimes.map(item => ({ ...item, collection: 'animes' }));
 
-    const allRecentItems = [...moviesWithCollection, ...animesWithCollection].slice(0, 50); // Limita a 50 itens no total
+    const allRecentItems = [...moviesWithCollection, ...animesWithCollection]
+      .sort((a, b) => b.createdAt - a.createdAt)
+      .slice(0, 50);
+
     res.json(allRecentItems);
   } catch (err) {
     console.error('Erro ao buscar itens recentes:', err);
@@ -200,9 +281,9 @@ app.get('/api/category/:category', async (req, res) => {
   }
 });
 
-// Rota inicial para verificar se o servidor está funcionando
-app.get('/', (req, res) => {
-  res.send('Bem-vindo ao servidor de Filmes e Animes!');
+// Todas as outras requisições GET não tratadas retornarão nosso app React
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
 // Tratamento de erro para rotas não encontradas (404)
@@ -248,28 +329,20 @@ async function killProcessOnPort(port) {
 // Função para iniciar o servidor
 const startServer = async () => {
   try {
-    const desiredPort = parseInt(process.env.PORT) || 3001;
-    let port = desiredPort;
-
+    await connectDB(); // Garantir que o MongoDB está conectado antes de iniciar o servidor
+    
+    const port = process.env.PORT || 3001;
+    
     const server = app.listen(port, () => {
-      console.log(`Servidor rodando na porta ${port}`);
+      console.log(`Servidor rodando em http://localhost:${port}`);
     });
 
-    server.on('error', async (err) => {
-      if (err.code === 'EADDRINUSE') {
-        console.log(`Porta ${port} em uso, tentando próxima porta...`);
-        port++;
-        server.close();
-        app.listen(port, () => {
-          console.log(`Servidor rodando na porta ${port}`);
-        });
-      } else {
-        console.error('Erro ao iniciar o servidor:', err);
-        process.exit(1);
-      }
+    server.on('error', (err) => {
+      console.error('Erro no servidor:', err);
+      process.exit(1);
     });
   } catch (err) {
-    console.error('Erro ao iniciar o servidor:', err);
+    console.error('Erro ao iniciar aplicação:', err);
     process.exit(1);
   }
 };

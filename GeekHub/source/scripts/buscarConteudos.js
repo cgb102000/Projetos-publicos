@@ -1,4 +1,5 @@
 function buscarRelacionados(genero, idAtual) {
+function buscarRelacionados(genero, idAtual) {
 
     const relacionadosList = document.getElementById('relacionados-list');
     relacionadosList.innerHTML = ''; // Limpa a lista de relacionados
