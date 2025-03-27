@@ -114,4 +114,103 @@ router.get('/favoritos', auth, async (req, res) => {
   }
 });
 
+// Obter perfil do usuário
+router.get('/perfil', auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) return res.status(404).json({ message: 'Usuário não encontrado' });
+
+    res.json({
+      nome: user.nome,
+      email: user.email,
+      descricao: user.descricao || '',
+      foto: user.foto || '',
+      tema_cor: user.tema_cor || '#ef4444'
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Erro ao buscar perfil do usuário' });
+  }
+});
+
+// Atualizar perfil do usuário
+router.put('/perfil', auth, async (req, res) => {
+  try {
+    const { nome, descricao, foto, tema_cor, senha_atual, nova_senha } = req.body;
+    const user = await User.findById(req.user.id);
+    
+    if (!user) {
+      return res.status(404).json({ message: 'Usuário não encontrado' });
+    }
+
+    // Se está tentando alterar a senha, validar senha atual
+    if (nova_senha) {
+      if (!senha_atual) {
+        return res.status(400).json({ message: 'Senha atual é necessária para alterar a senha' });
+      }
+
+      const senhaValida = await user.verificarSenha(senha_atual);
+      if (!senhaValida) {
+        return res.status(400).json({ message: 'Senha atual incorreta' });
+      }
+
+      user.senha = nova_senha;
+    }
+
+    // Atualizar outros campos
+    if (nome) user.nome = nome;
+    if (descricao !== undefined) user.descricao = descricao;
+    if (tema_cor) user.tema_cor = tema_cor;
+    if (foto) {
+      // Validar se a foto é uma string base64 válida
+      if (foto.startsWith('data:image')) {
+        user.foto = foto;
+      } else {
+        return res.status(400).json({ message: 'Formato de imagem inválido' });
+      }
+    }
+
+    await user.save();
+    
+    // Retornar usuário atualizado
+    res.json({
+      message: 'Perfil atualizado com sucesso',
+      user: {
+        nome: user.nome,
+        email: user.email,
+        descricao: user.descricao,
+        foto: user.foto,
+        tema_cor: user.tema_cor
+      }
+    });
+  } catch (error) {
+    console.error('Erro ao atualizar perfil:', error);
+    res.status(500).json({ message: 'Erro ao atualizar perfil do usuário' });
+  }
+});
+
+// Nova rota para alteração de senha
+router.post('/change-password', auth, async (req, res) => {
+  try {
+    const { senha_atual, nova_senha } = req.body;
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+      return res.status(404).json({ message: 'Usuário não encontrado' });
+    }
+
+    const senhaValida = await user.verificarSenha(senha_atual);
+    if (!senhaValida) {
+      return res.status(400).json({ message: 'Senha atual incorreta' });
+    }
+
+    user.senha = nova_senha;
+    await user.save();
+
+    res.json({ message: 'Senha alterada com sucesso' });
+  } catch (error) {
+    console.error('Erro ao alterar senha:', error);
+    res.status(500).json({ message: 'Erro ao alterar senha' });
+  }
+});
+
 module.exports = router;

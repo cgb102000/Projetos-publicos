@@ -33,6 +33,14 @@ const userSchema = new mongoose.Schema({
     required: [true, 'Senha é obrigatória'],
     minlength: 6
   },
+  descricao: { 
+    type: String, 
+    default: '' 
+  },
+  foto: { 
+    type: String, 
+    default: '' 
+  },
   favoritos: [favoritoSchema],
   data_criacao: {
     type: Date,

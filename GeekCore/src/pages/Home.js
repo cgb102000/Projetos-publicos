@@ -7,6 +7,7 @@ import { Card } from '../components/Card';
 export function Home() {
   const [recentItems, setRecentItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const { isAuthenticated } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -18,6 +19,10 @@ export function Home() {
     try {
       setLoading(true);
       const items = await contentService.getRecentContent();
+      if (!Array.isArray(items)) {
+        throw new Error('Formato de dados inválido');
+      }
+      
       const processedItems = items.map(item => {
         const isAnime = item.tipo === 'anime' || item.categoria?.toLowerCase().includes('anime');
         return {
@@ -26,10 +31,11 @@ export function Home() {
           collection: isAnime ? 'animes' : 'filmes'
         };
       });
-      console.log('Itens processados:', processedItems);
+      
       setRecentItems(processedItems);
     } catch (error) {
       console.error('Erro ao carregar itens:', error);
+      setError('Não foi possível carregar os itens. Tente novamente mais tarde.');
     } finally {
       setLoading(false);
     }
@@ -53,6 +59,14 @@ export function Home() {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p className="text-red-500">{error}</p>
       </div>
     );
   }

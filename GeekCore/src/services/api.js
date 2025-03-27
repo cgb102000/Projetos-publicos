@@ -85,6 +85,39 @@ export const authService = {
       console.error('Erro ao buscar favoritos:', error);
       return [];
     }
+  },
+
+  async getUserProfile() {
+    const { data } = await api.get('/api/auth/perfil');
+    return data;
+  },
+
+  async updateUserProfile(profileData) {
+    try {
+      const { data } = await api.put('/api/auth/perfil', profileData);
+      
+      // Atualizar o usuário no localStorage
+      const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+      const updatedUser = { ...currentUser, ...data.user };
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      
+      return data;
+    } catch (error) {
+      console.error('Erro ao atualizar perfil:', error);
+      throw error;
+    }
+  },
+
+  async changePassword(senhaAtual, novaSenha) {
+    try {
+      const { data } = await api.post('/api/auth/change-password', {
+        senha_atual: senhaAtual,
+        nova_senha: novaSenha
+      });
+      return data;
+    } catch (error) {
+      throw error;
+    }
   }
 };
 

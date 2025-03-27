@@ -225,28 +225,39 @@ app.get('/api/categories', async (req, res) => {
 // Rota para buscar itens enviados recentemente
 app.get('/api/recent', async (req, res) => {
   try {
-    const recentMovies = await mongoose.connection.db.collection('filmes')
-      .find()
-      .sort({ createdAt: -1 })
-      .limit(50)
-      .toArray();
-      
-    const recentAnimes = await mongoose.connection.db.collection('animes')
-      .find()
-      .sort({ createdAt: -1 })
-      .limit(50)
-      .toArray();
+    const db = mongoose.connection.db;
+    
+    if (!db) {
+      throw new Error('Conexão com o banco de dados não estabelecida');
+    }
 
-    const moviesWithCollection = recentMovies.map(item => ({ ...item, collection: 'filmes' }));
-    const animesWithCollection = recentAnimes.map(item => ({ ...item, collection: 'animes' }));
+    const [recentMovies, recentAnimes] = await Promise.all([
+      db.collection('filmes')
+        .find()
+        .sort({ _id: -1 })
+        .limit(50)
+        .toArray(),
+      db.collection('animes')
+        .find()
+        .sort({ _id: -1 })
+        .limit(50)
+        .toArray()
+    ]);
 
-    const allRecentItems = [...moviesWithCollection, ...animesWithCollection]
-      .sort((a, b) => b.createdAt - a.createdAt)
-      .slice(0, 50);
+    const allRecentItems = [...recentMovies.map(item => ({
+      ...item,
+      collection: 'filmes'
+    })), ...recentAnimes.map(item => ({
+      ...item,
+      collection: 'animes'
+    }))].sort((a, b) => {
+      // Usar ObjectId para ordenação por data de criação
+      return b._id.getTimestamp() - a._id.getTimestamp();
+    }).slice(0, 50);
 
     res.json(allRecentItems);
-  } catch (err) {
-    console.error('Erro ao buscar itens recentes:', err);
+  } catch (error) {
+    console.error('Erro ao buscar itens recentes:', error);
     res.status(500).json({ message: 'Erro ao buscar itens recentes.' });
   }
 });

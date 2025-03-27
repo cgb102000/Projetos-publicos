@@ -30,6 +30,11 @@ function authReducer(state, action) {
         ...state,
         loading: action.payload
       };
+    case 'UPDATE_USER':
+      return {
+        ...state,
+        user: { ...state.user, ...action.payload.user }
+      };
     default:
       return state;
   }
@@ -53,8 +58,26 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
+  const updateUserData = (userData) => {
+    dispatch({ 
+      type: 'UPDATE_USER', 
+      payload: { 
+        user: { ...state.user, ...userData },
+        token: state.token 
+      } 
+    });
+    // Atualizar também no localStorage
+    const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+    localStorage.setItem('user', JSON.stringify({ ...currentUser, ...userData }));
+  };
+
   return (
-    <AuthContext.Provider value={{ ...state, dispatch }}>
+    <AuthContext.Provider value={{ 
+      ...state, 
+      dispatch,
+      updateUserData,
+      isAuthenticated: !!state.token 
+    }}>
       {children}
     </AuthContext.Provider>
   );
