@@ -30,16 +30,27 @@ export function Detalhes() {
           throw new Error('ID inválido');
         }
 
-        const [itemData, recommendationsData] = await Promise.all([
+        // Carregar favoritos junto com os dados do item
+        const [itemData, recommendationsData, favoritosData] = await Promise.all([
           contentService.getItem(collection, id),
-          contentService.getRecommendations(collection)
+          contentService.getRecommendations(collection),
+          isAuthenticated ? authService.getFavorites() : []
         ]);
 
         if (!itemData) {
           throw new Error('Item não encontrado');
         }
 
-        setItem(itemData);
+        // Verificar se o item está nos favoritos
+        const isFavorited = favoritosData.some(fav => 
+          fav._id === id || fav.conteudo_id === id
+        );
+
+        setItem({
+          ...itemData,
+          isFavorited
+        });
+
         setRecommendations(
           recommendationsData
             .filter(rec => rec._id !== id)
@@ -58,7 +69,7 @@ export function Detalhes() {
     };
 
     loadContent();
-  }, [id, collection]);
+  }, [id, collection, isAuthenticated]); // Adicionar isAuthenticated como dependência
 
   const handleFavorite = async () => {
     if (!isAuthenticated) {
@@ -67,10 +78,21 @@ export function Detalhes() {
     }
 
     try {
-      await authService.toggleFavorite(id, collection);
-      // Adicionar feedback visual
+      const tipo = collection === 'animes' ? 'anime' : 'filme';
+      const response = await authService.toggleFavorite(id, tipo);
+      
+      // Atualizar o estado local do item com base na resposta da API
+      setItem(prev => ({
+        ...prev,
+        isFavorited: response.isFavorited
+      }));
+      
+      // Feedback visual mais discreto
+      const action = response.isFavorited ? 'adicionado aos' : 'removido dos';
+      console.log(`Item ${action} favoritos`);
     } catch (error) {
       console.error('Erro ao favoritar:', error);
+      alert(error.message);
     }
   };
 
@@ -108,9 +130,11 @@ export function Detalhes() {
                     {isAuthenticated && (
                       <button 
                         onClick={handleFavorite}
-                        className="text-4xl hover:text-primary transition-transform hover:scale-110"
+                        className={`favorite-button-large ${item.isFavorited ? 'text-red-500' : 'text-gray-400'} 
+                                   hover:text-red-500 transition-colors duration-300`}
+                        aria-label={item.isFavorited ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
                       >
-                        ❤️
+                        {item.isFavorited ? '♥' : '♡'}
                       </button>
                     )}
                   </div>

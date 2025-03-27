@@ -3,32 +3,35 @@ import { authService } from '../services/api';
 import { Card } from '../components/Card';
 
 export function Favoritos() {
-  const [favorites, setFavorites] = useState([]);
+  const [favoritos, setFavoritos] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    loadFavorites();
+    const loadFavoritos = async () => {
+      try {
+        setLoading(true);
+        const data = await authService.getFavorites();
+        
+        if (Array.isArray(data)) {
+          // Garantir que todos os itens têm os campos necessários
+          const validFavoritos = data.filter(item => 
+            item && item._id && item.titulo && item.img_url
+          );
+          setFavoritos(validFavoritos);
+        } else {
+          setFavoritos([]);
+        }
+      } catch (error) {
+        console.error('Erro ao carregar favoritos:', error);
+        setError('Erro ao carregar seus favoritos. Tente novamente mais tarde.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadFavoritos();
   }, []);
-
-  async function loadFavorites() {
-    try {
-      const data = await authService.getFavorites();
-      setFavorites(data);
-    } catch (error) {
-      console.error('Erro ao carregar favoritos:', error);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function handleRemoveFavorite(id, tipo) {
-    try {
-      await authService.toggleFavorite(id, tipo);
-      setFavorites(favorites.filter(item => item._id !== id));
-    } catch (error) {
-      console.error('Erro ao remover favorito:', error);
-    }
-  }
 
   if (loading) {
     return (
@@ -39,18 +42,20 @@ export function Favoritos() {
   }
 
   return (
-    <div className="content-section pt-20 animate-fadeIn">
+    <div className="content-section pt-20">
       <h1 className="section-title">Meus Favoritos</h1>
-      {favorites.length === 0 ? (
-        <p className="text-light text-center text-lg">Você ainda não tem favoritos.</p>
+      
+      {favoritos.length === 0 ? (
+        <div className="flex flex-col items-center justify-center p-8">
+          <p className="text-xl text-light mb-4">Você ainda não tem favoritos.</p>
+          <p className="text-light">Explore o catálogo e adicione itens aos favoritos!</p>
+        </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-          {favorites.map(item => (
+          {favoritos.map(item => (
             <Card 
               key={item._id} 
               item={item}
-              isAuthenticated={true}
-              onFavorite={() => handleRemoveFavorite(item._id, item.tipo)}
             />
           ))}
         </div>

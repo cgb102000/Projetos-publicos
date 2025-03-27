@@ -30,7 +30,7 @@ app.use(logMiddleware);
 // Importar rotas de autenticação
 const authRoutes = require('./routes/authRoutes');
 
-// Adicionar rotas de autenticação
+// Corrigir o caminho base das rotas de autenticação
 app.use('/api/auth', authRoutes);
 
 // Função para conectar ao MongoDB com tentativas de reconexão

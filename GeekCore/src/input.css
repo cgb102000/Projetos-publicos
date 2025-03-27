@@ -73,6 +73,17 @@
            transform hover:scale-125;
   }
 
+  .favorite-button-large {
+    @apply text-4xl transition-all duration-300 transform hover:scale-125 
+           focus:outline-none active:scale-90 cursor-pointer;
+  }
+
+  /* Efeito de hover no botão de favorito */
+  .favorite-button-large:hover {
+    @apply text-red-500;
+    filter: drop-shadow(0 0 4px theme('colors.red.500'));
+  }
+
   .card-container:hover {
     @apply shadow-xl shadow-black/50;
   }

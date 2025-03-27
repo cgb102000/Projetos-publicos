@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { Link } from 'react-router-dom';
 
-export const Card = memo(({ item, isAuthenticated, onFavorite }) => {
+export const Card = memo(({ item }) => {
   if (!item) return null;
 
   const collection = item.collection || 
@@ -9,38 +9,12 @@ export const Card = memo(({ item, isAuthenticated, onFavorite }) => {
       ? 'animes' 
       : 'filmes';
 
-  const handleFavorite = async (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    
-    try {
-      if (!isAuthenticated) {
-        throw new Error('Faça login para favoritar');
-      }
-
-      // Log para debug
-      console.log('Tentando favoritar:', {
-        id: item._id,
-        tipo: item.tipo || (item.collection === 'animes' ? 'anime' : 'filme')
-      });
-
-      await onFavorite(
-        item._id,
-        item.tipo || (item.collection === 'animes' ? 'anime' : 'filme')
-      );
-    } catch (error) {
-      console.error('Erro ao favoritar:', error);
-      alert(error.message);
-    }
-  };
-
   return (
-    <div className="card-container h-[400px] w-[260px]"> {/* Tamanho fixo adicionado */}
+    <div className="card-container h-[400px] w-[260px]">
       <Link 
         to={`/detalhes/${collection}/${item._id}`}
         className="block w-full h-full"
       >
-        {/* Lazy loading para imagens */}
         <div className="relative aspect-[2/3] rounded-lg overflow-hidden group">
           <img 
             loading="lazy"
@@ -69,16 +43,6 @@ export const Card = memo(({ item, isAuthenticated, onFavorite }) => {
                         d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
                 </svg>
               </button>
-              
-              {isAuthenticated && (
-                <button 
-                  onClick={handleFavorite}
-                  className="favorite-button"
-                  aria-label="Favoritar"
-                >
-                  ❤️
-                </button>
-              )}
             </div>
             
             <div className="absolute bottom-0 w-full p-4">

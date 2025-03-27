@@ -52,54 +52,39 @@ export const authService = {
   async toggleFavorite(conteudoId, tipo) {
     try {
       if (!conteudoId || !tipo) {
-        console.warn('Dados recebidos:', { conteudoId, tipo });
         throw new Error('ID do conteúdo e tipo são obrigatórios');
       }
 
-      const token = localStorage.getItem('token');
-      if (!token) {
-        throw new Error('Usuário não autenticado');
-      }
-
-      // Log para debug
-      console.log('Enviando requisição de favorito:', {
-        conteudo_id: conteudoId,
-        tipo,
-        collection: tipo === 'anime' ? 'animes' : 'filmes'
-      });
-
       const { data } = await api.post('/api/auth/favoritos', {
         conteudo_id: conteudoId,
-        tipo: tipo.toLowerCase(),
-        collection: tipo.toLowerCase() === 'anime' ? 'animes' : 'filmes'
-      }, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        }
+        tipo: tipo.toLowerCase().replace('s', '')
       });
 
-      return data;
+      // Garantir que temos o status do favorito na resposta
+      return {
+        ...data,
+        isFavorited: data.isFavorited ?? false
+      };
     } catch (error) {
-      console.error('Detalhes do erro:', {
-        message: error.message,
-        response: error.response?.data,
-        status: error.response?.status
-      });
-
-      if (error.response?.status === 401) {
-        throw new Error('Faça login para favoritar');
-      }
-      if (error.response?.status === 400) {
-        throw new Error(error.response.data.message || 'Dados inválidos');
-      }
-      throw new Error('Erro ao favoritar. Tente novamente.');
+      console.error('Detalhes do erro:', error.response?.data || error.message);
+      throw new Error(error.response?.data?.message || 'Erro ao favoritar. Tente novamente.');
     }
   },
 
   async getFavorites() {
-    const { data } = await api.get('/api/auth/favoritos');
-    return data;
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return [];
+
+      const { data } = await api.get('/api/auth/favoritos');
+      return Array.isArray(data) ? data.map(fav => ({
+        ...fav,
+        _id: fav._id || fav.conteudo_id
+      })) : [];
+    } catch (error) {
+      console.error('Erro ao buscar favoritos:', error);
+      return [];
+    }
   }
 };
 
@@ -168,8 +153,14 @@ export const contentService = {
 
   async getRecommendations(collection) {
     try {
-      console.log(`Requisitando recomendações para: ${collection}`);
+      console.log(`Buscando recomendações para: ${collection}`);
       const { data } = await api.get(`/api/random/${collection}`);
+      
+      if (!data || !Array.isArray(data)) {
+        console.warn('Dados de recomendação inválidos:', data);
+        return [];
+      }
+
       return data.map(item => ({
         ...item,
         collection: collection,

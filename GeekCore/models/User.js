@@ -1,6 +1,22 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
+const favoritoSchema = new mongoose.Schema({
+  conteudo_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true
+  },
+  tipo: {
+    type: String,
+    enum: ['anime', 'filme'],
+    required: true
+  },
+  adicionado_em: {
+    type: Date,
+    default: Date.now
+  }
+});
+
 const userSchema = new mongoose.Schema({
   nome: {
     type: String,
@@ -17,17 +33,7 @@ const userSchema = new mongoose.Schema({
     required: [true, 'Senha é obrigatória'],
     minlength: 6
   },
-  favoritos: [{
-    conteudo_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true
-    },
-    tipo: {
-      type: String,
-      enum: ['anime', 'filme'],
-      required: true
-    }
-  }],
+  favoritos: [favoritoSchema],
   data_criacao: {
     type: Date,
     default: Date.now
