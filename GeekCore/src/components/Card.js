@@ -10,24 +10,24 @@ export const Card = memo(({ item }) => {
       : 'filmes';
 
   return (
-    <div className="card-container h-[400px] w-[260px]">
+    <div className="card-container relative h-[400px] w-[260px]">
       <Link 
         to={`/detalhes/${collection}/${item._id}`}
         className="block w-full h-full"
       >
-        <div className="relative aspect-[2/3] rounded-lg overflow-hidden group">
+        <div className="relative aspect-[2/3] rounded-lg overflow-hidden">
           <img 
             loading="lazy"
             src={item.img_url} 
             alt={item.titulo}
-            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+            className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
           />
           
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent 
-                          opacity-0 group-hover:opacity-100 transition-all duration-300">
+                        opacity-0 hover:opacity-100 transition-all duration-300">
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 
-                           opacity-0 group-hover:opacity-100 transform group-hover:translate-y-0 
-                           transition-all duration-300 translate-y-4">
+                         opacity-0 hover:opacity-100 transform hover:translate-y-0 
+                         transition-all duration-300 translate-y-4">
               <button 
                 onClick={(e) => {
                   e.preventDefault();

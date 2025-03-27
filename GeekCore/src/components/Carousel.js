@@ -22,7 +22,9 @@ export const Carousel = ({ items, title }) => {
 
   if (!items?.length) return null;
 
-  const chunks = items.reduce((acc, item, i) => {
+  const limitedItems = items?.slice(0, 20) || [];
+
+  const chunks = limitedItems.reduce((acc, item, i) => {
     const chunkIndex = Math.floor(i / itemsPerSlide);
     if (!acc[chunkIndex]) acc[chunkIndex] = [];
     acc[chunkIndex].push(item);
@@ -38,7 +40,7 @@ export const Carousel = ({ items, title }) => {
   };
 
   return (
-    <section className="mt-16 relative px-4 group">
+    <section className="mt-16 relative px-4">
       <h2 className="text-2xl font-bold mb-6 text-light pl-4 border-l-4 border-primary">
         {title || 'Sugestões'}
       </h2>
@@ -71,7 +73,7 @@ export const Carousel = ({ items, title }) => {
           <>
             <button 
               onClick={prevSlide}
-              className="carousel-nav-btn left-2 opacity-100"
+              className="carousel-nav-btn left-2"
               disabled={currentSlide === 0}
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -81,7 +83,7 @@ export const Carousel = ({ items, title }) => {
 
             <button 
               onClick={nextSlide}
-              className="carousel-nav-btn right-2 opacity-100"
+              className="carousel-nav-btn right-2"
               disabled={currentSlide === chunks.length - 1}
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

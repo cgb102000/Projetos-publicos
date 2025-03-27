@@ -50,7 +50,19 @@
   }
 
   .card-container {
-    @apply relative block transform transition-all duration-300 hover:scale-105 hover:z-20;
+    @apply relative block;
+  }
+
+  .card-container:hover {
+    @apply z-10;
+  }
+
+  .card-container:hover img {
+    @apply scale-110;
+  }
+
+  .card-container:hover .card-overlay {
+    @apply opacity-100;
   }
 
   .card-container::after {
@@ -74,18 +86,15 @@
   }
 
   .favorite-button-large {
-    @apply text-4xl transition-all duration-300 transform hover:scale-125 
-           focus:outline-none active:scale-90 cursor-pointer;
+    @apply text-4xl transition-all duration-300
+           focus:outline-none active:scale-90 cursor-pointer
+           hover:drop-shadow-glow rounded-full p-3
+           backdrop-filter backdrop-blur-sm;
   }
 
-  /* Efeito de hover no botão de favorito */
   .favorite-button-large:hover {
-    @apply text-red-500;
-    filter: drop-shadow(0 0 4px theme('colors.red.500'));
-  }
-
-  .card-container:hover {
-    @apply shadow-xl shadow-black/50;
+    @apply transform scale-110;
+    filter: drop-shadow(0 0 12px theme('colors.red.500'));
   }
 
   .primary-button {
@@ -101,8 +110,21 @@
            z-10 shadow-lg backdrop-blur-sm;
   }
 
+  .carousel-container:hover .carousel-nav-btn {
+    @apply opacity-100;
+  }
+
   .carousel-item {
     @apply transform transition-all duration-300 hover:scale-105 hover:z-10;
+  }
+
+  /* Ajustes para o carrossel */
+  .carousel-track {
+    @apply flex transition-transform duration-500 ease-out;
+  }
+
+  .carousel-slide {
+    @apply flex-none w-full;
   }
 }
 
@@ -139,6 +161,21 @@
 
 .animate-scaleIn {
   animation: scaleIn 0.3s ease-out forwards;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-down {
+  animation: fadeInDown 0.3s ease-out forwards;
 }
 
 /* Animação suave para o scroll do carrossel */
@@ -185,4 +222,16 @@
 .carousel-track {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+@keyframes heartBeat {
+  0% { transform: scale(1); }
+  25% { transform: scale(1.1); }
+  40% { transform: scale(1); }
+  60% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+.heart-beat {
+  animation: heartBeat 1s ease-in-out;
 }
