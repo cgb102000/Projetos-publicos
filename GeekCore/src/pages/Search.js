@@ -14,11 +14,11 @@ export function Search() {
 
   useEffect(() => {
     if (query) {
-      searchContent();
+      searchContent(query);
     }
   }, [query]);
 
-  async function searchContent() {
+  async function searchContent(query) {
     try {
       setLoading(true);
       setError(null);
@@ -60,14 +60,20 @@ export function Search() {
     );
   }
 
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p className="text-red-500">{error}</p>
+      </div>
+    );
+  }
+
   return (
     <div className="content-section pt-20 animate-fadeIn">
       <h1 className="section-title">
         Resultados para: {query}
       </h1>
       
-      {error && <p className="text-red-500 text-center text-lg">{error}</p>}
-
       {results.length === 0 ? (
         <p className="text-light text-center text-lg">Nenhum resultado encontrado.</p>
       ) : (

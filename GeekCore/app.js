@@ -40,11 +40,8 @@ const connectDB = async () => {
       throw new Error('MONGO_URI não definida no arquivo .env');
     }
 
-    await mongoose.connect(process.env.MONGO_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-    console.log('Conectado ao MongoDB - Banco de dados: conteudo');
+    const connection = await mongoose.connect(process.env.MONGO_URI); // Conexão com o MongoDB
+    console.log('Conectado ao MongoDB - Banco de dados:', connection.connection.db.databaseName);
   } catch (err) {
     console.error('Erro ao conectar no MongoDB:', err.message);
     setTimeout(connectDB, 5000);
@@ -105,7 +102,7 @@ app.get('/api/search', async (req, res) => {
   const query = req.query.q;
 
   // Verificar se o termo de pesquisa é válido
-  if (!query) {
+  if (!query || query.trim() === '') {
     return res.status(400).json({ message: 'Termo de pesquisa inválido.' });
   }
 
@@ -116,20 +113,20 @@ app.get('/api/search', async (req, res) => {
     // Usando Promise.all para buscar nas duas coleções de forma paralela
     const results = await Promise.all(validCollections.map(collection => {
       return mongoose.connection.db.collection(collection)
-        .find({ titulo: { $regex: query, $options: 'i' } })
+        .find({ titulo: { $regex: query, $options: 'i' } }) // Busca insensível a maiúsculas/minúsculas
         .toArray();
     }));
 
     // Concatenando os resultados das duas coleções
-    const allResults = [].concat(...results);
+    const allResults = results.flat();
 
     if (allResults.length > 0) {
       res.json(allResults); // Envia os resultados encontrados
     } else {
-      res.status(404).json({ message: 'Nenhum item encontrado.' });
+      res.status(404).json({ message: 'Nenhum item encontrado para o termo de pesquisa.' });
     }
   } catch (err) {
-    console.error('Erro ao buscar itens:', err);
+    console.error('Erro ao buscar itens:', err.message);
     res.status(500).json({ message: 'Erro ao buscar itens. Tente novamente mais tarde.' });
   }
 });
@@ -222,43 +219,33 @@ app.get('/api/categories', async (req, res) => {
   }
 });
 
-// Rota para buscar itens enviados recentemente
 app.get('/api/recent', async (req, res) => {
   try {
-    const db = mongoose.connection.db;
-    
-    if (!db) {
+    if (!mongoose.connection.readyState) {
       throw new Error('Conexão com o banco de dados não estabelecida');
     }
 
-    const [recentMovies, recentAnimes] = await Promise.all([
-      db.collection('filmes')
-        .find()
-        .sort({ _id: -1 })
-        .limit(50)
-        .toArray(),
-      db.collection('animes')
-        .find()
-        .sort({ _id: -1 })
-        .limit(50)
-        .toArray()
-    ]);
+    const recentItems = await mongoose.connection.db.collection('animes')
+      .find()
+      .sort({ _id: -1 }) // Ordenar por ID em ordem decrescente
+      .toArray();
 
-    const allRecentItems = [...recentMovies.map(item => ({
-      ...item,
-      collection: 'filmes'
-    })), ...recentAnimes.map(item => ({
-      ...item,
-      collection: 'animes'
-    }))].sort((a, b) => {
-      // Usar ObjectId para ordenação por data de criação
-      return b._id.getTimestamp() - a._id.getTimestamp();
-    }).slice(0, 50);
+    if (!recentItems || recentItems.length === 0) {
+      return res.json([]); // Retorna um array vazio se não houver itens
+    }
 
-    res.json(allRecentItems);
+    // Adicionar validação para garantir que cada item tenha as propriedades necessárias
+    const validatedItems = recentItems.map(item => ({
+      ...item,
+      collection: 'animes', // Define a coleção como 'animes'
+      titulo: item.titulo || 'Sem título', // Define um valor padrão para `titulo` se estiver ausente
+      img_url: item.img_url || '/images/default-image.png' // Define uma imagem padrão se `img_url` estiver ausente
+    }));
+
+    res.json(validatedItems);
   } catch (error) {
-    console.error('Erro ao buscar itens recentes:', error);
-    res.status(500).json({ message: 'Erro ao buscar itens recentes.' });
+    console.error('Erro ao buscar itens recentes:', error.message);
+    res.status(500).json({ message: 'Erro ao buscar itens recentes' });
   }
 });
 

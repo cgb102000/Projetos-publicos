@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { Link } from 'react-router-dom';
 
-export const Card = memo(({ item }) => {
+export const Card = memo(({ item, isAuthenticated, onFavorite }) => {
   if (!item) return null;
 
   const collection = item.collection || 
@@ -10,7 +10,7 @@ export const Card = memo(({ item }) => {
       : 'filmes';
 
   return (
-    <div className="card-container relative h-[400px] w-[260px]">
+    <div className="card-container interactive-element relative h-[400px] w-[260px]">
       <Link 
         to={`/detalhes/${collection}/${item._id}`}
         className="block w-full h-full"
@@ -20,7 +20,7 @@ export const Card = memo(({ item }) => {
             loading="lazy"
             src={item.img_url} 
             alt={item.titulo}
-            className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
+            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
           
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent 
@@ -35,7 +35,7 @@ export const Card = memo(({ item }) => {
                     window.open(item.url, '_blank', 'noopener,noreferrer');
                   }
                 }}
-                className="primary-button"
+                className="button-base rounded-full p-3"
               >
                 <span>Assistir Agora</span>
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -53,6 +53,15 @@ export const Card = memo(({ item }) => {
           </div>
         </div>
       </Link>
+      {isAuthenticated && (
+        <button
+          onClick={() => onFavorite(item)}
+          className="favorite-button"
+          data-favorited={item.isFavorited}
+        >
+          <svg>...</svg>
+        </button>
+      )}
     </div>
   );
 });

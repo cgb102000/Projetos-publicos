@@ -135,43 +135,30 @@ router.get('/perfil', auth, async (req, res) => {
 // Atualizar perfil do usuário
 router.put('/perfil', auth, async (req, res) => {
   try {
-    const { nome, descricao, foto, tema_cor, senha_atual, nova_senha } = req.body;
-    const user = await User.findById(req.user.id);
+    const { nome, descricao, foto, tema_cor } = req.body;
     
+    // Validar tamanho da foto
+    if (foto && foto.length > 2 * 1024 * 1024) { // 2MB
+      return res.status(413).json({ 
+        message: 'Imagem muito grande. Máximo permitido: 2MB' 
+      });
+    }
+
+    const user = await User.findById(req.user.id);
     if (!user) {
       return res.status(404).json({ message: 'Usuário não encontrado' });
     }
 
-    // Se está tentando alterar a senha, validar senha atual
-    if (nova_senha) {
-      if (!senha_atual) {
-        return res.status(400).json({ message: 'Senha atual é necessária para alterar a senha' });
-      }
-
-      const senhaValida = await user.verificarSenha(senha_atual);
-      if (!senhaValida) {
-        return res.status(400).json({ message: 'Senha atual incorreta' });
-      }
-
-      user.senha = nova_senha;
-    }
-
-    // Atualizar outros campos
+    // Atualizar campos
     if (nome) user.nome = nome;
     if (descricao !== undefined) user.descricao = descricao;
     if (tema_cor) user.tema_cor = tema_cor;
-    if (foto) {
-      // Validar se a foto é uma string base64 válida
-      if (foto.startsWith('data:image')) {
-        user.foto = foto;
-      } else {
-        return res.status(400).json({ message: 'Formato de imagem inválido' });
-      }
+    if (foto && foto.startsWith('data:image')) {
+      user.foto = foto;
     }
 
     await user.save();
     
-    // Retornar usuário atualizado
     res.json({
       message: 'Perfil atualizado com sucesso',
       user: {

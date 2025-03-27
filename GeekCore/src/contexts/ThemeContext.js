@@ -20,12 +20,18 @@ export function ThemeProvider({ children }) {
   const adjustBrightness = (hex, percent) => {
     const num = parseInt(hex.replace('#', ''), 16);
     const amt = Math.round(2.55 * percent);
-    const R = (num >> 16) + amt;
-    const G = (num >> 8 & 0x00FF) + amt;
-    const B = (num & 0x0000FF) + amt;
-    return '#' + (0x1000000 + (R<255?R<1?0:R:255)*0x10000 + 
-                              (G<255?G<1?0:G:255)*0x100 + 
-                              (B<255?B<1?0:B:255)).toString(16).slice(1);
+    const R = Math.max(Math.min((num >> 16) + amt, 255), 0);
+    const G = Math.max(Math.min((num >> 8 & 0x00FF) + amt, 255), 0);
+    const B = Math.max(Math.min((num & 0x0000FF) + amt, 255), 0);
+    
+    const newHex = '#' + (
+      0x1000000 +
+      (R < 255 ? (R < 0 ? 0 : R) : 255) * 0x10000 +
+      (G < 255 ? (G < 0 ? 0 : G) : 255) * 0x100 +
+      (B < 255 ? (B < 0 ? 0 : B) : 255)
+    ).toString(16).slice(1);
+    
+    return newHex;
   };
 
   const getContrastColor = (hexcolor) => {
@@ -40,17 +46,27 @@ export function ThemeProvider({ children }) {
     const root = document.documentElement;
     const { r, g, b } = getRGBValues(themeColor);
     
-    localStorage.setItem('themeColor', themeColor);
-    localStorage.setItem('darkMode', isDarkMode);
-
-    // Cores do tema
+    // Cores principais
     root.style.setProperty('--color-primary', themeColor);
-    root.style.setProperty('--color-hover', adjustBrightness(themeColor, -20));
+    root.style.setProperty('--color-hover', adjustBrightness(themeColor, -15));
+    root.style.setProperty('--color-active', adjustBrightness(themeColor, -25));
+    root.style.setProperty('--color-primary-rgb', `${r}, ${g}, ${b}`);
+    
+    // Variações de cor
     root.style.setProperty('--color-primary-light', adjustBrightness(themeColor, 10));
     root.style.setProperty('--color-primary-dark', adjustBrightness(themeColor, -30));
     root.style.setProperty('--color-primary-ghost', `rgba(${r}, ${g}, ${b}, 0.1)`);
-    root.style.setProperty('--color-primary-rgb', `${r}, ${g}, ${b}`);
+    
+    // Cores de interação
+    root.style.setProperty('--color-focus-ring', `rgba(${r}, ${g}, ${b}, 0.4)`);
+    root.style.setProperty('--color-hover-overlay', `rgba(${r}, ${g}, ${b}, 0.05)`);
+    
+    // Cores de texto
     root.style.setProperty('--color-text', getContrastColor(themeColor));
+    root.style.setProperty('--color-text-hover', adjustBrightness(getContrastColor(themeColor), -15));
+    
+    localStorage.setItem('themeColor', themeColor);
+    localStorage.setItem('darkMode', isDarkMode);
 
     // Cores do modo claro/escuro
     if (isDarkMode) {

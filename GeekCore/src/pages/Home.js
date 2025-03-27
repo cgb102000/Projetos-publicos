@@ -10,34 +10,52 @@ export function Home() {
   const [error, setError] = useState(null);
   const { isAuthenticated } = useContext(AuthContext);
   const navigate = useNavigate();
+  const [featuredItem, setFeaturedItem] = useState(null);
 
   useEffect(() => {
     loadRecentItems();
+    loadFeaturedItem();
   }, []);
 
   async function loadRecentItems() {
     try {
       setLoading(true);
+      setError(null);
+
       const items = await contentService.getRecentContent();
+      
       if (!Array.isArray(items)) {
-        throw new Error('Formato de dados inválido');
+        setRecentItems([]);
+        return;
       }
-      
-      const processedItems = items.map(item => {
-        const isAnime = item.tipo === 'anime' || item.categoria?.toLowerCase().includes('anime');
-        return {
-          ...item,
-          tipo: isAnime ? 'anime' : 'filme',
-          collection: isAnime ? 'animes' : 'filmes'
-        };
-      });
-      
+
+      const processedItems = items.map(item => ({
+        ...item,
+        tipo: item.tipo || (item.collection === 'animes' ? 'anime' : 'filme'),
+        collection: item.collection || (item.tipo === 'anime' ? 'animes' : 'filmes')
+      }));
+
       setRecentItems(processedItems);
     } catch (error) {
       console.error('Erro ao carregar itens:', error);
-      setError('Não foi possível carregar os itens. Tente novamente mais tarde.');
+      setError(error.message || 'Erro ao carregar itens. Tente novamente mais tarde.');
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function loadFeaturedItem() {
+    try {
+      const items = await contentService.getRecommendations('animes');
+      // Filtra apenas itens com img_capa_url
+      const itemsWithCover = items.filter(item => item.img_capa_url);
+      
+      if (itemsWithCover.length > 0) {
+        const randomIndex = Math.floor(Math.random() * itemsWithCover.length);
+        setFeaturedItem(itemsWithCover[randomIndex]);
+      }
+    } catch (error) {
+      console.error('Erro ao carregar destaque:', error);
     }
   }
 
@@ -63,56 +81,77 @@ export function Home() {
     );
   }
 
-  if (error) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <p className="text-red-500">{error}</p>
-      </div>
-    );
-  }
-
   return (
     <div className="content-section pt-20 animate-fadeIn">
-      {/* Hero Section */}
-      <section className="mb-16">
-        <h2 className="section-title">Destaques</h2>
-        <div className="relative h-[70vh] rounded-lg overflow-hidden mb-12">
-          {recentItems[0] && (
-            <>
-              <img 
-                src={recentItems[0].img_url} 
-                alt={recentItems[0].titulo}
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-darker via-transparent to-transparent">
-                <div className="absolute bottom-0 left-0 p-8">
-                  <h1 className="text-5xl font-bold text-white mb-4">{recentItems[0].titulo}</h1>
-                  <a href={recentItems[0].url} className="netflix-button">
-                    <span>Assistir Agora</span>
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
-                    </svg>
-                  </a>
-                </div>
-              </div>
-            </>
-          )}
+      {error ? (
+        <div className="flex flex-col items-center justify-center min-h-[50vh] text-center">
+          <p className="text-red-500 mb-4">{error}</p>
+          <button 
+            onClick={() => {
+              setError(null);
+              loadRecentItems();
+            }}
+            className="bg-primary text-white px-4 py-2 rounded hover:bg-hover"
+          >
+            Tentar Novamente
+          </button>
         </div>
-      </section>
+      ) : (
+        <>
+          {/* Hero Section */}
+          <section className="mb-16">
+            <h2 className="section-title"></h2>
+            <div className="relative h-[70vh] rounded-lg overflow-hidden mb-12">
+              {featuredItem && featuredItem.img_capa_url && (
+                <Link 
+                  to={`/detalhes/${featuredItem.collection}/${featuredItem._id}`}
+                  className="block w-full h-full group"
+                >
+                  <img 
+                    src={featuredItem.img_capa_url} // Usar apenas img_capa_url
+                    alt={featuredItem.titulo}
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-darker via-transparent to-transparent">
+                    <div className="absolute bottom-0 left-0 p-8">
+                      <h1 className="text-5xl font-bold text-white mb-4">{featuredItem.titulo}</h1>
+                      <div className="flex items-center space-x-2 nav-button bg-primary text-white px-6 py-3 rounded-full hover:bg-hover transition-all duration-300 w-fit">
+                        <span>Assistir Agora</span>
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                        </svg>
+                      </div>
+                      {featuredItem.descricao && (
+                        <p className="text-white mt-4 max-w-2xl line-clamp-2">
+                          {featuredItem.descricao}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </Link>
+              )}
+            </div>
+          </section>
 
-      <section className="mb-16">
-        <h2 className="section-title">Conteúdo Recente</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-          {recentItems.map(item => (
-            <Card 
-              key={item._id} 
-              item={item}
-              isAuthenticated={isAuthenticated}
-              onFavorite={handleFavorite}
-            />
-          ))}
-        </div>
-      </section>
+          <section className="mb-16">
+            <h2 className="section-title">Conteúdo Recente</h2>
+            {recentItems.length === 0 ? (
+              <p className="text-center text-gray-500">Nenhum item recente encontrado.</p>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                {recentItems.map(item => (
+                  <Card 
+                    key={item._id} 
+                    item={item}
+                    isAuthenticated={isAuthenticated}
+                    onFavorite={handleFavorite}
+                  />
+                ))}
+              </div>
+            )}
+          </section>
+        </>
+      )}
     </div>
   );
 }

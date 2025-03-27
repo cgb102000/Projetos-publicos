@@ -3,6 +3,7 @@ import { authService } from '../services/api';
 import { AuthContext } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { Alert } from '../components/Alert';
+import imageCompression from 'browser-image-compression'; // Adicione esta importação
 
 export function Perfil() {
   const [userData, setUserData] = useState({ nome: '', email: '', descricao: '', foto: '' });
@@ -35,27 +36,48 @@ export function Perfil() {
     setUserData({ ...userData, [name]: value });
   };
 
-  const handleFotoChange = (e) => {
+  const compressImage = async (file) => {
+    const options = {
+      maxSizeMB: 1,
+      maxWidthOrHeight: 800,
+      useWebWorker: true
+    };
+
+    try {
+      const compressedFile = await imageCompression(file, options);
+      return compressedFile;
+    } catch (error) {
+      console.error('Erro ao comprimir imagem:', error);
+      throw error;
+    }
+  };
+
+  const handleFotoChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
-      if (file.size > 5 * 1024 * 1024) { // 5MB
-        setError('Arquivo muito grande. Máximo: 5MB');
-        return;
+      try {
+        setLoading(true);
+        const compressedFile = await compressImage(file);
+        
+        const reader = new FileReader();
+        reader.onload = () => {
+          setPreviewFoto(reader.result);
+          setUserData(prev => ({ ...prev, foto: reader.result }));
+        };
+        reader.readAsDataURL(compressedFile);
+      } catch (err) {
+        setError('Erro ao processar imagem.');
+        console.error('Erro no processamento da imagem:', err);
+      } finally {
+        setLoading(false);
       }
-
-      const reader = new FileReader();
-      reader.onload = () => {
-        setPreviewFoto(reader.result);
-        setUserData(prev => ({ ...prev, foto: reader.result }));
-      };
-      reader.readAsDataURL(file);
     }
   };
 
   const handleColorChange = (e) => {
     const newColor = e.target.value;
-    setThemeColor(newColor);
-    setUserData(prev => ({ ...prev, tema_cor: newColor }));
+    setThemeColor(newColor); // Atualiza o contexto
+    setUserData(prev => ({ ...prev, tema_cor: newColor })); // Prepara para salvar no banco
   };
 
   const showAlertMessage = (message, type) => {
@@ -180,81 +202,96 @@ export function Perfil() {
         />
       )}
 
-      <h1 className="text-3xl font-bold mb-6 text-center">Editar Perfil</h1>
-      <div className="flex flex-col items-center gap-6">
-        <div className="relative group">
-          <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-primary group-hover:border-hover transition-colors">
-            <img
-              src={previewFoto || '/images/default-avatar.png'}
-              alt="Foto de Perfil"
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                e.target.onerror = null;
-                e.target.src = '/images/default-avatar.png';
-              }}
+      <h1 className="text-3xl font-bold mb-8 text-center">Editar Perfil</h1>
+      <div className="flex flex-col items-center gap-8">
+        {/* Seção da foto de perfil */}
+        <div className="flex flex-col items-center">
+          <div className="relative group mb-4">
+            <div className="w-40 h-40 rounded-full overflow-hidden border-4 profile-avatar-border transition-colors mx-auto">
+              <img
+                src={previewFoto || '/images/default-avatar.png'}
+                alt="Foto de Perfil"
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = '/images/default-avatar.png';
+                }}
+              />
+            </div>
+            <label
+              htmlFor="foto"
+              className="absolute bottom-2 right-2 nav-button bg-primary text-white p-3 rounded-full cursor-pointer hover:bg-hover transition-colors"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+              </svg>
+            </label>
+            <input
+              type="file"
+              id="foto"
+              accept="image/*"
+              className="hidden"
+              onChange={handleFotoChange}
             />
           </div>
-          <label
-            htmlFor="foto"
-            className="absolute bottom-0 right-0 bg-primary text-white p-2 rounded-full cursor-pointer hover:bg-hover transition-colors group-hover:bg-hover"
+          {/* Informações da imagem */}
+          <div className="text-center mb-6">
+            <p className="text-sm text-gray-400 space-y-1">
+              <span className="block">Tamanho máximo: 2MB</span>
+              <span className="block">Dimensão recomendada: 800x800 pixels</span>
+              <span className="block">Formatos aceitos: JPG, PNG</span>
+            </p>
+          </div>
+        </div>
+
+        {/* Restante do formulário */}
+        <div className="w-full max-w-md space-y-6">
+          <div className="w-full max-w-md">
+            <label className="block mb-2 font-semibold">Nome:</label>
+            <input
+              type="text"
+              name="nome"
+              value={userData.nome}
+              onChange={handleInputChange}
+              className="w-full p-3 rounded bg-dark text-white border border-gray-700 focus:outline-none focus:border-primary"
+            />
+          </div>
+          <div className="w-full max-w-md">
+            <label className="block mb-2 font-semibold">Email:</label>
+            <input
+              type="email"
+              name="email"
+              value={userData.email}
+              onChange={handleInputChange}
+              className="w-full p-3 rounded bg-dark text-white border border-gray-700 focus:outline-none focus:border-primary"
+              disabled
+            />
+          </div>
+          <div className="w-full max-w-md">
+            <label className="block mb-2 font-semibold">Descrição:</label>
+            <textarea
+              name="descricao"
+              value={userData.descricao}
+              onChange={handleInputChange}
+              className="w-full p-3 rounded bg-dark text-white border border-gray-700 focus:outline-none focus:border-primary"
+            />
+          </div>
+          <div className="w-full max-w-md">
+            <label className="block mb-2 font-semibold">Cor do Tema:</label>
+            <input
+              type="color"
+              value={themeColor}
+              onChange={handleColorChange}
+              className="w-full h-12 p-1 rounded bg-dark border border-gray-700 cursor-pointer"
+            />
+          </div>
+          <button
+            onClick={handleSave}
+            className="nav-button bg-primary text-white px-6 py-3 rounded transition-colors w-full max-w-md"
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
-            </svg>
-          </label>
-          <input
-            type="file"
-            id="foto"
-            accept="image/*"
-            className="hidden"
-            onChange={handleFotoChange}
-          />
+            Salvar Alterações
+          </button>
         </div>
-        <div className="w-full max-w-md">
-          <label className="block mb-2 font-semibold">Nome:</label>
-          <input
-            type="text"
-            name="nome"
-            value={userData.nome}
-            onChange={handleInputChange}
-            className="w-full p-3 rounded bg-dark text-white border border-gray-700 focus:outline-none focus:border-primary"
-          />
-        </div>
-        <div className="w-full max-w-md">
-          <label className="block mb-2 font-semibold">Email:</label>
-          <input
-            type="email"
-            name="email"
-            value={userData.email}
-            onChange={handleInputChange}
-            className="w-full p-3 rounded bg-dark text-white border border-gray-700 focus:outline-none focus:border-primary"
-            disabled
-          />
-        </div>
-        <div className="w-full max-w-md">
-          <label className="block mb-2 font-semibold">Descrição:</label>
-          <textarea
-            name="descricao"
-            value={userData.descricao}
-            onChange={handleInputChange}
-            className="w-full p-3 rounded bg-dark text-white border border-gray-700 focus:outline-none focus:border-primary"
-          />
-        </div>
-        <div className="w-full max-w-md">
-          <label className="block mb-2 font-semibold">Cor do Tema:</label>
-          <input
-            type="color"
-            value={themeColor}
-            onChange={handleColorChange}
-            className="w-full h-12 p-1 rounded bg-dark border border-gray-700 cursor-pointer"
-          />
-        </div>
-        <button
-          onClick={handleSave}
-          className="bg-primary text-white px-6 py-3 rounded hover:bg-hover transition-colors w-full max-w-md"
-        >
-          Salvar Alterações
-        </button>
       </div>
 
       <div className="mt-6 text-center">

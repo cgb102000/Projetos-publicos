@@ -1,9 +1,37 @@
 import axios from 'axios';
 
+const getBaseUrl = () => {
+  const hostname = window.location.hostname;
+  return process.env.REACT_APP_API_URL || `http://${hostname}:3001`;
+};
+
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:3001',
-  timeout: 10000,
-  withCredentials: true
+  baseURL: getBaseUrl(),
+  timeout: 5000,
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  withCredentials: true,
+  retry: 3,
+  retryDelay: (retryCount) => retryCount * 1000
+});
+
+// Adicionar interceptor de retry
+api.interceptors.response.use(null, async (error) => {
+  const { config } = error;
+  if (!config || !config.retry) {
+    return Promise.reject(error);
+  }
+  
+  config.retryCount = config.retryCount || 0;
+  
+  if (config.retryCount >= config.retry) {
+    return Promise.reject(error);
+  }
+  
+  config.retryCount += 1;
+  await new Promise(resolve => setTimeout(resolve, config.retryDelay(config.retryCount)));
+  return api(config);
 });
 
 api.interceptors.request.use(config => {
@@ -17,7 +45,17 @@ api.interceptors.request.use(config => {
 // Melhorar o interceptor de erro
 api.interceptors.response.use(
   response => response,
-  error => {
+  async error => {
+    if (!error.response) {
+      console.error('Erro de rede:', error.message);
+      throw new Error('Servidor indisponível. Verifique sua conexão.');
+    }
+
+    if (error.response.status === 503) {
+      console.error('Servidor em manutenção');
+      throw new Error('Servidor em manutenção. Tente novamente em alguns instantes.');
+    }
+
     if (error.code === 'ERR_NETWORK') {
       console.error('Erro de conexão - Servidor está rodando?');
       // Tentar reconectar
@@ -94,9 +132,13 @@ export const authService = {
 
   async updateUserProfile(profileData) {
     try {
+      // Verifica o tamanho da string base64 da foto
+      if (profileData.foto && profileData.foto.length > 2 * 1024 * 1024) { // 2MB em caracteres base64
+        throw new Error('Imagem muito grande. Máximo: 2MB');
+      }
+
       const { data } = await api.put('/api/auth/perfil', profileData);
       
-      // Atualizar o usuário no localStorage
       const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
       const updatedUser = { ...currentUser, ...data.user };
       localStorage.setItem('user', JSON.stringify(updatedUser));
@@ -104,7 +146,7 @@ export const authService = {
       return data;
     } catch (error) {
       console.error('Erro ao atualizar perfil:', error);
-      throw error;
+      throw error.response?.data?.message || error.message || 'Erro ao atualizar perfil';
     }
   },
 
@@ -137,10 +179,19 @@ export const contentService = {
   },
 
   async getRecentContent() {
-    return this.getFromCacheOrFetch('recent', async () => {
+    try {
+      // Verificar status do servidor primeiro
+      await api.get('/api/health');
+      
       const { data } = await api.get('/api/recent');
-      return data;
-    });
+      if (data.length === 0) {
+        console.info('Nenhum item recente encontrado.'); // Ajuste para log informativo
+      }
+      return Array.isArray(data) ? data : [];
+    } catch (error) {
+      console.error('Erro ao buscar conteúdo recente:', error);
+      throw error;
+    }
   },
 
   async searchContent(query) {
@@ -154,17 +205,10 @@ export const contentService = {
         throw new Error('ID ou collection inválidos');
       }
 
-      // Log para debug
-      console.log('Requisição getItem:', { collection, id });
-
       const { data } = await api.get(`/api/item/${collection}/${id}`);
-      
       if (!data) {
         throw new Error('Item não encontrado');
       }
-
-      // Log do dado recebido
-      console.log('Dados recebidos:', data);
 
       return {
         ...data,
@@ -172,25 +216,16 @@ export const contentService = {
         tipo: collection === 'animes' ? 'anime' : 'filme'
       };
     } catch (error) {
-      // Melhor tratamento de erro
-      const errorMessage = error.response?.data?.message || error.message;
-      console.error('Erro ao buscar item:', {
-        error: errorMessage,
-        collection,
-        id,
-        status: error.response?.status
-      });
-      throw new Error(errorMessage);
+      console.error('Erro ao buscar item:', error.message);
+      throw error;
     }
   },
 
   async getRecommendations(collection) {
     try {
-      console.log(`Buscando recomendações para: ${collection}`);
       const { data } = await api.get(`/api/random/${collection}`);
-      
       if (!data || !Array.isArray(data)) {
-        console.warn('Dados de recomendação inválidos:', data);
+        console.warn('Dados de recomendação inválidos.');
         return [];
       }
 
@@ -200,7 +235,7 @@ export const contentService = {
         tipo: collection === 'animes' ? 'anime' : 'filme'
       }));
     } catch (error) {
-      console.error('Erro ao buscar recomendações:', error);
+      console.error('Erro ao buscar recomendações:', error.message);
       return [];
     }
   }
