@@ -48,36 +48,45 @@ export function ThemeProvider({ children }) {
     
     // Cores principais
     root.style.setProperty('--color-primary', themeColor);
+    // Tornar a cor de hover 15% mais escura que a cor principal
     root.style.setProperty('--color-hover', adjustBrightness(themeColor, -15));
-    root.style.setProperty('--color-active', adjustBrightness(themeColor, -25));
+    
+    // Cores principais e variações
+    root.style.setProperty('--color-active', adjustBrightness(themeColor, -30));
+    
+    // Variações de opacidade e efeitos
     root.style.setProperty('--color-primary-rgb', `${r}, ${g}, ${b}`);
+    root.style.setProperty('--color-primary-ghost', `rgba(${r}, ${g}, ${b}, 0.15)`);
+    root.style.setProperty('--color-primary-glow', `rgba(${r}, ${g}, ${b}, 0.5)`);
+    root.style.setProperty('--color-hover-overlay', `rgba(${r}, ${g}, ${b}, 0.1)`);
     
-    // Variações de cor
-    root.style.setProperty('--color-primary-light', adjustBrightness(themeColor, 10));
-    root.style.setProperty('--color-primary-dark', adjustBrightness(themeColor, -30));
-    root.style.setProperty('--color-primary-ghost', `rgba(${r}, ${g}, ${b}, 0.1)`);
-    
-    // Cores de interação
-    root.style.setProperty('--color-focus-ring', `rgba(${r}, ${g}, ${b}, 0.4)`);
-    root.style.setProperty('--color-hover-overlay', `rgba(${r}, ${g}, ${b}, 0.05)`);
-    
-    // Cores de texto
-    root.style.setProperty('--color-text', getContrastColor(themeColor));
-    root.style.setProperty('--color-text-hover', adjustBrightness(getContrastColor(themeColor), -15));
-    
-    localStorage.setItem('themeColor', themeColor);
-    localStorage.setItem('darkMode', isDarkMode);
+    // Variações para diferentes estados
+    root.style.setProperty('--color-primary-light', adjustBrightness(themeColor, 15));
+    root.style.setProperty('--color-primary-dark', adjustBrightness(themeColor, -25));
 
     // Cores do modo claro/escuro
     if (isDarkMode) {
       root.style.setProperty('--color-bg', '#141414');
       root.style.setProperty('--color-bg-darker', '#0a0a0a');
       root.style.setProperty('--color-text-base', '#ffffff');
+      root.style.setProperty('--color-text-secondary', '#9ca3af');
+      root.style.setProperty('--color-border', '#374151');
+      root.style.setProperty('--color-input-bg', '#1f2937');
     } else {
       root.style.setProperty('--color-bg', '#ffffff');
       root.style.setProperty('--color-bg-darker', '#f3f4f6');
-      root.style.setProperty('--color-text-base', '#1f2937');
+      root.style.setProperty('--color-text-base', '#111827');
+      root.style.setProperty('--color-text-secondary', '#4b5563');
+      root.style.setProperty('--color-border', '#e5e7eb');
+      root.style.setProperty('--color-input-bg', '#f9fafb');
     }
+
+    // Ajuste automático do contraste do texto
+    const textColor = isDarkMode ? '#ffffff' : '#111827';
+    root.style.setProperty('--color-text', textColor);
+
+    localStorage.setItem('themeColor', themeColor);
+    localStorage.setItem('darkMode', isDarkMode);
   }, [themeColor, isDarkMode]);
 
   return (

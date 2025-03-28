@@ -24,6 +24,16 @@ body {
   background-color: var(--color-bg);
   color: var(--color-text-base);
   transition: background-color 0.3s ease;
+  padding: 0;
+  min-height: 100vh;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* Sobrescrever estilos do Tailwind para garantir nossas cores personalizadas */
+.bg-primary {
+  background-color: var(--color-primary) !important;
+  --tw-bg-opacity: 1 !important;
 }
 
 .bg-primary {
@@ -69,7 +79,7 @@ body {
 }
 
 .hover\:bg-hover:hover {
-  background-color: var(--color-hover);
+  background-color: var(--color-hover) !important;
   color: var(--color-text);
   transform: translateY(-1px);
   transition: all 0.3s ease;
@@ -126,6 +136,28 @@ body {
   background-color: var(--color-hover);
 }
 
+/* Garantir que botões da capa usem a cor do tema */
+[class*="nav-button"] {
+  background-color: var(--color-primary);
+}
+
+[class*="nav-button"]:hover {
+  background-color: var(--color-hover) !important;
+}
+
+/* Ajuste para remover scrollbar no hover do perfil */
+.nav-link.flex {
+  overflow: visible;
+  white-space: nowrap;
+}
+
+/* Elimina qualquer scrollbar indesejado em elementos de navegação */
+.nav-link, 
+.nav-button,
+.flex.items-center {
+  overflow: visible;
+}
+
 /* Adicionar classes específicas para elementos do perfil */
 .profile-avatar-border {
   border-color: var(--color-primary);
@@ -156,6 +188,60 @@ body {
 .group:hover .profile-avatar-border {
   border-color: var(--color-hover);
   transform: scale(1.05);
+}
+
+/* Ajustes específicos para o perfil */
+.profile-text {
+  color: var(--color-text-base);
+}
+
+.profile-label {
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.profile-input {
+  @apply transition-all duration-300;
+  background-color: var(--color-input-bg);
+  color: var(--color-text-base);
+  border: 1px solid var(--color-border);
+}
+
+.profile-input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px var(--color-primary-ghost);
+  outline: none;
+}
+
+.profile-input:hover:not(:disabled) {
+  border-color: var(--color-hover);
+}
+
+.profile-input:disabled {
+  opacity: 0.7;
+}
+
+/* Ajuste para input de cor */
+input[type="color"] {
+  -webkit-appearance: none;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+input[type="color"]::-webkit-color-swatch {
+  border: none;
+  border-radius: 8px;
+}
+
+.profile-heading {
+  color: var(--color-text-base);
+  font-weight: bold;
 }
 
 /* Efeito de ripple para botões */
@@ -318,4 +404,390 @@ input:focus.hover\:border-hover:hover {
 .favorite-button:hover {
   color: var(--color-hover);
   transform: scale(1.1);
+}
+
+/* Classe específica para o título */
+.title-hover {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.title-hover:hover {
+  filter: brightness(0.8); /* Escurece a cor em 20% */
+  transform: scale(1.02);
+  text-shadow: 0 0 10px var(--color-primary-ghost);
+}
+
+/* Ajustes para o modo claro/escuro */
+.text-light {
+  color: var(--color-text-base);
+}
+
+.bg-dark {
+  background-color: var(--color-input-bg);
+}
+
+/* Ajuste de inputs para modo claro/escuro */
+input, textarea, select {
+  background-color: var(--color-input-bg);
+  color: var(--color-text-base);
+  border-color: var(--color-border);
+}
+
+/* Ajustes de texto secundário */
+.text-secondary {
+  color: var(--color-text-secondary);
+}
+
+/* Ajuste de bordas */
+.border-default {
+  border-color: var(--color-border);
+}
+
+/* Ajuste do nav-link para modo claro/escuro */
+.nav-link {
+  color: var(--color-text-base);
+}
+
+.nav-link:hover {
+  color: var(--color-primary);
+}
+
+/* Ajuste específico para o título em modo claro */
+.title-hover:hover {
+  filter: brightness(0.8);
+  transform: scale(1.02);
+  text-shadow: 0 0 10px var(--color-primary-ghost);
+}
+
+/* Ajustes de responsividade - Atualizado */
+.container {
+  width: 100%;
+  max-width: 100%;
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: 1rem;
+  padding-left: 1rem;
+  position: relative;
+}
+
+/* Remove scrollbar duplicado e ajusta o comportamento do scroll */
+html {
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  width: 100%;
+  overflow: hidden;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Ajusta o container principal para evitar scroll duplo */
+.main-content {
+  flex: 1;
+  position: relative;
+  width: 100%;
+}
+
+/* Ajustes de responsividade */
+.container {
+  width: 100%;
+  max-width: 100%;
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: 1rem;
+  padding-left: 1rem;
+  overflow-x: hidden;
+}
+
+/* Remove scrollbar horizontal em todas as resoluções */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Ajustes para grid responsivo */
+.responsive-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  width: 100%;
+}
+
+/* Ajuste para containers de cards */
+.cards-container {
+  @apply grid gap-4;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  width: 100%;
+}
+
+@media (max-width: 640px) {
+  .cards-container {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  }
+}
+
+/* Ajuste para imagens responsivas */
+.img-responsive {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+/* Botões de ação primários (Assistir/Favoritar) */
+.action-button {
+  @apply transition-all duration-300;
+  background-color: var(--color-primary);
+  color: var(--color-text);
+  position: relative;
+  overflow: hidden;
+}
+
+.action-button:hover {
+  background-color: var(--color-hover);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 4px 12px var(--color-primary-ghost);
+}
+
+.action-button:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Botão de favoritar com animação melhorada */
+.favorite-button {
+  @apply transition-all duration-300;
+  color: var(--color-text-base);
+}
+
+.favorite-button[data-favorited="true"] {
+  color: var(--color-primary);
+  fill: var(--color-primary);
+  filter: drop-shadow(0 0 4px var(--color-primary-ghost));
+}
+
+.favorite-button:hover {
+  color: var(--color-hover);
+  transform: scale(1.15);
+}
+
+.favorite-button:active {
+  transform: scale(0.95);
+}
+
+/* Efeito de pulso para feedback visual */
+@keyframes pulseHover {
+  0% { box-shadow: 0 0 0 0 var(--color-primary-ghost); }
+  70% { box-shadow: 0 0 0 10px rgba(0, 0, 0, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 0, 0, 0); }
+}
+
+.action-button:hover::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  transform: translate(-50%, -50%);
+  border-radius: inherit;
+  animation: pulseHover 1.5s infinite;
+  pointer-events: none;
+}
+
+/* Sistema unificado de hover */
+.hover-effect {
+  @apply transition-all duration-300;
+  position: relative;
+}
+
+.hover-effect:hover {
+  color: var(--color-hover);
+  transform: translateY(-1px);
+}
+
+/* Botões com efeito de hover */
+.button-hover {
+  @apply transition-all duration-300;
+  background-color: var(--color-primary);
+  color: var(--color-text);
+  position: relative;
+  overflow: hidden;
+}
+
+.button-hover:hover {
+  background-color: var(--color-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--color-primary-ghost);
+}
+
+.button-hover:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* Links com efeito de hover */
+.link-hover {
+  @apply transition-all duration-300;
+  position: relative;
+}
+
+.link-hover:hover {
+  color: var(--color-hover);
+}
+
+.link-hover::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -2px;
+  left: 0;
+  background-color: var(--color-hover);
+  transition: width 0.3s ease;
+}
+
+.link-hover:hover::after {
+  width: 100%;
+}
+
+/* Ícones com efeito de hover */
+.icon-hover {
+  @apply transition-all duration-300;
+  color: var(--color-text-base);
+}
+
+.icon-hover:hover {
+  color: var(--color-hover);
+  transform: scale(1.1);
+}
+
+/* Cards com efeito de hover */
+.card-hover {
+  @apply transition-all duration-300;
+  border: 1px solid transparent;
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  border-color: var(--color-hover);
+  box-shadow: 0 8px 16px var(--color-primary-ghost);
+}
+
+/* Botões de ação com efeito de hover */
+.action-hover {
+  @apply transition-all duration-300;
+  background-color: var(--color-primary);
+  color: var(--color-text);
+}
+
+.action-hover:hover {
+  background-color: var(--color-hover);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 6px 15px var(--color-primary-ghost);
+}
+
+.action-hover:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Efeito de ripple melhorado */
+.ripple-hover {
+  position: relative;
+  overflow: hidden;
+}
+
+.ripple-hover::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: linear-gradient(
+    rgba(var(--color-primary-rgb), 0.2),
+    rgba(var(--color-primary-rgb), 0)
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.ripple-hover:hover::after {
+  opacity: 1;
+}
+
+/* Botão de destaque para capa principal */
+.highlight-button {
+  @apply transition-all duration-300;
+  background-color: var(--color-primary);
+  color: var(--color-text);
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.highlight-button:hover {
+  background-color: var(--color-hover);
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 20px var(--color-primary-ghost);
+}
+
+.highlight-button:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.highlight-button::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(var(--color-primary-rgb), 0.2),
+    transparent
+  );
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+  z-index: -1;
+}
+
+.highlight-button:hover::after {
+  transform: translateX(100%);
+}
+
+/* Botão de destaque da capa principal */
+.featured-button {
+  @apply transition-all duration-300;
+  background-color: var(--color-primary) !important;
+  color: var(--color-text);
+  position: relative;
+  overflow: hidden;
+}
+
+.featured-button:hover {
+  background-color: var(--color-hover) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px var(--color-primary-ghost);
+}
+
+.featured-button:active {
+  transform: translateY(0);
+}
+
+/* Ajuste o elemento que contém o botão para usar a nova classe */
+.featured-button-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  padding: 2rem;
+  z-index: 2;
 }
