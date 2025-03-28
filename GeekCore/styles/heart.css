@@ -1,0 +1,12 @@
+.heart-icon {
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.heart-icon.favorited {
+  color: #ef4444; /* ou sua cor de destaque */
+  transform: scale(1.1);
+}
+
+.heart-icon:active {
+  transform: scale(0.9);
+}

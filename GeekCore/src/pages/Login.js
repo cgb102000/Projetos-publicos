@@ -17,14 +17,17 @@ export function Login() {
     setError('');
 
     try {
-      const { user, token } = await authService.login(email, senha);
-      localStorage.setItem('token', token);
-      localStorage.setItem('user', JSON.stringify(user));
+      const { user, token, success } = await authService.login(email, senha);
       
-      dispatch({ type: 'LOGIN', payload: { user, token } });
-      navigate('/');  // Alterado de /home para /
+      if (success && token) {
+        dispatch({ type: 'LOGIN', payload: { user, token } });
+        navigate('/');
+      } else {
+        setError('Erro ao fazer login. Tente novamente.');
+      }
     } catch (err) {
-      setError('Email ou senha inválidos');
+      setError(err.message || 'Email ou senha inválidos');
+      console.error('Erro de login:', err);
     } finally {
       setLoading(false);
     }

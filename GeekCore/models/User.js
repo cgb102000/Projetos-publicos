@@ -8,7 +8,7 @@ const favoritoSchema = new mongoose.Schema({
   },
   tipo: {
     type: String,
-    enum: ['anime', 'filme'],
+    enum: ['anime', 'filme', 'serie', 'video'], // Adicionando 'serie' como opção válida
     required: true
   },
   adicionado_em: {
@@ -57,7 +57,12 @@ userSchema.pre('save', async function(next) {
 
 // Método para verificar senha
 userSchema.methods.verificarSenha = async function(senhaInformada) {
-  return await bcrypt.compare(senhaInformada, this.senha);
+  try {
+    return await bcrypt.compare(senhaInformada, this.senha);
+  } catch (error) {
+    console.error('Erro ao verificar senha:', error);
+    return false;
+  }
 };
 
 module.exports = mongoose.model('User', userSchema);

@@ -27,19 +27,54 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
   try {
     const { email, senha } = req.body;
-    const user = await User.findOne({ email });
-    
-    if (!user || !(await user.verificarSenha(senha))) {
-      throw new Error('Email ou senha inválidos');
+    console.log('Tentativa de login:', { email }); // Log para debug
+
+    if (!email || !senha) {
+      return res.status(400).json({ 
+        success: false,
+        message: 'Email e senha são obrigatórios' 
+      });
+    }
+
+    const user = await User.findOne({ email: email.toLowerCase() });
+    console.log('Usuário encontrado:', !!user); // Log para debug
+
+    if (!user) {
+      return res.status(401).json({ 
+        success: false,
+        message: 'Email ou senha inválidos' 
+      });
+    }
+
+    const senhaValida = await user.verificarSenha(senha);
+    console.log('Senha válida:', senhaValida); // Log para debug
+
+    if (!senhaValida) {
+      return res.status(401).json({ 
+        success: false,
+        message: 'Email ou senha inválidos' 
+      });
     }
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: '7d'
     });
 
-    res.json({ user, token });
+    const userResponse = user.toObject();
+    delete userResponse.senha;
+
+    res.json({
+      success: true,
+      user: userResponse,
+      token,
+      message: 'Login realizado com sucesso'
+    });
   } catch (error) {
-    res.status(401).json({ message: error.message });
+    console.error('Erro no login:', error);
+    res.status(500).json({ 
+      success: false,
+      message: 'Erro interno no servidor' 
+    });
   }
 });
 
@@ -47,33 +82,58 @@ router.post('/login', async (req, res) => {
 router.post('/favoritos', auth, async (req, res) => {
   try {
     const { conteudo_id, tipo } = req.body;
-    const userId = req.user.id;
-
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ message: 'Usuário não encontrado' });
+    
+    if (!conteudo_id || !tipo) {
+      return res.status(400).json({ 
+        success: false,
+        message: 'Dados incompletos' 
+      });
     }
 
-    const favoritoIndex = user.favoritos.findIndex(
-      f => f.conteudo_id.toString() === conteudo_id && f.tipo === tipo
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ 
+        success: false,
+        message: 'Usuário não encontrado' 
+      });
+    }
+
+    // Verifica se o item já está nos favoritos
+    const itemIndex = user.favoritos.findIndex(
+      fav => fav.conteudo_id.toString() === conteudo_id && fav.tipo === tipo
     );
 
-    if (favoritoIndex > -1) {
-      user.favoritos.splice(favoritoIndex, 1);
+    let status = false;
+    let message = '';
+
+    if (itemIndex !== -1) {
+      // Remove o item
+      user.favoritos.splice(itemIndex, 1);
+      status = false;
+      message = '❌ Item removido dos favoritos';
     } else {
+      // Adiciona o item
       user.favoritos.push({ conteudo_id, tipo });
+      status = true;
+      message = '❤️ Item adicionado aos favoritos';
     }
 
     await user.save();
-    
-    res.json({
-      message: 'Favoritos atualizados com sucesso',
-      favoritos: user.favoritos,
-      isFavorited: favoritoIndex === -1
+
+    res.status(200).json({
+      success: true,
+      isFavorito: status,
+      message: message,
+      favoritos: user.favoritos
     });
+
   } catch (error) {
     console.error('Erro ao atualizar favoritos:', error);
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ 
+      success: false,
+      message: 'Erro ao atualizar favoritos',
+      error: error.message 
+    });
   }
 });
 
@@ -89,23 +149,32 @@ router.get('/favoritos', auth, async (req, res) => {
 
     const favoritos = await Promise.all(
       user.favoritos.map(async (fav) => {
-        const collection = fav.tipo === 'anime' ? 'animes' : 'filmes';
-        const item = await mongoose.connection.db.collection(collection)
-          .findOne({ _id: new mongoose.Types.ObjectId(fav.conteudo_id) });
-          
-        if (item) {
-          return {
-            ...item,
-            tipo: fav.tipo,
-            collection,
-            favorito_em: fav.adicionado_em
-          };
+        let collection = 'filmes';
+        if (fav.tipo === 'anime') collection = 'animes';
+        else if (fav.tipo === 'serie') collection = 'series';
+        else if (fav.tipo === 'video') collection = 'videos';
+
+        try {
+          const item = await mongoose.connection.db.collection(collection)
+            .findOne({ _id: new mongoose.Types.ObjectId(fav.conteudo_id) });
+            
+          if (item) {
+            return {
+              ...item,
+              tipo: fav.tipo,
+              collection,
+              favorito_em: fav.adicionado_em,
+              isFavorito: true,
+              favoritoId: fav._id // Incluir ID do favorito para referência
+            };
+          }
+        } catch (err) {
+          console.error(`Erro ao buscar item ${fav.conteudo_id}:`, err);
         }
         return null;
       })
     );
 
-    // Filtrar itens nulos (não encontrados)
     const validFavoritos = favoritos.filter(f => f !== null);
     res.json(validFavoritos);
   } catch (error) {

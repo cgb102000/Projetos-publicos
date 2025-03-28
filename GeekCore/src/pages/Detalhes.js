@@ -20,12 +20,25 @@ export function Detalhes() {
       try {
         setLoading(true);
         setError(null);
-        const [itemData, recommendationsData] = await Promise.all([
+        
+        // Carregar favoritos do usuário junto com os dados do item
+        const [itemData, recommendationsData, favoritos] = await Promise.all([
           contentService.getItem(collection, id),
-          contentService.getRecommendations(collection)
+          contentService.getRecommendations(collection),
+          authService.getFavorites()
         ]);
 
-        setItem(itemData);
+        // Verificar se o item atual está nos favoritos
+        const isFavorited = favoritos.some(
+          fav => fav.conteudo_id === id || fav._id === id
+        );
+
+        // Atualizar o item com o estado de favorito
+        setItem({
+          ...itemData,
+          isFavorited
+        });
+
         setRecommendations(recommendationsData.filter(rec => rec._id !== id).slice(0, 6));
       } catch (error) {
         console.error('Erro ao carregar conteúdo:', error);
@@ -35,8 +48,13 @@ export function Detalhes() {
       }
     };
 
-    loadContent();
-  }, [id, collection]);
+    if (isAuthenticated) {
+      loadContent();
+    } else {
+      // Se não estiver autenticado, carrega sem verificar favoritos
+      loadContent();
+    }
+  }, [id, collection, isAuthenticated]);
 
   const handleFavorite = async () => {
     if (!isAuthenticated) {
@@ -48,16 +66,17 @@ export function Detalhes() {
       const tipo = collection === 'animes' ? 'anime' : 'filme';
       const response = await authService.toggleFavorite(id, tipo);
       
+      // Atualizar o estado com base no isFavorito retornado pela API
       setItem(prev => ({
         ...prev,
-        isFavorited: response.isFavorited
+        isFavorited: response.isFavorito // Usar a propriedade correta da API
       }));
 
-      // Atualizar toast com o tipo apropriado
+      // Atualizar toast com base no status retornado
       setToast({
         show: true,
-        message: `${item.titulo} foi ${response.isFavorited ? 'adicionado aos' : 'removido dos'} favoritos!`,
-        type: response.isFavorited ? 'success' : 'info'
+        message: response.message, // Usar a mensagem retornada pela API
+        type: response.isFavorito ? 'success' : 'info'
       });
 
       setTimeout(() => setToast({ show: false, message: '', type: '' }), 3000);

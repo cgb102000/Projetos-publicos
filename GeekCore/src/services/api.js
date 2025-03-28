@@ -78,8 +78,27 @@ api.interceptors.response.use(
 
 export const authService = {
   async login(email, senha) {
-    const { data } = await api.post('/api/auth/login', { email, senha });
-    return data;
+    try {
+      console.log('Tentando login com:', { email }); // Log para debug
+
+      const { data } = await api.post('/api/auth/login', { 
+        email: email.toLowerCase().trim(),
+        senha: senha
+      });
+
+      console.log('Resposta do servidor:', data); // Log para debug
+
+      if (data.success && data.token) {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        return data;
+      }
+      
+      throw new Error(data.message || 'Erro ao fazer login');
+    } catch (error) {
+      console.error('Erro de login:', error.response?.data || error);
+      throw new Error(error.response?.data?.message || 'Erro ao fazer login');
+    }
   },
 
   async register(nome, email, senha) {
@@ -98,10 +117,10 @@ export const authService = {
         tipo: tipo.toLowerCase().replace('s', '')
       });
 
-      // Garantir que temos o status do favorito na resposta
+      // Corrigir o nome da propriedade para corresponder ao backend
       return {
         ...data,
-        isFavorited: data.isFavorited ?? false
+        isFavorited: data.isFavorito // Aqui estava o problema
       };
     } catch (error) {
       console.error('Detalhes do erro:', error.response?.data || error.message);
@@ -117,7 +136,9 @@ export const authService = {
       const { data } = await api.get('/api/auth/favoritos');
       return Array.isArray(data) ? data.map(fav => ({
         ...fav,
-        _id: fav._id || fav.conteudo_id
+        conteudo_id: fav.conteudo_id || fav._id,
+        _id: fav._id || fav.conteudo_id,
+        isFavorito: true
       })) : [];
     } catch (error) {
       console.error('Erro ao buscar favoritos:', error);
