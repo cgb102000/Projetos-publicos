@@ -4,7 +4,7 @@
 
 :root {
   --color-primary: #ef4444;
-  --color-hover: #dc2626;
+  --color-hover: color-mix(in srgb, var(--color-primary) 80%, black); /* 20% mais escuro */
   --color-text: #ffffff;
   --color-bg: #141414;
   --color-bg-darker: #0a0a0a;
@@ -79,7 +79,7 @@ body {
 }
 
 .hover\:bg-hover:hover {
-  background-color: var(--color-hover) !important;
+  background-color: var(--color-hover);
   color: var(--color-text);
   transform: translateY(-1px);
   transition: all 0.3s ease;
@@ -393,7 +393,7 @@ input:focus.hover\:border-hover:hover {
 /* Botão de favorito animado */
 .favorite-button {
   @apply transition-all duration-300;
-  color: var(--color-text);
+  color: var(--color-primary);
 }
 
 .favorite-button[data-favorited="true"] {
@@ -404,6 +404,10 @@ input:focus.hover\:border-hover:hover {
 .favorite-button:hover {
   color: var(--color-hover);
   transform: scale(1.1);
+}
+
+.favorite-button[data-favorited="true"]:hover {
+  fill: var(--color-hover);
 }
 
 /* Classe específica para o título */
@@ -790,4 +794,29 @@ html, body {
   left: 0;
   padding: 2rem;
   z-index: 2;
+}
+
+/* Footer Styles */
+footer {
+  width: 100%;
+  position: relative;
+  z-index: 10;
+}
+
+footer .text-primary {
+  color: var(--color-primary);
+}
+
+footer .text-light {
+  color: var(--color-text);
+}
+
+@media (max-width: 640px) {
+  footer {
+    padding: 2rem 1rem;
+  }
+  
+  footer .container {
+    padding: 0 1rem;
+  }
 }

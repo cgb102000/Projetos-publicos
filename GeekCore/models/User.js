@@ -4,7 +4,11 @@ const bcrypt = require('bcryptjs');
 const favoritoSchema = new mongoose.Schema({
   conteudo_id: {
     type: mongoose.Schema.Types.ObjectId,
-    required: true
+    required: true,
+    validate: {
+      validator: mongoose.Types.ObjectId.isValid,
+      message: 'ID do conteúdo inválido'
+    }
   },
   tipo: {
     type: String,

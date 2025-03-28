@@ -83,6 +83,23 @@
   .favorite-button {
     @apply text-2xl filter hover:drop-shadow-glow transition-all duration-300
            transform hover:scale-125;
+    @apply transition-all duration-300;
+    color: var(--color-primary);
+  }
+
+  .favorite-button[data-favorited="true"] {
+    color: var(--color-primary);
+    fill: var(--color-primary);
+    filter: drop-shadow(0 0 4px var(--color-primary-ghost));
+  }
+
+  .favorite-button:hover {
+    color: var(--color-hover);
+    transform: scale(1.1);
+  }
+
+  .favorite-button:active {
+    transform: scale(0.95);
   }
 
   .favorite-button-large {

@@ -149,23 +149,16 @@ router.get('/favoritos', auth, async (req, res) => {
 
     const favoritos = await Promise.all(
       user.favoritos.map(async (fav) => {
-        let collection = 'filmes';
-        if (fav.tipo === 'anime') collection = 'animes';
-        else if (fav.tipo === 'serie') collection = 'series';
-        else if (fav.tipo === 'video') collection = 'videos';
-
         try {
-          const item = await mongoose.connection.db.collection(collection)
+          const item = await mongoose.connection.db.collection('videos')
             .findOne({ _id: new mongoose.Types.ObjectId(fav.conteudo_id) });
             
           if (item) {
             return {
               ...item,
               tipo: fav.tipo,
-              collection,
               favorito_em: fav.adicionado_em,
-              isFavorito: true,
-              favoritoId: fav._id // Incluir ID do favorito para referência
+              isFavorito: true
             };
           }
         } catch (err) {

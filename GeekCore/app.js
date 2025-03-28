@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
+const auth = require('./middleware/auth'); // Adicione esta linha
 require('dotenv').config();
 
 const app = express();
@@ -76,17 +77,6 @@ const validateObjectId = (req, res, next) => {
   }
 };
 
-// Middleware para validar coleção
-const validateCollection = (req, res, next) => {
-  const { collection } = req.params;
-  const validCollections = ['animes', 'filmes'];
-  
-  if (!validCollections.includes(collection)) {
-    return res.status(400).json({ message: 'Coleção inválida' });
-  }
-  next();
-};
-
 // Adicionar rota de health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date() });
@@ -101,27 +91,17 @@ app.get('/', (req, res) => {
 app.get('/api/search', async (req, res) => {
   const query = req.query.q;
 
-  // Verificar se o termo de pesquisa é válido
   if (!query || query.trim() === '') {
     return res.status(400).json({ message: 'Termo de pesquisa inválido.' });
   }
 
-  // Buscando nas coleções 'animes' e 'filmes'
-  const validCollections = ['animes', 'filmes'];
-
   try {
-    // Usando Promise.all para buscar nas duas coleções de forma paralela
-    const results = await Promise.all(validCollections.map(collection => {
-      return mongoose.connection.db.collection(collection)
-        .find({ titulo: { $regex: query, $options: 'i' } }) // Busca insensível a maiúsculas/minúsculas
-        .toArray();
-    }));
+    const results = await mongoose.connection.db.collection('videos')
+      .find({ titulo: { $regex: query, $options: 'i' } })
+      .toArray();
 
-    // Concatenando os resultados das duas coleções
-    const allResults = results.flat();
-
-    if (allResults.length > 0) {
-      res.json(allResults); // Envia os resultados encontrados
+    if (results.length > 0) {
+      res.json(results);
     } else {
       res.status(404).json({ message: 'Nenhum item encontrado para o termo de pesquisa.' });
     }
@@ -132,35 +112,18 @@ app.get('/api/search', async (req, res) => {
 });
 
 // Corrigir rota de busca de item específico
-app.get('/api/item/:collection/:id', validateCollection, validateObjectId, async (req, res) => {
-  const { collection, id } = req.params;
-  
-  try {
-    const db = mongoose.connection.db;
-    let item;
+app.get('/api/item/:id', validateObjectId, async (req, res) => {
+  const { id } = req.params;
 
-    try {
-      const objectId = new mongoose.Types.ObjectId(id);
-      item = await db.collection(collection).findOne({ _id: objectId });
-    } catch (err) {
-      // Tenta buscar usando o ID como string se a conversão falhar
-      item = await db.collection(collection).findOne({ _id: id });
-    }
+  try {
+    const objectId = new mongoose.Types.ObjectId(id);
+    const item = await mongoose.connection.db.collection('videos').findOne({ _id: objectId });
 
     if (!item) {
-      return res.status(404).json({
-        message: `Item não encontrado na coleção ${collection}`,
-        details: { collection, id }
-      });
+      return res.status(404).json({ message: 'Item não encontrado.' });
     }
 
-    const response = {
-      ...item,
-      tipo: collection === 'animes' ? 'anime' : 'filme',
-      collection
-    };
-
-    res.json(response);
+    res.json(item);
   } catch (err) {
     console.error('Erro ao buscar item:', err);
     res.status(500).json({ message: 'Erro interno do servidor' });
@@ -168,28 +131,32 @@ app.get('/api/item/:collection/:id', validateCollection, validateObjectId, async
 });
 
 // Rota para pegar recomendações
-app.get('/api/random/:collection', validateCollection, async (req, res) => {
-  const { collection } = req.params;
-  console.log(`Buscando recomendações para: ${collection}`);
-
+app.get('/api/random', async (req, res) => {
   try {
-    const db = mongoose.connection.db;
-    const items = await db.collection(collection)
-      .aggregate([
-        { $sample: { size: 6 } },
-        { 
-          $addFields: {
-            tipo: collection === 'animes' ? 'anime' : 'filme',
-            collection: collection
-          }
-        }
-      ]).toArray();
+    const items = await mongoose.connection.db.collection('videos')
+      .aggregate([{ $sample: { size: 6 } }])
+      .toArray();
 
-    console.log(`Encontrados ${items.length} itens para recomendação`);
     res.json(items);
   } catch (err) {
     console.error('Erro ao buscar recomendações:', err);
     res.status(500).json({ message: 'Erro ao buscar recomendações' });
+  }
+});
+
+// Rota para buscar itens recentes
+app.get('/api/recent', async (req, res) => {
+  try {
+    const recentItems = await mongoose.connection.db.collection('videos')
+      .find()
+      .sort({ _id: -1 })
+      .limit(20)
+      .toArray();
+
+    res.json(recentItems);
+  } catch (error) {
+    console.error('Erro ao buscar itens recentes:', error.message);
+    res.status(500).json({ message: 'Erro ao buscar itens recentes' });
   }
 });
 
@@ -201,51 +168,16 @@ app.get('/api/categories', async (req, res) => {
       throw new Error('Conexão com o banco de dados não estabelecida');
     }
 
-    const [movieCategories, animeCategories] = await Promise.all([
-      db.collection('filmes').distinct('categoria'),
-      db.collection('animes').distinct('categoria')
-    ]);
+    const categories = await db.collection('videos').distinct('categoria');
 
-    const allCategories = [...new Set([...movieCategories, ...animeCategories])];
-    
-    if (!allCategories.length) {
+    if (!categories.length) {
       return res.status(404).json({ message: 'Nenhuma categoria encontrada' });
     }
 
-    res.json(allCategories);
+    res.json(categories);
   } catch (err) {
     console.error('Erro ao buscar categorias:', err.message);
     res.status(500).json({ message: 'Erro ao buscar categorias', error: err.message });
-  }
-});
-
-app.get('/api/recent', async (req, res) => {
-  try {
-    if (!mongoose.connection.readyState) {
-      throw new Error('Conexão com o banco de dados não estabelecida');
-    }
-
-    const recentItems = await mongoose.connection.db.collection('animes')
-      .find()
-      .sort({ _id: -1 }) // Ordenar por ID em ordem decrescente
-      .toArray();
-
-    if (!recentItems || recentItems.length === 0) {
-      return res.json([]); // Retorna um array vazio se não houver itens
-    }
-
-    // Adicionar validação para garantir que cada item tenha as propriedades necessárias
-    const validatedItems = recentItems.map(item => ({
-      ...item,
-      collection: 'animes', // Define a coleção como 'animes'
-      titulo: item.titulo || 'Sem título', // Define um valor padrão para `titulo` se estiver ausente
-      img_url: item.img_url || '/images/default-image.png' // Define uma imagem padrão se `img_url` estiver ausente
-    }));
-
-    res.json(validatedItems);
-  } catch (error) {
-    console.error('Erro ao buscar itens recentes:', error.message);
-    res.status(500).json({ message: 'Erro ao buscar itens recentes' });
   }
 });
 
@@ -254,28 +186,36 @@ app.get('/api/category/:category', async (req, res) => {
   const { category } = req.params;
 
   try {
-    const results = await Promise.all([
-      mongoose.connection.db.collection('filmes')
-        .find({ categoria: { $regex: new RegExp(category, 'i') } })
-        .toArray(),
-      mongoose.connection.db.collection('animes')
-        .find({ categoria: { $regex: new RegExp(category, 'i') } })
-        .toArray()
-    ]);
+    const results = await mongoose.connection.db.collection('videos')
+      .find({ categoria: { $regex: new RegExp(category, 'i') } })
+      .toArray();
 
-    const allResults = results.flat().map(item => ({
-      ...item,
-      collection: item.categoria.toLowerCase().includes('anime') ? 'animes' : 'filmes'
-    }));
-
-    if (allResults.length > 0) {
-      res.json(allResults);
+    if (results.length > 0) {
+      res.json(results);
     } else {
       res.status(404).json({ message: 'Nenhum item encontrado nesta categoria.' });
     }
   } catch (err) {
     console.error('Erro ao buscar por categoria:', err);
     res.status(500).json({ message: 'Erro ao buscar itens por categoria.' });
+  }
+});
+
+// Rota para buscar perfil do usuário
+app.get('/api/auth/perfil', auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) return res.status(404).json({ message: 'Usuário não encontrado' });
+
+    res.json({
+      nome: user.nome,
+      email: user.email,
+      descricao: user.descricao || '',
+      foto: user.foto || '',
+      tema_cor: user.tema_cor || '#ef4444' // Cor padrão caso não esteja definida
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Erro ao buscar perfil do usuário' });
   }
 });
 

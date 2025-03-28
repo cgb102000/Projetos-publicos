@@ -56,6 +56,12 @@ api.interceptors.response.use(
       throw new Error('Servidor em manutenção. Tente novamente em alguns instantes.');
     }
 
+    // Preservar cor do tema ao recarregar estado
+    const temaAtual = document.documentElement.style.getPropertyValue('--color-primary');
+    if (temaAtual) {
+      localStorage.setItem('tema_cor', temaAtual);
+    }
+
     if (error.code === 'ERR_NETWORK') {
       console.error('Erro de conexão - Servidor está rodando?');
       // Tentar reconectar
@@ -117,14 +123,26 @@ export const authService = {
         tipo: tipo.toLowerCase().replace('s', '')
       });
 
-      // Corrigir o nome da propriedade para corresponder ao backend
+      // Atualizar o localStorage com o novo estado
+      const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+      if (data.isFavorito) {
+        favorites.push(conteudoId);
+      } else {
+        const index = favorites.indexOf(conteudoId);
+        if (index > -1) favorites.splice(index, 1);
+      }
+      localStorage.setItem('favorites', JSON.stringify(favorites));
+
       return {
         ...data,
-        isFavorited: data.isFavorito // Aqui estava o problema
+        isFavorito: data.isFavorito,
+        message: data.isFavorito 
+          ? 'Item adicionado aos favoritos!' 
+          : 'Item removido dos favoritos!'
       };
     } catch (error) {
       console.error('Detalhes do erro:', error.response?.data || error.message);
-      throw new Error(error.response?.data?.message || 'Erro ao favoritar. Tente novamente.');
+      throw error;
     }
   },
 
@@ -134,11 +152,11 @@ export const authService = {
       if (!token) return [];
 
       const { data } = await api.get('/api/auth/favoritos');
+      
+      // Garantir que todos os itens retornados tenham a propriedade isFavorited como true
       return Array.isArray(data) ? data.map(fav => ({
         ...fav,
-        conteudo_id: fav.conteudo_id || fav._id,
-        _id: fav._id || fav.conteudo_id,
-        isFavorito: true
+        isFavorited: true
       })) : [];
     } catch (error) {
       console.error('Erro ao buscar favoritos:', error);
@@ -148,6 +166,12 @@ export const authService = {
 
   async getUserProfile() {
     const { data } = await api.get('/api/auth/perfil');
+    
+    // Salvar a cor do tema no localStorage para uso global
+    if (data.tema_cor) {
+      localStorage.setItem('tema_cor', data.tema_cor);
+    }
+    
     return data;
   },
 
@@ -199,65 +223,51 @@ export const contentService = {
     return data;
   },
 
-  async getRecentContent() {
+  async getItem(id) {
     try {
-      // Verificar status do servidor primeiro
-      await api.get('/api/health');
-      
-      const { data } = await api.get('/api/recent');
-      if (data.length === 0) {
-        console.info('Nenhum item recente encontrado.'); // Ajuste para log informativo
-      }
-      return Array.isArray(data) ? data : [];
-    } catch (error) {
-      console.error('Erro ao buscar conteúdo recente:', error);
-      throw error;
-    }
-  },
-
-  async searchContent(query) {
-    const { data } = await api.get(`/api/search?q=${encodeURIComponent(query)}`);
-    return data;
-  },
-
-  async getItem(collection, id) {
-    try {
-      if (!id || !collection) {
-        throw new Error('ID ou collection inválidos');
+      if (!id) {
+        throw new Error('ID inválido');
       }
 
-      const { data } = await api.get(`/api/item/${collection}/${id}`);
+      const { data } = await api.get(`/api/item/${id}`);
       if (!data) {
         throw new Error('Item não encontrado');
       }
 
-      return {
-        ...data,
-        collection: collection,
-        tipo: collection === 'animes' ? 'anime' : 'filme'
-      };
+      return data;
     } catch (error) {
       console.error('Erro ao buscar item:', error.message);
       throw error;
     }
   },
 
-  async getRecommendations(collection) {
+  async getRecommendations() {
     try {
-      const { data } = await api.get(`/api/random/${collection}`);
-      if (!data || !Array.isArray(data)) {
-        console.warn('Dados de recomendação inválidos.');
-        return [];
-      }
-
-      return data.map(item => ({
-        ...item,
-        collection: collection,
-        tipo: collection === 'animes' ? 'anime' : 'filme'
-      }));
+      const { data } = await api.get('/api/random');
+      return data || [];
     } catch (error) {
       console.error('Erro ao buscar recomendações:', error.message);
       return [];
+    }
+  },
+
+  async getRecentContent() {
+    try {
+      const { data } = await api.get('/api/recent');
+      return data || [];
+    } catch (error) {
+      console.error('Erro ao buscar conteúdo recente:', error.message);
+      throw error;
+    }
+  },
+
+  async searchContent(query) {
+    try {
+      const { data } = await api.get(`/api/search?q=${encodeURIComponent(query)}`);
+      return data || [];
+    } catch (error) {
+      console.error('Erro ao buscar conteúdo:', error.message);
+      throw error;
     }
   }
 };
