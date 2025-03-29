@@ -7,13 +7,13 @@ const getBaseUrl = () => {
 
 const api = axios.create({
   baseURL: getBaseUrl(),
-  timeout: 5000,
+  timeout: 3000, // Reduzido de 5000 para 3000ms
   headers: {
     'Content-Type': 'application/json'
   },
   withCredentials: true,
-  retry: 3,
-  retryDelay: (retryCount) => retryCount * 1000
+  retry: 1, // Reduzido de 3 para 1 retry
+  retryDelay: (retryCount) => retryCount * 500 // Reduzido delay entre retries
 });
 
 // Adicionar interceptor de retry
@@ -85,14 +85,15 @@ api.interceptors.response.use(
 export const authService = {
   async login(email, senha) {
     try {
-      console.log('Tentando login com:', { email }); // Log para debug
+      console.log('Tentando login com:', { email });
 
-      const { data } = await api.post('/api/auth/login', { 
+      const response = await api.post('/api/auth/login', { 
         email: email.toLowerCase().trim(),
         senha: senha
       });
 
-      console.log('Resposta do servidor:', data); // Log para debug
+      const { data } = response;
+      console.log('Resposta do servidor:', data);
 
       if (data.success && data.token) {
         localStorage.setItem('token', data.token);
@@ -103,7 +104,11 @@ export const authService = {
       throw new Error(data.message || 'Erro ao fazer login');
     } catch (error) {
       console.error('Erro de login:', error.response?.data || error);
-      throw new Error(error.response?.data?.message || 'Erro ao fazer login');
+      throw new Error(
+        error.response?.data?.message || 
+        error.message || 
+        'Email ou senha inválidos'
+      );
     }
   },
 
@@ -173,6 +178,26 @@ export const authService = {
     }
     
     return data;
+  },
+
+  async getPublicProfile(userId) {
+    try {
+      const [profileData, favoritosData] = await Promise.all([
+        api.get(`/api/auth/perfil/${userId}`),
+        api.get(`/api/auth/favoritos/${userId}`)
+      ]);
+
+      return {
+        ...profileData.data,
+        favoritos: Array.isArray(favoritosData.data) ? favoritosData.data : []
+      };
+    } catch (error) {
+      console.error('Erro ao buscar perfil:', error);
+      return {
+        ...profileData.data,
+        favoritos: []
+      };
+    }
   },
 
   async updateUserProfile(profileData) {
@@ -257,7 +282,7 @@ export const contentService = {
       return data || [];
     } catch (error) {
       console.error('Erro ao buscar conteúdo recente:', error.message);
-      throw error;
+      return [];
     }
   },
 
@@ -267,7 +292,64 @@ export const contentService = {
       return data || [];
     } catch (error) {
       console.error('Erro ao buscar conteúdo:', error.message);
-      throw error;
+      return [];
+    }
+  }
+};
+
+export const amigoService = {
+  async enviarSolicitacao(email) {
+    try {
+      console.log('Tentando enviar solicitação para:', email);
+      const response = await api.post('/api/auth/amizade/solicitar', { email }, {
+        timeout: 2000 // Timeout específico para esta requisição
+      });
+      
+      console.log('Resposta do servidor:', response.data);
+      
+      if (!response.data.success) {
+        throw new Error(response.data.message || 'Erro ao enviar solicitação');
+      }
+      
+      return response.data;
+    } catch (error) {
+      console.error('Erro detalhado:', error.response?.data || error);
+      
+      // Melhorar tratamento de erro
+      const errorMessage = error.response?.data?.message || error.message;
+      throw new Error(errorMessage);
+    }
+  },
+
+  async responderSolicitacao(solicitacaoId, aceitar) {
+    try {
+      const { data } = await api.post('/api/auth/amizade/responder', { 
+        solicitacaoId, 
+        aceitar 
+      });
+      return data;
+    } catch (error) {
+      throw error.response?.data?.message || 'Erro ao responder solicitação';
+    }
+  },
+
+  async listarAmigos() {
+    try {
+      const { data } = await api.get('/api/auth/amigos');
+      return data;
+    } catch (error) {
+      console.error('Erro ao listar amigos:', error);
+      return [];
+    }
+  },
+
+  async listarSolicitacoes() {
+    try {
+      const { data } = await api.get('/api/auth/amizade/solicitacoes');
+      return data;
+    } catch (error) {
+      console.error('Erro ao listar solicitações:', error);
+      return [];
     }
   }
 };

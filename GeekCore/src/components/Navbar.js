@@ -6,6 +6,7 @@ import { useTheme } from '../contexts/ThemeContext';
 export function Navbar() {
   const { isAuthenticated, user, dispatch } = useContext(AuthContext);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const navigate = useNavigate();
   const { isDarkMode, setIsDarkMode } = useTheme();
 
@@ -65,47 +66,75 @@ export function Navbar() {
               </svg>
             )}
           </button>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center">
             {isAuthenticated ? (
-              <>
-                <Link to="/favoritos" className="nav-link text-light">
-                  Favoritos
-                </Link>
-                <div className="flex items-center space-x-3">
-                  <Link 
-                    to="/perfil" 
-                    className="nav-link flex items-center space-x-2 text-light group"
-                  >
-                    <div className="relative w-10 h-10 rounded-full overflow-hidden border-2 profile-avatar-border transition-colors">
-                      {user?.foto ? (
-                        <img
-                          src={user.foto}
-                          alt={user.nome}
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            e.target.onerror = null;
-                            e.target.src = '/images/default-avatar.png';
-                          }}
-                          loading="eager"
-                        />
-                      ) : (
-                        <img
-                          src="/images/default-avatar.png"
-                          alt="Avatar padrão"
-                          className="w-full h-full object-cover"
-                        />
-                      )}
-                    </div>
-                    <span>Meu Perfil</span>
-                  </Link>
-                </div>
+              <div className="relative">
                 <button 
-                  onClick={handleLogout}
-                  className="nav-button bg-primary text-white px-4 py-2 rounded transition-colors"
+                  onClick={() => setIsProfileOpen(!isProfileOpen)}
+                  className="nav-link flex items-center space-x-2 text-light group"
                 >
-                  Sair
+                  <div className="relative w-10 h-10 rounded-full overflow-hidden border-2 profile-avatar-border transition-colors">
+                    {user?.foto ? (
+                      <img
+                        src={user.foto}
+                        alt={user.nome}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = '/images/default-avatar.png';
+                        }}
+                        loading="eager"
+                      />
+                    ) : (
+                      <img
+                        src="/images/default-avatar.png"
+                        alt="Avatar padrão"
+                        className="w-full h-full object-cover"
+                      />
+                    )}
+                  </div>
+                  <span className="hidden md:inline">Meu Perfil</span>
+                  <svg className={`w-4 h-4 transition-transform duration-200 ${isProfileOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                  </svg>
                 </button>
-              </>
+
+                {isProfileOpen && (
+                  <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-darker border border-gray-700 z-50">
+                    <Link
+                      to="/perfil"
+                      onClick={() => setIsProfileOpen(false)}
+                      className="block px-4 py-2 text-sm text-light hover:bg-hover transition-all"
+                    >
+                      Ver Perfil
+                    </Link>
+                    <Link
+                      to="/favoritos"
+                      onClick={() => setIsProfileOpen(false)}
+                      className="block px-4 py-2 text-sm text-light hover:bg-hover transition-all"
+                    >
+                      Meus Favoritos
+                    </Link>
+                    <Link
+                      to="/amigos"
+                      onClick={() => setIsProfileOpen(false)}
+                      className="block px-4 py-2 text-sm text-light hover:bg-hover transition-all"
+                    >
+                      Meus Amigos
+                    </Link>
+                    <div className="border-t border-gray-700 my-1"></div>
+                    <button
+                      onClick={() => {
+                        handleLogout();
+                        setIsProfileOpen(false);
+                      }}
+                      className="w-full text-left px-4 py-2 text-sm text-light hover:bg-hover transition-all"
+                    >
+                      Sair
+                    </button>
+                  </div>
+                )}
+              </div>
             ) : (
               <>
                 <Link to="/login" className="nav-link text-light">

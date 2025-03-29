@@ -5,7 +5,7 @@ export function Footer() {
         <div className="flex flex-col items-center gap-6">
           <div className="text-center">
             <h2 className="text-2xl font-bold text-primary">GeekCore</h2>
-            <p className="text-gray-400 mt-2">Sua plataforma de entretenimento geek</p>
+            <p className="text-gray-400 mt-2">Sua plataforma de entretenimento Geek!</p>
           </div>
           
           <div className="text-center max-w-2xl">
@@ -17,7 +17,7 @@ export function Footer() {
           </div>
 
           <div className="text-gray-500 text-sm">
-            &copy; {new Date().getFullYear()} GeekCore. Todos os direitos reservados.
+            &copy; {new Date().getFullYear()} Site criado por Caio Gabriel.
           </div>
         </div>
       </div>

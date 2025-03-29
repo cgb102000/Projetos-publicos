@@ -10,6 +10,9 @@ import { Favoritos } from './pages/Favoritos';
 import { Detalhes } from './pages/Detalhes';
 import { Perfil } from './pages/Perfil';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { Amigos } from './pages/Amigos';
+import { AlertProvider } from './contexts/AlertContext';
+import { PerfilAmigo } from './pages/PerfilAmigo';
 
 function App() {
   return (
@@ -19,33 +22,51 @@ function App() {
         v7_relativeSplatPath: true 
       }}>
         <AuthProvider>
-          <div className="min-h-screen bg-darker">
-            <Navbar />
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/search" element={<Search />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route 
-                path="/favoritos" 
-                element={
-                  <PrivateRoute>
-                    <Favoritos />
-                  </PrivateRoute>
-                } 
-              />
-              <Route path="/detalhes/:collection/:id" element={<Detalhes />} />
-              <Route 
-                path="/perfil" 
-                element={
-                  <PrivateRoute>
-                    <Perfil />
-                  </PrivateRoute>
-                } 
-              />
-              <Route path="*" element={<Navigate to="/" />} />
-            </Routes>
-          </div>
+          <AlertProvider>
+            <div className="min-h-screen bg-darker">
+              <Navbar />
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/search" element={<Search />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route 
+                  path="/favoritos" 
+                  element={
+                    <PrivateRoute>
+                      <Favoritos />
+                    </PrivateRoute>
+                  } 
+                />
+                <Route path="/detalhes/:collection/:id" element={<Detalhes />} />
+                <Route 
+                  path="/perfil" 
+                  element={
+                    <PrivateRoute>
+                      <Perfil />
+                    </PrivateRoute>
+                  } 
+                />
+                <Route 
+                  path="/amigos" 
+                  element={
+                    <PrivateRoute>
+                      <Amigos />
+                    </PrivateRoute>
+                  } 
+                />
+                <Route 
+                  path="/perfil/:id" 
+                  element={
+                    <PrivateRoute>
+                      <PerfilAmigo />
+                    </PrivateRoute>
+                  } 
+                />
+                <Route path="*" element={<Navigate to="/" />} />
+              </Routes>
+            </div>
+          </AlertProvider>
         </AuthProvider>
       </BrowserRouter>
     </ThemeProvider>

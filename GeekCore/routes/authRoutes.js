@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 
 const router = express.Router();
 
-// Registro
+// Rotas públicas (sem auth)
 router.post('/register', async (req, res) => {
   try {
     const { nome, email, senha } = req.body;
@@ -23,11 +23,10 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// Login
 router.post('/login', async (req, res) => {
   try {
     const { email, senha } = req.body;
-    console.log('Tentativa de login:', { email }); // Log para debug
+    console.log('Tentativa de login:', { email });
 
     if (!email || !senha) {
       return res.status(400).json({ 
@@ -37,7 +36,7 @@ router.post('/login', async (req, res) => {
     }
 
     const user = await User.findOne({ email: email.toLowerCase() });
-    console.log('Usuário encontrado:', !!user); // Log para debug
+    console.log('Usuário encontrado:', !!user);
 
     if (!user) {
       return res.status(401).json({ 
@@ -47,7 +46,7 @@ router.post('/login', async (req, res) => {
     }
 
     const senhaValida = await user.verificarSenha(senha);
-    console.log('Senha válida:', senhaValida); // Log para debug
+    console.log('Senha válida:', senhaValida);
 
     if (!senhaValida) {
       return res.status(401).json({ 
@@ -78,8 +77,12 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// Rotas protegidas (com auth)
+// Adicionar middleware auth apenas nas rotas que precisam de autenticação
+router.use(auth); // Aplica auth em todas as rotas abaixo
+
 // Rota para favoritar/desfavoritar
-router.post('/favoritos', auth, async (req, res) => {
+router.post('/favoritos', async (req, res) => {
   try {
     const { conteudo_id, tipo } = req.body;
     
@@ -138,7 +141,7 @@ router.post('/favoritos', auth, async (req, res) => {
 });
 
 // Rota para listar favoritos
-router.get('/favoritos', auth, async (req, res) => {
+router.get('/favoritos', async (req, res) => {
   try {
     const userId = req.user.id;
     const user = await User.findById(userId);
@@ -177,7 +180,7 @@ router.get('/favoritos', auth, async (req, res) => {
 });
 
 // Obter perfil do usuário
-router.get('/perfil', auth, async (req, res) => {
+router.get('/perfil', async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ message: 'Usuário não encontrado' });
@@ -194,8 +197,33 @@ router.get('/perfil', auth, async (req, res) => {
   }
 });
 
+// Obter perfil público do usuário
+router.get('/perfil/:id', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id)
+      .select('nome email descricao foto data_criacao amigos favoritos')
+      .populate('amigos.usuario', 'nome foto');
+
+    if (!user) {
+      return res.status(404).json({ message: 'Usuário não encontrado' });
+    }
+
+    res.json({
+      id: user._id,
+      nome: user.nome,
+      descricao: user.descricao,
+      foto: user.foto,
+      data_criacao: user.data_criacao,
+      amigos: user.amigos,
+      favoritos: user.favoritos
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Erro ao buscar perfil do usuário' });
+  }
+});
+
 // Atualizar perfil do usuário
-router.put('/perfil', auth, async (req, res) => {
+router.put('/perfil', async (req, res) => {
   try {
     const { nome, descricao, foto, tema_cor } = req.body;
     
@@ -238,7 +266,7 @@ router.put('/perfil', auth, async (req, res) => {
 });
 
 // Nova rota para alteração de senha
-router.post('/change-password', auth, async (req, res) => {
+router.post('/change-password', async (req, res) => {
   try {
     const { senha_atual, nova_senha } = req.body;
     const user = await User.findById(req.user.id);
@@ -259,6 +287,214 @@ router.post('/change-password', auth, async (req, res) => {
   } catch (error) {
     console.error('Erro ao alterar senha:', error);
     res.status(500).json({ message: 'Erro ao alterar senha' });
+  }
+});
+
+// Enviar solicitação de amizade
+router.post('/amizade/solicitar', async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ 
+        success: false,
+        message: 'Email é obrigatório' 
+      });
+    }
+
+    // Usando lean() para busca mais rápida
+    const usuarioDestino = await User.findOne({ email: email.toLowerCase() }).lean();
+    const usuarioOrigem = await User.findById(req.user.id).lean();
+
+    if (!usuarioDestino) {
+      return res.status(404).json({ 
+        success: false,
+        message: 'Usuário não encontrado' 
+      });
+    }
+
+    if (usuarioDestino._id.toString() === req.user.id) {
+      return res.status(400).json({ 
+        success: false,
+        message: 'Você não pode adicionar a si mesmo' 
+      });
+    }
+
+    // Otimizando a verificação de amizade
+    const jaAmigos = await User.exists({
+      _id: usuarioDestino._id,
+      'amigos.usuario': req.user.id
+    });
+
+    if (jaAmigos) {
+      return res.status(400).json({ 
+        success: false,
+        message: 'Vocês já são amigos' 
+      });
+    }
+
+    // Otimizando verificação de solicitação pendente
+    const solicitacaoExiste = await User.exists({
+      _id: usuarioDestino._id,
+      'solicitacoes_amizade': {
+        $elemMatch: {
+          de: req.user.id,
+          status: 'pendente'
+        }
+      }
+    });
+
+    if (solicitacaoExiste) {
+      return res.status(400).json({ 
+        success: false,
+        message: 'Já existe uma solicitação pendente' 
+      });
+    }
+
+    // Atualizando diretamente sem carregar todo o documento
+    await User.updateOne(
+      { _id: usuarioDestino._id },
+      {
+        $push: {
+          solicitacoes_amizade: {
+            de: req.user.id,
+            status: 'pendente'
+          }
+        }
+      }
+    );
+
+    res.json({
+      success: true,
+      message: 'Solicitação enviada com sucesso'
+    });
+  } catch (error) {
+    console.error('Erro ao processar solicitação:', error);
+    res.status(500).json({ 
+      success: false,
+      message: 'Erro ao processar solicitação'
+    });
+  }
+});
+
+// Responder solicitação de amizade
+router.post('/amizade/responder', async (req, res) => {
+  try {
+    const { solicitacaoId, aceitar } = req.body;
+    const usuario = await User.findById(req.user.id);
+    
+    const solicitacao = usuario.solicitacoes_amizade.id(solicitacaoId);
+    if (!solicitacao) {
+      return res.status(404).json({ message: 'Solicitação não encontrada' });
+    }
+
+    solicitacao.status = aceitar ? 'aceito' : 'rejeitado';
+
+    if (aceitar) {
+      // Adicionar amizade para ambos os usuários
+      const outroUsuario = await User.findById(solicitacao.de);
+      
+      usuario.amigos.push({ usuario: solicitacao.de });
+      outroUsuario.amigos.push({ usuario: usuario._id });
+      
+      await Promise.all([usuario.save(), outroUsuario.save()]);
+    } else {
+      await usuario.save();
+    }
+
+    res.json({ 
+      message: aceitar ? 'Solicitação aceita' : 'Solicitação rejeitada',
+      status: solicitacao.status
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Erro ao responder solicitação' });
+  }
+});
+
+// Listar amigos
+router.get('/amigos', async (req, res) => {
+  try {
+    const usuario = await User.findById(req.user.id);
+    if (!usuario) {
+      return res.status(404).json({ message: 'Usuário não encontrado' });
+    }
+
+    // Limpar amigos deletados antes de retornar
+    await usuario.limparAmigosDeletedos();
+    
+    // Buscar dados atualizados dos amigos
+    await usuario.populate('amigos.usuario', 'nome email foto');
+    
+    // Filtrar apenas amigos válidos
+    const amigosValidos = usuario.amigos.filter(amigo => amigo.usuario);
+    
+    res.json(amigosValidos);
+  } catch (error) {
+    console.error('Erro ao listar amigos:', error);
+    res.status(500).json({ message: 'Erro ao listar amigos' });
+  }
+});
+
+// Listar solicitações pendentes
+router.get('/amizade/solicitacoes', async (req, res) => {
+  try {
+    const usuario = await User.findById(req.user.id);
+    if (!usuario) {
+      return res.status(404).json({ message: 'Usuário não encontrado' });
+    }
+
+    // Limpar solicitações de usuários deletados
+    await usuario.limparAmigosDeletedos();
+    
+    await usuario.populate('solicitacoes_amizade.de', 'nome email foto');
+    
+    const solicitacoesPendentes = usuario.solicitacoes_amizade
+      .filter(s => s.status === 'pendente' && s.de);
+    
+    res.json(solicitacoesPendentes);
+  } catch (error) {
+    console.error('Erro ao listar solicitações:', error);
+    res.status(500).json({ message: 'Erro ao listar solicitações' });
+  }
+});
+
+// Obter favoritos de um usuário específico
+router.get('/favoritos/:userId', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    if (!user) {
+      return res.status(404).json({ message: 'Usuário não encontrado' });
+    }
+
+    // Garantir que favoritos existe e é um array
+    const favoritosArray = user.favoritos || [];
+
+    const favoritos = await Promise.all(
+      favoritosArray.map(async (fav) => {
+        try {
+          const item = await mongoose.connection.db
+            .collection('videos')
+            .findOne({ _id: new mongoose.Types.ObjectId(fav.conteudo_id) });
+          
+          if (item) {
+            return {
+              ...item,
+              tipo: fav.tipo,
+              favorito_em: fav.adicionado_em
+            };
+          }
+        } catch (err) {
+          console.error(`Erro ao buscar item ${fav.conteudo_id}:`, err);
+        }
+        return null;
+      })
+    );
+
+    // Filtrar itens nulos e retornar array vazio se não houver favoritos
+    res.json(favoritos.filter(f => f !== null) || []);
+  } catch (error) {
+    console.error('Erro ao buscar favoritos:', error);
+    // Retornar array vazio em caso de erro
+    res.json([]);
   }
 });
 

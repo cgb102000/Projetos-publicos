@@ -79,7 +79,7 @@ body {
 }
 
 .hover\:bg-hover:hover {
-  background-color: var(--color-hover);
+  background-color: var(--color-hover) !important; /* Forçar uso da cor do hover */
   color: var(--color-text);
   transform: translateY(-1px);
   transition: all 0.3s ease;
@@ -177,6 +177,49 @@ body {
 .profile-button:hover {
   background-color: var(--color-hover);
   transform: translateY(-1px);
+}
+
+/* Estilos do Dropdown do Perfil */
+.profile-dropdown {
+  position: relative;
+}
+
+.profile-dropdown-menu {
+  animation: dropdownFade 0.2s ease-out;
+}
+
+@keyframes dropdownFade {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.profile-dropdown-item {
+  @apply transition-all duration-200;
+}
+
+.profile-dropdown-item:hover {
+  @apply bg-primary text-white transform translate-x-1;
+}
+
+/* Ajuste do botão do perfil */
+.profile-button {
+  @apply relative flex items-center space-x-2 text-light;
+  transition: all 0.3s ease;
+}
+
+.profile-button:hover .profile-avatar-border {
+  border-color: var(--color-hover);
+  transform: scale(1.05);
+}
+
+.profile-button:hover .profile-chevron {
+  color: var(--color-hover);
 }
 
 /* Adicionar classes específicas para o avatar */
@@ -819,4 +862,48 @@ footer .text-light {
   footer .container {
     padding: 0 1rem;
   }
+}
+
+/* Estilização do Dropdown */
+.nav-link .dropdown-item {
+  @apply block px-4 py-2 text-sm text-light transition-all duration-200;
+}
+
+.nav-link .dropdown-item:hover {
+  background-color: var(--color-hover);
+  color: var(--color-text);
+}
+
+/* Ajuste do efeito hover para usar a cor personalizada */
+.hover\:bg-hover:hover {
+  background-color: var(--color-hover) !important;
+  color: var(--color-text);
+  transform: translateY(-1px);
+  transition: all 0.3s ease;
+}
+
+/* Efeito de transição suave para itens do dropdown */
+.dropdown-menu {
+  animation: dropdownFade 0.2s ease-out;
+}
+
+@keyframes dropdownFade {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Hover consistente para todos os elementos interativos */
+.interactive-hover {
+  transition: all 0.3s ease;
+}
+
+.interactive-hover:hover {
+  background-color: var(--color-hover);
+  color: var(--color-text);
 }

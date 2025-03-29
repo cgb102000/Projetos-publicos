@@ -121,16 +121,16 @@ export function Home() {
             {/* Hero Section */}
             <section className="mb-16">
               <h2 className="section-title"></h2>
-              <div className="relative h-[70vh] rounded-lg overflow-hidden mb-12">
+              <div className="relative h-[70vh] rounded-lg overflow-hidden mb-12 hero-section">
                 {featuredItem && featuredItem.img_capa_url && (
                   <Link 
                     to={`/detalhes/${featuredItem.collection}/${featuredItem._id}`}
-                    className="block w-full h-full group"
+                    className="block w-full h-full"
                   >
                     <img 
-                      src={featuredItem.img_capa_url} // Usar apenas img_capa_url
+                      src={featuredItem.img_capa_url}
                       alt={featuredItem.titulo}
-                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      className="w-full h-full object-cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-darker via-transparent to-transparent">
                       <div className="absolute bottom-0 left-0 p-8">

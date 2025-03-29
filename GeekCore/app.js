@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
 const auth = require('./middleware/auth'); // Adicione esta linha
+const User = require('./models/User'); // Importar o modelo User
 require('dotenv').config();
 
 const app = express();
@@ -31,7 +32,7 @@ app.use(logMiddleware);
 // Importar rotas de autenticação
 const authRoutes = require('./routes/authRoutes');
 
-// Corrigir o caminho base das rotas de autenticação
+// Registrar apenas as rotas de autenticação
 app.use('/api/auth', authRoutes);
 
 // Função para conectar ao MongoDB com tentativas de reconexão
@@ -198,24 +199,6 @@ app.get('/api/category/:category', async (req, res) => {
   } catch (err) {
     console.error('Erro ao buscar por categoria:', err);
     res.status(500).json({ message: 'Erro ao buscar itens por categoria.' });
-  }
-});
-
-// Rota para buscar perfil do usuário
-app.get('/api/auth/perfil', auth, async (req, res) => {
-  try {
-    const user = await User.findById(req.user.id);
-    if (!user) return res.status(404).json({ message: 'Usuário não encontrado' });
-
-    res.json({
-      nome: user.nome,
-      email: user.email,
-      descricao: user.descricao || '',
-      foto: user.foto || '',
-      tema_cor: user.tema_cor || '#ef4444' // Cor padrão caso não esteja definida
-    });
-  } catch (error) {
-    res.status(500).json({ message: 'Erro ao buscar perfil do usuário' });
   }
 });
 

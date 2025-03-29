@@ -143,6 +143,59 @@
   .carousel-slide {
     @apply flex-none w-full;
   }
+
+  .cards-container {
+    @apply grid gap-4;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    width: 100%;
+  }
+
+  /* Padronização dos cards */
+  .card {
+    @apply relative overflow-hidden rounded-lg cursor-pointer;
+    aspect-ratio: 2/3;
+    width: 100%;
+    height: auto;
+    min-height: 300px;
+    max-height: 450px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .card:hover {
+    @apply transform scale-[1.02] z-10;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  .card::after {
+    @apply content-[''] absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 transition-opacity duration-300;
+  }
+
+  .card:hover::after {
+    @apply opacity-100;
+  }
+
+  .card img {
+    @apply absolute inset-0 w-full h-full object-cover transition-transform duration-300;
+    @apply w-full h-full object-cover transition-all duration-300;
+  }
+
+  .card .hover-overlay {
+    @apply absolute inset-0 bg-black opacity-0 transition-all duration-300 
+           flex items-center justify-center;
+  }
+
+  .card:hover .hover-overlay {
+    @apply opacity-80;
+  }
+
+  /* Hover suave para a capa principal */
+  .hero-section img {
+    @apply transition-transform duration-500;
+  }
+
+  .hero-section:hover img {
+    transform: scale(1.02);
+  }
 }
 
 @layer utilities {
