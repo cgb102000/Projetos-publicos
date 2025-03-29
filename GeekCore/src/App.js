@@ -56,6 +56,14 @@ function App() {
                   } 
                 />
                 <Route 
+                  path="/amigos/adicionar" 
+                  element={
+                    <PrivateRoute>
+                      <Amigos mode="adicionar" />
+                    </PrivateRoute>
+                  } 
+                />
+                <Route 
                   path="/perfil/:id" 
                   element={
                     <PrivateRoute>
