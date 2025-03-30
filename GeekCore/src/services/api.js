@@ -376,6 +376,43 @@ export const amigoService = {
       console.error('Erro ao listar solicitações:', error);
       return [];
     }
+  },
+
+  async removerAmigo(amigoId) {
+    try {
+      const { data } = await api.delete(`/api/auth/amizade/remover/${amigoId}`);
+      return data;
+    } catch (error) {
+      throw error.response?.data?.message || 'Erro ao remover amigo';
+    }
+  },
+
+  async bloquearAmigo(amigoId) {
+    try {
+      const { data } = await api.post(`/api/auth/amizade/bloquear/${amigoId}`);
+      return data;
+    } catch (error) {
+      throw error.response?.data?.message || 'Erro ao bloquear usuário';
+    }
+  },
+
+  async listarBloqueados() {
+    try {
+      const { data } = await api.get('/api/auth/bloqueados');
+      return data;
+    } catch (error) {
+      console.error('Erro ao listar bloqueados:', error);
+      return [];
+    }
+  },
+
+  async desbloquearUsuario(userId) {
+    try {
+      const { data } = await api.post(`/api/auth/amizade/desbloquear/${userId}`);
+      return data;
+    } catch (error) {
+      throw error.response?.data?.message || 'Erro ao desbloquear usuário';
+    }
   }
 };
 

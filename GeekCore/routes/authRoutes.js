@@ -498,4 +498,117 @@ router.get('/favoritos/:userId', async (req, res) => {
   }
 });
 
+// Rota para remover amigo
+router.delete('/amizade/remover/:id', auth, async (req, res) => {
+  try {
+    const usuario = await User.findById(req.user.id);
+    const amigoId = req.params.id;
+
+    usuario.amigos = usuario.amigos.filter(
+      amigo => amigo.usuario.toString() !== amigoId
+    );
+
+    // Remover amizade do outro usuário também
+    await User.updateOne(
+      { _id: amigoId },
+      { $pull: { amigos: { usuario: req.user.id } } }
+    );
+
+    await usuario.save();
+    
+    res.json({ 
+      success: true,
+      message: 'Amigo removido com sucesso'
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Erro ao remover amigo' });
+  }
+});
+
+// Rota para bloquear usuário
+router.post('/amizade/bloquear/:id', auth, async (req, res) => {
+  try {
+    const usuario = await User.findById(req.user.id);
+    const usuarioParaBloquear = req.params.id;
+
+    // Remover amizade
+    usuario.amigos = usuario.amigos.filter(
+      amigo => amigo.usuario.toString() !== usuarioParaBloquear
+    );
+
+    // Adicionar à lista de bloqueados
+    if (!usuario.bloqueados) {
+      usuario.bloqueados = [];
+    }
+    usuario.bloqueados.push(usuarioParaBloquear);
+
+    // Remover amizade do outro usuário também
+    await User.updateOne(
+      { _id: usuarioParaBloquear },
+      { 
+        $pull: { amigos: { usuario: req.user.id } },
+        $push: { bloqueadoPor: req.user.id }
+      }
+    );
+
+    await usuario.save();
+    
+    res.json({
+      success: true,
+      message: 'Usuário bloqueado com sucesso'
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Erro ao bloquear usuário' });
+  }
+});
+
+// Rota para listar bloqueados
+router.get('/bloqueados', auth, async (req, res) => {
+  try {
+    const usuario = await User.findById(req.user.id);
+    if (!usuario) {
+      return res.status(404).json({ message: 'Usuário não encontrado' });
+    }
+
+    // Buscar dados dos usuários bloqueados
+    const bloqueados = await User.find(
+      { _id: { $in: usuario.bloqueados } },
+      'nome email foto'
+    );
+
+    res.json(bloqueados);
+  } catch (error) {
+    console.error('Erro ao listar bloqueados:', error);
+    res.status(500).json({ message: 'Erro ao listar bloqueados' });
+  }
+});
+
+// Rota para desbloquear usuário
+router.post('/amizade/desbloquear/:id', auth, async (req, res) => {
+  try {
+    const usuario = await User.findById(req.user.id);
+    const usuarioParaDesbloquear = req.params.id;
+
+    // Remover da lista de bloqueados
+    usuario.bloqueados = usuario.bloqueados.filter(
+      id => id.toString() !== usuarioParaDesbloquear
+    );
+
+    // Remover da lista de bloqueadoPor do outro usuário
+    await User.updateOne(
+      { _id: usuarioParaDesbloquear },
+      { $pull: { bloqueadoPor: req.user.id } }
+    );
+
+    await usuario.save();
+    
+    res.json({
+      success: true,
+      message: 'Usuário desbloqueado com sucesso'
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Erro ao desbloquear usuário' });
+  }
+});
+
 module.exports = router;

@@ -13,6 +13,7 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import { Amigos } from './pages/Amigos';
 import { AlertProvider } from './contexts/AlertContext';
 import { PerfilAmigo } from './pages/PerfilAmigo';
+import { ListaBloqueados } from './pages/ListaBloqueados';
 
 function App() {
   return (
@@ -68,6 +69,14 @@ function App() {
                   element={
                     <PrivateRoute>
                       <PerfilAmigo />
+                    </PrivateRoute>
+                  } 
+                />
+                <Route 
+                  path="/bloqueados" 
+                  element={
+                    <PrivateRoute>
+                      <ListaBloqueados />
                     </PrivateRoute>
                   } 
                 />

@@ -69,6 +69,19 @@ export function ThemeProvider({ children }) {
   };
 
   useEffect(() => {
+    const savedColor = localStorage.getItem('tema_cor') || 
+                      localStorage.getItem('userThemeColor') || 
+                      themeColor;
+
+    if (savedColor) {
+      setThemeColor(savedColor);
+      const root = document.documentElement;
+      root.style.setProperty('--color-primary', savedColor);
+      root.style.setProperty('--color-hover', adjustBrightness(savedColor, -15));
+    }
+  }, []); // Executar apenas na montagem inicial
+
+  useEffect(() => {
     const root = document.documentElement;
     const savedColor = localStorage.getItem('userThemeColor') || themeColor;
     const { r, g, b } = getRGBValues(savedColor);
