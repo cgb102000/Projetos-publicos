@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { adjustBrightness } from '../utils/themeUtils';
 
 const getBaseUrl = () => {
   const hostname = window.location.hostname;
@@ -56,10 +57,12 @@ api.interceptors.response.use(
       throw new Error('Servidor em manutenção. Tente novamente em alguns instantes.');
     }
 
-    // Preservar cor do tema ao recarregar estado
-    const temaAtual = document.documentElement.style.getPropertyValue('--color-primary');
-    if (temaAtual) {
-      localStorage.setItem('tema_cor', temaAtual);
+    // Preservar cor do tema somente se não for logout
+    if (!error.config?.url?.includes('/logout')) {
+      const temaAtual = document.documentElement.style.getPropertyValue('--color-primary');
+      if (temaAtual) {
+        localStorage.setItem('tema_cor', temaAtual);
+      }
     }
 
     if (error.code === 'ERR_NETWORK') {
@@ -98,6 +101,14 @@ export const authService = {
       if (data.success && data.token) {
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
+        
+        // Aplicar tema do usuário se existir
+        if (data.user.tema_cor) {
+          const userColor = data.user.tema_cor;
+          document.documentElement.style.setProperty('--color-primary', userColor);
+          document.documentElement.style.setProperty('--color-hover', adjustBrightness(userColor, -15));
+        }
+        
         return data;
       }
       
@@ -202,18 +213,32 @@ export const authService = {
 
   async updateUserProfile(profileData) {
     try {
-      // Verifica o tamanho da string base64 da foto
-      if (profileData.foto && profileData.foto.length > 2 * 1024 * 1024) { // 2MB em caracteres base64
+      if (profileData.foto && profileData.foto.length > 2 * 1024 * 1024) {
         throw new Error('Imagem muito grande. Máximo: 2MB');
       }
 
       const { data } = await api.put('/api/auth/perfil', profileData);
       
+      // Atualizar user no localStorage
       const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
       const updatedUser = { ...currentUser, ...data.user };
+      
+      // Garantir que a cor do tema seja salva
+      if (profileData.tema_cor) {
+        updatedUser.tema_cor = profileData.tema_cor;
+        localStorage.setItem('userThemeColor', profileData.tema_cor);
+        
+        // Atualizar as variáveis CSS
+        document.documentElement.style.setProperty('--color-primary', profileData.tema_cor);
+        document.documentElement.style.setProperty('--color-hover', adjustBrightness(profileData.tema_cor, -15));
+      }
+      
       localStorage.setItem('user', JSON.stringify(updatedUser));
       
-      return data;
+      return {
+        ...data,
+        user: updatedUser
+      };
     } catch (error) {
       console.error('Erro ao atualizar perfil:', error);
       throw error.response?.data?.message || error.message || 'Erro ao atualizar perfil';

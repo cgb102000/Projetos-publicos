@@ -23,7 +23,7 @@ export function Perfil() {
                 }`}
                 onClick={() => setActiveTab('perfil')}
               >
-                Meu Perfil
+                Editar Perfil
               </button>
               <button
                 className={`px-6 py-3 font-medium ${

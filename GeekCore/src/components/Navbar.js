@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { FriendsDropdown } from './FriendsDropdown';
+import { adjustBrightness } from '../utils/themeUtils';
 
 export function Navbar() {
   const { isAuthenticated, user, dispatch } = useContext(AuthContext);
@@ -10,7 +11,7 @@ export function Navbar() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [showFriendsList, setShowFriendsList] = useState(false);
   const navigate = useNavigate();
-  const { isDarkMode, setIsDarkMode } = useTheme();
+  const { isDarkMode, setIsDarkMode, resetToDefaultTheme } = useTheme();
   const dropdownRef = useRef(null);
   const buttonRef = useRef(null);
 
@@ -31,9 +32,19 @@ export function Navbar() {
   }, []);
 
   const handleLogout = () => {
+    // Primeiro limpar dados do usuário
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    localStorage.removeItem('userThemeColor');
+    localStorage.removeItem('tema_cor');
+    
+    // Resetar para cor padrão
+    resetToDefaultTheme();
+    
+    // Despachar ação de logout
     dispatch({ type: 'LOGOUT' });
+    
+    // Navegar para home
     navigate('/');
   };
 
@@ -43,6 +54,19 @@ export function Navbar() {
       navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
       setSearchQuery('');
     }
+  };
+
+  const handleThemeToggle = () => {
+    // Preservar a cor atual antes de mudar o modo
+    const currentColor = document.documentElement.style.getPropertyValue('--color-primary');
+    setIsDarkMode(!isDarkMode);
+    
+    // Reaplica a cor após a mudança de modo
+    setTimeout(() => {
+      document.documentElement.style.setProperty('--color-primary', currentColor);
+      document.documentElement.style.setProperty('--color-hover', adjustBrightness(currentColor, -15));
+      localStorage.setItem('userThemeColor', currentColor);
+    }, 0);
   };
 
   return (
@@ -72,7 +96,7 @@ export function Navbar() {
 
         <div className="flex items-center space-x-4">
           <button
-            onClick={() => setIsDarkMode(!isDarkMode)}
+            onClick={handleThemeToggle}
             className="p-2 rounded-full hover:bg-gray-700 transition-all"
             title={isDarkMode ? 'Mudar para modo claro' : 'Mudar para modo escuro'}
           >
@@ -105,43 +129,66 @@ export function Navbar() {
           <div className="flex items-center space-x-4">
             {isAuthenticated ? (
               <div className="relative">
-                <button
-                  ref={buttonRef}
-                  onClick={() => setIsProfileOpen(!isProfileOpen)}
-                  className="nav-link flex items-center space-x-2 text-light group"
-                >
-                  <div className="relative w-10 h-10 rounded-full overflow-hidden border-2 profile-avatar-border transition-colors">
-                    {user?.foto ? (
-                      <img
-                        src={user.foto}
-                        alt={user.nome}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          e.target.onerror = null;
-                          e.target.src = '/images/default-avatar.png';
-                        }}
-                        loading="eager"
-                      />
-                    ) : (
-                      <img
-                        src="/images/default-avatar.png"
-                        alt="Avatar padrão"
-                        className="w-full h-full object-cover"
-                      />
-                    )}
-                  </div>
-                  <span className="hidden md:inline">Meu Perfil</span>
-                  <svg
-                    className={`w-4 h-4 transition-transform duration-200 ${
-                      isProfileOpen ? 'rotate-180' : ''
-                    }`}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+                <div className="flex items-center space-x-4">
+                  <button
+                    ref={buttonRef}
+                    onClick={() => setIsProfileOpen(!isProfileOpen)}
+                    className="nav-link flex items-center space-x-2 text-light group"
                   >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
+                    <div className="relative w-10 h-10 rounded-full overflow-hidden border-2 profile-avatar-border transition-colors">
+                      {user?.foto ? (
+                        <img
+                          src={user.foto}
+                          alt={user.nome}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = '/images/default-avatar.png';
+                          }}
+                          loading="eager"
+                        />
+                      ) : (
+                        <img
+                          src="/images/default-avatar.png"
+                          alt="Avatar padrão"
+                          className="w-full h-full object-cover"
+                        />
+                      )}
+                    </div>
+                    <span className="hidden md:inline">Meu Perfil</span>
+                    <svg
+                      className={`w-4 h-4 transition-transform duration-200 ${
+                        isProfileOpen ? 'rotate-180' : ''
+                      }`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  <button
+                    onClick={handleLogout}
+                    className="nav-link flex items-center space-x-2 text-light hover:bg-hover rounded-md px-3 py-2 transition-colors"
+                    title="Sair"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="w-6 h-6"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 01-3-3h4a3 3 0 013 3v1"
+                      />
+                    </svg>
+                    <span className="hidden md:inline">Sair</span>
+                  </button>
+                </div>
 
                 {isProfileOpen && (
                   <div

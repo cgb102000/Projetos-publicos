@@ -3,22 +3,50 @@ import { Alert } from './Alert';
 import { AuthContext } from '../contexts/AuthContext';
 import { authService } from '../services/api'; // Corrigido o caminho de importação
 import { useAlert } from '../contexts/AlertContext';
+import { useTheme } from '../contexts/ThemeContext';
 
 export function EditarPerfil({ usuario }) {
-  const [perfil, setPerfil] = useState({
-    nome: usuario?.nome || '',
-    descricao: usuario?.descricao || '',
-    foto: usuario?.foto || ''
+  const defaultProfile = {
+    nome: '',
+    descricao: '',
+    foto: null,
+    tema_cor: '#ef4444',
+    id: usuario?.id
+  };
+
+  const [perfil, setPerfil] = useState(() => {
+    const savedUser = JSON.parse(localStorage.getItem('user') || '{}');
+    return {
+      nome: savedUser.nome || usuario?.nome || '',
+      descricao: savedUser.descricao || usuario?.descricao || '',
+      foto: savedUser.foto || usuario?.foto || null,
+      tema_cor: savedUser.tema_cor || usuario?.tema_cor || '#ef4444'
+    };
   });
+
   const [loading, setLoading] = useState(false);
   const { updateUserData } = useContext(AuthContext);
   const { showAlert } = useAlert();
+  const { setThemeColor } = useTheme();
 
   const handleSave = async () => {
     try {
       setLoading(true);
       const response = await authService.updateUserProfile(perfil);
-      updateUserData(response.user);
+      
+      const updatedUser = {
+        ...usuario,
+        ...response.user,
+        foto: perfil.foto,
+        tema_cor: perfil.tema_cor // Garantir que a cor do tema seja incluída
+      };
+
+      // Atualizar localStorage e estado global
+      updateUserData(updatedUser);
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      localStorage.setItem('userThemeColor', perfil.tema_cor); // Salvar em ambos os locais
+      setThemeColor(perfil.tema_cor);
+
       showAlert('Perfil atualizado com sucesso!', 'success');
     } catch (error) {
       showAlert(error.message, 'error');
@@ -84,6 +112,19 @@ export function EditarPerfil({ usuario }) {
                 onChange={(e) => setPerfil({ ...perfil, descricao: e.target.value })}
                 className="w-full p-3 rounded bg-dark text-light h-32"
                 placeholder="Conte um pouco sobre você..."
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-2">Cor do Tema</label>
+              <input
+                type="color"
+                value={perfil.tema_cor}
+                onChange={(e) => {
+                  setPerfil({ ...perfil, tema_cor: e.target.value });
+                  setThemeColor(e.target.value); // Atualizar cor em tempo real
+                }}
+                className="w-full h-12 p-1 rounded bg-dark cursor-pointer"
               />
             </div>
           </div>

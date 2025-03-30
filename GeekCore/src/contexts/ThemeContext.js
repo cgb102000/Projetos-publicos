@@ -3,9 +3,10 @@ import { createContext, useContext, useEffect, useState } from 'react';
 const ThemeContext = createContext();
 
 export function ThemeProvider({ children }) {
-  const [themeColor, setThemeColor] = useState(() => 
-    localStorage.getItem('themeColor') || '#ef4444'
-  );
+  const [themeColor, setThemeColor] = useState(() => {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    return user.tema_cor || localStorage.getItem('userThemeColor') || '#ef4444';
+  });
   const [isDarkMode, setIsDarkMode] = useState(() =>
     localStorage.getItem('darkMode') !== 'false'
   );
@@ -42,17 +43,42 @@ export function ThemeProvider({ children }) {
     return (yiq >= 128) ? '#000000' : '#ffffff';
   };
 
+  const resetToDefaultTheme = () => {
+    const defaultColor = '#ef4444';
+    // Limpar todas as cores salvas
+    localStorage.removeItem('userThemeColor');
+    localStorage.removeItem('tema_cor');
+    
+    // Aplicar cor padrão
+    setThemeColor(defaultColor);
+    const root = document.documentElement;
+    root.style.setProperty('--color-primary', defaultColor);
+    root.style.setProperty('--color-hover', adjustBrightness(defaultColor, -15));
+    root.style.setProperty('--color-active', adjustBrightness(defaultColor, -30));
+    
+    const { r, g, b } = getRGBValues(defaultColor);
+    root.style.setProperty('--color-primary-rgb', `${r}, ${g}, ${b}`);
+    root.style.setProperty('--color-primary-ghost', `rgba(${r}, ${g}, ${b}, 0.15)`);
+    root.style.setProperty('--color-primary-glow', `rgba(${r}, ${g}, ${b}, 0.5)`);
+  };
+
+  const applyUserTheme = (userThemeColor) => {
+    if (userThemeColor) {
+      setThemeColor(userThemeColor);
+    }
+  };
+
   useEffect(() => {
     const root = document.documentElement;
-    const { r, g, b } = getRGBValues(themeColor);
+    const savedColor = localStorage.getItem('userThemeColor') || themeColor;
+    const { r, g, b } = getRGBValues(savedColor);
     
-    // Cores principais
-    root.style.setProperty('--color-primary', themeColor);
-    // Tornar a cor de hover 15% mais escura que a cor principal
-    root.style.setProperty('--color-hover', adjustBrightness(themeColor, -15));
+    // Cores principais - usar a cor salva ou atual
+    root.style.setProperty('--color-primary', savedColor);
+    root.style.setProperty('--color-hover', adjustBrightness(savedColor, -15));
     
     // Cores principais e variações
-    root.style.setProperty('--color-active', adjustBrightness(themeColor, -30));
+    root.style.setProperty('--color-active', adjustBrightness(savedColor, -30));
     
     // Variações de opacidade e efeitos
     root.style.setProperty('--color-primary-rgb', `${r}, ${g}, ${b}`);
@@ -61,10 +87,10 @@ export function ThemeProvider({ children }) {
     root.style.setProperty('--color-hover-overlay', `rgba(${r}, ${g}, ${b}, 0.1)`);
     
     // Variações para diferentes estados
-    root.style.setProperty('--color-primary-light', adjustBrightness(themeColor, 15));
-    root.style.setProperty('--color-primary-dark', adjustBrightness(themeColor, -25));
+    root.style.setProperty('--color-primary-light', adjustBrightness(savedColor, 15));
+    root.style.setProperty('--color-primary-dark', adjustBrightness(savedColor, -25));
 
-    // Cores do modo claro/escuro
+    // Cores do modo claro/escuro (mantém a cor do tema)
     if (isDarkMode) {
       root.style.setProperty('--color-bg', '#141414');
       root.style.setProperty('--color-bg-darker', '#0a0a0a');
@@ -85,7 +111,8 @@ export function ThemeProvider({ children }) {
     const textColor = isDarkMode ? '#ffffff' : '#111827';
     root.style.setProperty('--color-text', textColor);
 
-    localStorage.setItem('themeColor', themeColor);
+    // Salvar a cor atual
+    localStorage.setItem('userThemeColor', savedColor);
     localStorage.setItem('darkMode', isDarkMode);
   }, [themeColor, isDarkMode]);
 
@@ -95,7 +122,9 @@ export function ThemeProvider({ children }) {
       setThemeColor, 
       isDarkMode, 
       setIsDarkMode,
-      getContrastColor 
+      getContrastColor,
+      resetToDefaultTheme,
+      applyUserTheme
     }}>
       {children}
     </ThemeContext.Provider>
