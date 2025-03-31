@@ -169,9 +169,10 @@ export const authService = {
 
       const { data } = await api.get('/api/auth/favoritos');
       
-      // Garantir que todos os itens retornados tenham a propriedade isFavorited como true
+      // Garantir que todos os itens retornados tenham tipo correto (videos)
       return Array.isArray(data) ? data.map(fav => ({
         ...fav,
+        tipo: 'videos', // Sempre usar 'videos' no plural
         isFavorited: true
       })) : [];
     } catch (error) {

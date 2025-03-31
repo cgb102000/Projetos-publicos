@@ -37,7 +37,7 @@ export function TodosFavoritos() {
                 <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
                 </svg>
-                Voltar ao Perfil
+                Perfil
               </Link>
             </div>
 
@@ -50,17 +50,17 @@ export function TodosFavoritos() {
                 {favoritos.map(item => (
                   <Link
                     key={item._id}
-                    to={`/detalhes/${item.tipo}/${item._id}`}
+                    to={`/detalhes/videos/${item._id}`}
                     className="block group"
                   >
                     <div className="bg-dark rounded-lg overflow-hidden transition-transform duration-300 transform hover:scale-105">
                       <div className="relative aspect-[2/3]">
                         <img
-                          src={item.img_url || process.env.PUBLIC_URL + '/images/placeholder.jpg'}
+                          src={item.img_url || '/images/placeholder.jpg'}
                           alt={item.titulo}
                           className="absolute inset-0 w-full h-full object-cover"
                           onError={(e) => {
-                            e.target.src = process.env.PUBLIC_URL + '/images/placeholder.jpg';
+                            e.target.src = '/images/placeholder.jpg';
                           }}
                           loading="lazy"
                         />
