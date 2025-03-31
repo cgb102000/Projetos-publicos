@@ -907,3 +907,87 @@ footer .text-light {
   background-color: var(--color-hover);
   color: var(--color-text);
 }
+
+/* Estilos do carrossel de recomendações */
+.carousel-track {
+  display: flex;
+  gap: 1rem;
+  transition: transform 0.3s ease;
+}
+
+.carousel-container {
+  overflow: hidden;
+  position: relative;
+  padding: 0 2rem;
+}
+
+.carousel-button {
+  @apply absolute top-1/2 -translate-y-1/2 bg-primary text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-hover transition-all z-10;
+}
+
+.carousel-prev {
+  left: 0;
+}
+
+.carousel-next {
+  right: 0;
+}
+
+/* Ajustes específicos para os cards do carrossel */
+.card {
+  min-width: 200px;
+  background-color: var(--color-bg-darker);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+/* Estilo Crunchyroll para cards */
+.card {
+  @apply relative overflow-hidden rounded-lg transition-transform duration-300 ease-out;
+  aspect-ratio: 2/3;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.card:hover {
+  transform: scale(1.08);
+  z-index: 10;
+}
+
+.card img {
+  @apply w-full h-full object-cover transition-all duration-300;
+}
+
+.card-overlay {
+  @apply absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/90 via-black/50 to-transparent 
+         opacity-0 transition-all duration-300 p-4;
+}
+
+.card:hover .card-overlay {
+  opacity: 1;
+}
+
+.card-title {
+  @apply text-white text-sm font-semibold transform translate-y-4 transition-transform duration-300;
+}
+
+.card:hover .card-title {
+  transform: translateY(0);
+}
+
+.watch-button {
+  @apply flex items-center justify-center gap-2 bg-primary text-white px-4 py-2 rounded-full
+         font-medium opacity-0 transform translate-y-4 transition-all duration-300;
+  background-color: var(--color-primary);
+}
+
+.watch-button:hover {
+  background-color: color-mix(in srgb, var(--color-primary) 80%, black); /* 20% mais escuro */
+  transform: scale(1.05);
+}
+
+.card:hover .watch-button {
+  opacity: 1;
+  transform: translateY(0);
+}

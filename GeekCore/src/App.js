@@ -14,6 +14,7 @@ import { Amigos } from './pages/Amigos';
 import { AlertProvider } from './contexts/AlertContext';
 import { PerfilAmigo } from './pages/PerfilAmigo';
 import { ListaBloqueados } from './pages/ListaBloqueados';
+import { TodosFavoritos } from './pages/TodosFavoritos';
 
 function App() {
   return (
@@ -35,11 +36,11 @@ function App() {
                   path="/favoritos" 
                   element={
                     <PrivateRoute>
-                      <Favoritos />
+                      <TodosFavoritos />
                     </PrivateRoute>
                   } 
                 />
-                <Route path="/detalhes/:collection/:id" element={<Detalhes />} />
+                <Route path="/detalhes/videos/:id" element={<Detalhes />} />
                 <Route 
                   path="/perfil" 
                   element={

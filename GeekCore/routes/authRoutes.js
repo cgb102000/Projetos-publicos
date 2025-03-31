@@ -157,25 +157,32 @@ router.get('/favoritos', async (req, res) => {
             .findOne({ _id: new mongoose.Types.ObjectId(fav.conteudo_id) });
             
           if (item) {
+            // Garantir que a URL da imagem seja absoluta
+            const img_url = item.img_url?.startsWith('http') 
+              ? item.img_url 
+              : `${process.env.API_URL}${item.img_url}`;
+
             return {
               ...item,
+              img_url,
               tipo: fav.tipo,
               favorito_em: fav.adicionado_em,
               isFavorito: true
             };
           }
+          return null;
         } catch (err) {
           console.error(`Erro ao buscar item ${fav.conteudo_id}:`, err);
+          return null;
         }
-        return null;
       })
     );
 
-    const validFavoritos = favoritos.filter(f => f !== null);
-    res.json(validFavoritos);
+    // Filtrar itens nulos e retornar array
+    res.json(favoritos.filter(f => f !== null));
   } catch (error) {
     console.error('Erro ao buscar favoritos:', error);
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'Erro ao buscar favoritos' });
   }
 });
 
@@ -201,7 +208,7 @@ router.get('/perfil', async (req, res) => {
 router.get('/perfil/:id', async (req, res) => {
   try {
     const user = await User.findById(req.params.id)
-      .select('nome email descricao foto data_criacao amigos favoritos')
+      .select('nome email descricao foto data_criacao amigos favoritos tema_cor')
       .populate('amigos.usuario', 'nome foto');
 
     if (!user) {
@@ -215,7 +222,8 @@ router.get('/perfil/:id', async (req, res) => {
       foto: user.foto,
       data_criacao: user.data_criacao,
       amigos: user.amigos,
-      favoritos: user.favoritos
+      favoritos: user.favoritos,
+      tema_cor: user.tema_cor || '#ef4444'
     });
   } catch (error) {
     res.status(500).json({ message: 'Erro ao buscar perfil do usuário' });

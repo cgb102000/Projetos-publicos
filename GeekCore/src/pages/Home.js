@@ -124,7 +124,7 @@ export function Home() {
               <div className="relative h-[70vh] rounded-lg overflow-hidden mb-12 hero-section">
                 {featuredItem && featuredItem.img_capa_url && (
                   <Link 
-                    to={`/detalhes/${featuredItem.collection}/${featuredItem._id}`}
+                    to={`/detalhes/videos/${featuredItem._id}`}
                     className="block w-full h-full"
                   >
                     <img 
