@@ -11,7 +11,8 @@
     "build:css": "tailwindcss -i ./src/input.css -o ./public/css/tailwind.css --minify",
     "watch:css": "tailwindcss -i ./src/input.css -o ./public/css/tailwind.css --watch",
     "build": "react-scripts build",
-    "server": "node server.js"
+    "server": "node server.js",
+    "generate-pdf": "node scripts/convertToPdf.js"
   },
   "keywords": [
     "express",
@@ -23,13 +24,17 @@
   "author": "Seu Nome",
   "license": "MIT",
   "dependencies": {
+    "@emoji-mart/data": "^1.2.1",
+    "@emoji-mart/react": "^1.1.1",
     "axios": "^1.8.4",
     "bcryptjs": "^3.0.2",
     "browser-image-compression": "^2.0.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
+    "emoji-picker-react": "^4.12.2",
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.2",
+    "markdown-pdf": "^11.0.0",
     "mongoose": "^8.0.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

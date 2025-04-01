@@ -5,6 +5,7 @@ import { contentService, authService } from '../services/api';
 import { Carousel } from '../components/Carousel';
 import { Alert } from '../components/Alert';
 import { Footer } from '../components/Footer';
+import { Comments } from '../components/Comments';
 
 export function Detalhes() {
   const { id } = useParams();
@@ -234,6 +235,8 @@ export function Detalhes() {
             </>
           ) : null}
         </div>
+
+        <Comments videoId={id} />
       </div>
       <Footer />
     </div>

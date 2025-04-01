@@ -35,6 +35,10 @@ const authRoutes = require('./routes/authRoutes');
 // Registrar apenas as rotas de autenticação
 app.use('/api/auth', authRoutes);
 
+// Importar e configurar rotas de comentários
+const commentRoutes = require('./routes/commentRoutes');
+app.use('/api/comments', commentRoutes);
+
 // Função para conectar ao MongoDB com tentativas de reconexão
 const connectDB = async () => {
   try {
@@ -210,6 +214,15 @@ app.get('*', (req, res) => {
 // Tratamento de erro para rotas não encontradas (404)
 app.use((req, res) => {
   res.status(404).send('Página não encontrada!');
+});
+
+// Middleware global para tratar erros
+app.use((err, req, res, next) => {
+  console.error('Erro:', err);
+  res.status(500).json({ 
+    message: err.message || 'Erro interno do servidor',
+    path: req.path
+  });
 });
 
 // Função para encontrar uma porta disponível

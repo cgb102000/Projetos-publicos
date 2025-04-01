@@ -1,0 +1,28 @@
+.emoji-picker-container {
+  position: absolute;
+  z-index: 1000;
+  background: var(--bg-darker);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.em-emoji-picker {
+  --bg-color: var(--bg-darker);
+  --border-color: var(--border-color);
+  --category-icon-size: 20px;
+}
+
+.emoji-close-button {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: white;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1;
+}

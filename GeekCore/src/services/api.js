@@ -417,4 +417,35 @@ export const amigoService = {
   }
 };
 
+export const commentService = {
+  async getComments(videoId) {
+    try {
+      const response = await api.get(`/api/comments/video/${videoId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao carregar comentários:', error);
+      return [];
+    }
+  },
+
+  async addComment(videoId, conteudo, parentCommentId = null) {
+    const response = await api.post('/api/comments', {
+      videoId,
+      conteudo,
+      parentCommentId
+    });
+    return response.data;
+  },
+
+  async likeComment(commentId) {
+    const response = await api.post(`/api/comments/${commentId}/like`);
+    return response.data;
+  },
+
+  async deleteComment(commentId) {
+    const response = await api.delete(`/api/comments/${commentId}`);
+    return response.data;
+  }
+};
+
 export default api;

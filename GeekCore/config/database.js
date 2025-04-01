@@ -18,7 +18,10 @@ module.exports = {
         db.collection('animes').createIndex({ titulo: 1 }),
         db.collection('filmes').createIndex({ titulo: 1 }),
         db.collection('animes').createIndex({ categoria: 1 }),
-        db.collection('filmes').createIndex({ categoria: 1 })
+        db.collection('filmes').createIndex({ categoria: 1 }),
+        db.collection('comments').createIndex({ video: 1 }),
+        db.collection('comments').createIndex({ usuario: 1 }),
+        db.collection('comments').createIndex({ parentComment: 1 })
       ]);
     } catch (err) {
       console.error('Erro na conexão com MongoDB:', err);
