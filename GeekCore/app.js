@@ -35,9 +35,9 @@ const authRoutes = require('./routes/authRoutes');
 // Registrar apenas as rotas de autenticação
 app.use('/api/auth', authRoutes);
 
-// Importar e configurar rotas de comentários
-const commentRoutes = require('./routes/commentRoutes');
-app.use('/api/comments', commentRoutes);
+// Remover importação e uso das rotas de comentários
+// const commentRoutes = require('./routes/commentRoutes');
+// app.use('/api/comments', commentRoutes);
 
 // Função para conectar ao MongoDB com tentativas de reconexão
 const connectDB = async () => {

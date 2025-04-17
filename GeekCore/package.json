@@ -30,6 +30,7 @@
     "bcryptjs": "^3.0.2",
     "browser-image-compression": "^2.0.2",
     "cors": "^2.8.5",
+    "disqus-react": "^1.1.6",
     "dotenv": "^16.4.7",
     "emoji-picker-react": "^4.12.2",
     "express": "^4.18.2",
