@@ -414,6 +414,52 @@ export const amigoService = {
     } catch (error) {
       throw error.response?.data?.message || 'Erro ao desbloquear usuário';
     }
+  },
+
+  async listarNotificacoes() {
+    try {
+      const { data } = await api.get('/api/auth/notificacoes');
+      return data;
+    } catch (error) {
+      console.error('Erro ao listar notificações:', error);
+      return [];
+    }
+  },
+
+  async marcarNotificacaoComoLida(notificacaoId) {
+    try {
+      await api.post(`/api/auth/notificacoes/${notificacaoId}/ler`);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  },
+
+  async deletarNotificacao(notificacaoId) {
+    try {
+      await api.delete(`/api/auth/notificacoes/${notificacaoId}`);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  },
+
+  async limparNotificacoes() {
+    try {
+      await api.delete('/api/auth/notificacoes');
+      return true;
+    } catch (error) {
+      return false;
+    }
+  },
+
+  async compartilharComAmigo(amigoId, itemId) {
+    try {
+      await api.post('/api/auth/share', { amigoId, itemId });
+      return true;
+    } catch (error) {
+      throw new Error('Erro ao compartilhar');
+    }
   }
 };
 

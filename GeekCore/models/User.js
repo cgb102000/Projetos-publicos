@@ -21,6 +21,14 @@ const favoritoSchema = new mongoose.Schema({
   }
 });
 
+const NotificacaoSchema = new mongoose.Schema({
+  _id: { type: mongoose.Schema.Types.ObjectId, default: () => new mongoose.Types.ObjectId() },
+  mensagem: { type: String, required: true },
+  data: { type: Date, default: Date.now },
+  lida: { type: Boolean, default: false },
+  itemId: { type: mongoose.Schema.Types.ObjectId, ref: 'Video', default: null }
+}, { _id: false });
+
 const userSchema = new mongoose.Schema({
   nome: {
     type: String,
@@ -82,7 +90,8 @@ const userSchema = new mongoose.Schema({
   bloqueadoPor: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
-  }]
+  }],
+  notificacoes: { type: [NotificacaoSchema], default: [] }
 });
 
 // Hash da senha antes de salvar

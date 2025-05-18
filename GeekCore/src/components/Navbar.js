@@ -4,16 +4,22 @@ import { AuthContext } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { FriendsDropdown } from './FriendsDropdown';
 import { adjustBrightness } from '../utils/themeUtils';
+import { amigoService } from '../services/api';
 
 export function Navbar() {
   const { isAuthenticated, user, dispatch } = useContext(AuthContext);
   const [searchQuery, setSearchQuery] = useState('');
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [showFriendsList, setShowFriendsList] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [loadingNotifications, setLoadingNotifications] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
   const navigate = useNavigate();
   const { isDarkMode, setIsDarkMode, resetToDefaultTheme } = useTheme();
   const dropdownRef = useRef(null);
   const buttonRef = useRef(null);
+  const notificationsRef = useRef(null);
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -30,6 +36,60 @@ export function Navbar() {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  // Buscar notificações ao autenticar e periodicamente
+  useEffect(() => {
+    let interval;
+    async function fetchNotifications() {
+      if (isAuthenticated) {
+        try {
+          const data = await amigoService.listarNotificacoes?.();
+          setNotifications(data || []);
+          setUnreadCount((data || []).filter(n => !n.lida).length);
+        } catch {
+          setNotifications([]);
+          setUnreadCount(0);
+        }
+      } else {
+        setNotifications([]);
+        setUnreadCount(0);
+      }
+    }
+    fetchNotifications();
+    if (isAuthenticated) {
+      interval = setInterval(fetchNotifications, 15000); // Atualiza a cada 15s
+    }
+    return () => interval && clearInterval(interval);
+  }, [isAuthenticated]);
+
+  // Buscar notificações ao abrir o dropdown (mantém para garantir atualização instantânea)
+  useEffect(() => {
+    if (showNotifications && isAuthenticated) {
+      setLoadingNotifications(true);
+      amigoService.listarNotificacoes?.()
+        .then(data => {
+          setNotifications(data || []);
+          setUnreadCount((data || []).filter(n => !n.lida).length);
+        })
+        .catch(() => setNotifications([]))
+        .finally(() => setLoadingNotifications(false));
+    }
+  }, [showNotifications, isAuthenticated]);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (
+        notificationsRef.current &&
+        !notificationsRef.current.contains(event.target)
+      ) {
+        setShowNotifications(false);
+      }
+    }
+    if (showNotifications) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [showNotifications]);
 
   const handleLogout = () => {
     // Primeiro limpar dados do usuário
@@ -69,6 +129,34 @@ export function Navbar() {
     }, 0);
   };
 
+  const handleMarkAsRead = async (notificationId) => {
+    try {
+      await amigoService.marcarNotificacaoComoLida?.(notificationId);
+      setNotifications(prev =>
+        prev.map(n => n._id === notificationId ? { ...n, lida: true } : n)
+      );
+      setUnreadCount(prev => Math.max(0, prev - 1));
+    } catch {}
+  };
+
+  // Função para deletar uma notificação individual
+  const handleDeleteNotification = async (notificationId) => {
+    try {
+      await amigoService.deletarNotificacao?.(notificationId);
+      setNotifications(prev => prev.filter(n => n._id !== notificationId));
+      setUnreadCount(prev => Math.max(0, prev - 1));
+    } catch {}
+  };
+
+  // Função para limpar todas as notificações
+  const handleClearAllNotifications = async () => {
+    try {
+      await amigoService.limparNotificacoes?.();
+      setNotifications([]);
+      setUnreadCount(0);
+    } catch {}
+  };
+
   return (
     <nav className="fixed top-0 w-full bg-darker bg-opacity-95 z-50 py-4">
       <div className="container mx-auto flex flex-wrap items-center justify-between">
@@ -95,6 +183,86 @@ export function Navbar() {
         </div>
 
         <div className="flex items-center space-x-4">
+          {isAuthenticated && (
+            <div className="relative" ref={notificationsRef}>
+              <button
+                onClick={() => setShowNotifications(v => !v)}
+                className="p-2 rounded-full hover:bg-gray-700 transition-all relative"
+                title="Notificações"
+              >
+                <svg className="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                    d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                </svg>
+                {unreadCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs rounded-full px-1.5 py-0.5">
+                    {unreadCount}
+                  </span>
+                )}
+              </button>
+              {showNotifications && (
+                <div className="absolute right-0 mt-2 w-80 max-w-xs rounded-md shadow-lg bg-darker border border-gray-700 z-50 animate-fadeInDown">
+                  <div className="p-4 border-b border-gray-700 font-bold text-light flex items-center justify-between">
+                    <span>Notificações</span>
+                    {notifications.length > 0 && (
+                      <button
+                        onClick={handleClearAllNotifications}
+                        className="text-xs text-gray-400 hover:text-red-400 transition-colors"
+                        title="Limpar todas as notificações"
+                      >
+                        Limpar tudo
+                      </button>
+                    )}
+                  </div>
+                  <div className="max-h-80 overflow-y-auto">
+                    {loadingNotifications ? (
+                      <div className="p-4 text-center text-gray-400">Carregando...</div>
+                    ) : notifications.length === 0 ? (
+                      <div className="p-4 text-center text-gray-400">Nenhuma notificação</div>
+                    ) : (
+                      notifications.map(n => (
+                        <div
+                          key={n._id}
+                          className={`p-4 border-b border-gray-800 flex items-start gap-3 ${n.lida ? 'opacity-60' : ''} group`}
+                        >
+                          <div className="flex-shrink-0">
+                            <svg className="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                            </svg>
+                          </div>
+                          <div className="flex-1">
+                            <div className="text-light text-sm">{n.mensagem}</div>
+                            <div className="text-xs text-gray-400 mt-1">{new Date(n.data).toLocaleString()}</div>
+                            <div className="flex gap-2 mt-2">
+                              {!n.lida && (
+                                <button
+                                  onClick={() => handleMarkAsRead(n._id)}
+                                  className="text-xs text-primary hover:underline"
+                                >
+                                  Marcar como lida
+                                </button>
+                              )}
+                              <button
+                                onClick={() => handleDeleteNotification(n._id)}
+                                className="text-xs text-light rounded-full p-1 transition-colors hover:bg-hover hover:text-white ml-2"
+                                title="Excluir notificação"
+                                style={{ lineHeight: 0 }}
+                              >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
           <button
             onClick={handleThemeToggle}
             className="p-2 rounded-full hover:bg-gray-700 transition-all"

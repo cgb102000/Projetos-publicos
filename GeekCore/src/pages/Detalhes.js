@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../contexts/AuthContext';
-import { contentService, authService } from '../services/api';
+import { contentService, authService, amigoService } from '../services/api';
 import { Carousel } from '../components/Carousel';
 import { Alert } from '../components/Alert';
 import { Footer } from '../components/Footer';
@@ -13,10 +13,22 @@ export function Detalhes() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [alert, setAlert] = useState({ show: false, message: '', type: '' });
-  const { isAuthenticated } = useContext(AuthContext);
+  const { isAuthenticated, user } = useContext(AuthContext);
   const navigate = useNavigate();
   const [recommendations, setRecommendations] = useState([]);
   const [toast, setToast] = useState({ show: false, message: '', type: '' });
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [shareLoading, setShareLoading] = useState(false);
+  const [shareAlert, setShareAlert] = useState({ show: false, message: '', type: '' });
+  const [amigos, setAmigos] = useState([]);
+
+  // Corrige a cor do tema ao carregar a página
+  useEffect(() => {
+    if (isAuthenticated && user?.tema_cor) {
+      document.documentElement.style.setProperty('--color-primary', user.tema_cor);
+      document.documentElement.style.setProperty('--color-hover', user.tema_cor);
+    }
+  }, [isAuthenticated, user?.tema_cor]);
 
   useEffect(() => {
     const loadContent = async () => {
@@ -46,6 +58,17 @@ export function Detalhes() {
 
     loadContent();
   }, [id]);
+
+  // Buscar amigos ao abrir o modal de compartilhar
+  useEffect(() => {
+    if (showShareModal && isAuthenticated) {
+      setShareLoading(true);
+      amigoService.listarAmigos()
+        .then(data => setAmigos(data.filter(a => a.usuario)))
+        .catch(() => setAmigos([]))
+        .finally(() => setShareLoading(false));
+    }
+  }, [showShareModal, isAuthenticated]);
 
   const handleFavorite = async () => {
     try {
@@ -84,6 +107,21 @@ export function Detalhes() {
         message: 'Erro ao atualizar favoritos',
         type: 'error'
       });
+    }
+  };
+
+  const handleShareWithFriend = async (amigoId) => {
+    setShareLoading(true);
+    setShareAlert({ show: false, message: '', type: '' });
+    try {
+      // Chama o endpoint real para criar notificação
+      await amigoService.compartilharComAmigo(amigoId, id);
+      setShareAlert({ show: true, message: 'Compartilhado com sucesso!', type: 'success' });
+      setTimeout(() => setShowShareModal(false), 1200);
+    } catch (err) {
+      setShareAlert({ show: true, message: 'Erro ao compartilhar', type: 'error' });
+    } finally {
+      setShareLoading(false);
     }
   };
 
@@ -186,6 +224,18 @@ export function Detalhes() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
                       </svg>
                     </a>
+                    {isAuthenticated && (
+                      <button
+                        onClick={() => setShowShareModal(true)}
+                        className="nav-button bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700 transition-all inline-flex items-center gap-2"
+                        title="Compartilhar com um amigo"
+                      >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 8a3 3 0 11-6 0 3 3 0 016 0zm6 11a9 9 0 10-18 0h18zm-6-5v2m0 0h-2m2 0h2" />
+                        </svg>
+                        <span>Compartilhar</span>
+                      </button>
+                    )}
                   </div>
 
                   <div className="flex items-center gap-6 mt-4">
@@ -226,6 +276,73 @@ export function Detalhes() {
                   </div>
                 </div>
               </div>
+
+              {/* Modal Compartilhar com amigos */}
+              {showShareModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
+                  <div className="bg-dark p-6 rounded-lg w-96 relative">
+                    <button
+                      onClick={() => setShowShareModal(false)}
+                      className="absolute top-2 right-2 text-gray-400 hover:text-white"
+                    >
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                    <h3 className="text-xl font-bold mb-4">Compartilhar com um amigo</h3>
+                    {shareLoading ? (
+                      <div className="flex justify-center items-center py-8">
+                        <svg className="animate-spin h-8 w-8 text-primary" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                        </svg>
+                      </div>
+                    ) : (
+                      <>
+                        {amigos.length === 0 ? (
+                          <div className="text-gray-400 text-center py-6">Você não possui amigos para compartilhar.</div>
+                        ) : (
+                          <ul className="space-y-2 max-h-60 overflow-y-auto">
+                            {amigos.map(amigo => (
+                              <li key={amigo.usuario._id}>
+                                <button
+                                  onClick={() => handleShareWithFriend(amigo.usuario._id)}
+                                  className="w-full flex items-center gap-3 px-4 py-2 rounded hover:bg-primary/80 transition-colors bg-darker text-light"
+                                  disabled={shareLoading}
+                                  style={{
+                                    // Aplica a cor do tema do usuário logado no hover via CSS custom property
+                                    '--user-theme-hover': user?.tema_cor || '#ef4444'
+                                  }}
+                                  onMouseEnter={e => {
+                                    e.currentTarget.style.backgroundColor = user?.tema_cor || '#ef4444';
+                                    e.currentTarget.style.color = '#fff';
+                                  }}
+                                  onMouseLeave={e => {
+                                    e.currentTarget.style.backgroundColor = '';
+                                    e.currentTarget.style.color = '';
+                                  }}
+                                >
+                                  <img
+                                    src={amigo.usuario.foto || '/images/default-avatar.png'}
+                                    alt={amigo.usuario.nome}
+                                    className="w-8 h-8 rounded-full object-cover"
+                                  />
+                                  <span className="flex-1 text-left">{amigo.usuario.nome}</span>
+                                </button>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                        {shareAlert.show && (
+                          <div className={`mt-4 text-center text-sm ${shareAlert.type === 'success' ? 'text-green-400' : 'text-red-400'}`}>
+                            {shareAlert.message}
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </div>
+                </div>
+              )}
 
               {recommendations.length > 0 && (
                 <div className="mt-12">

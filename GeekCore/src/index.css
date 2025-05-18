@@ -991,3 +991,15 @@ footer .text-light {
   opacity: 1;
   transform: translateY(0);
 }
+
+/* Botão X de notificação (herda padrão do perfil) */
+button[title="Excluir notificação"] {
+  background: transparent;
+  color: var(--color-text-base);
+  transition: background 0.3s, color 0.3s;
+}
+
+button[title="Excluir notificação"]:hover {
+  background: var(--color-hover);
+  color: #fff;
+}

@@ -619,4 +619,95 @@ router.post('/amizade/desbloquear/:id', auth, async (req, res) => {
   }
 });
 
+// Notificações: listar
+router.get('/notificacoes', async (req, res) => {
+  try {
+    const usuario = await User.findById(req.user.id);
+    if (!usuario) return res.status(404).json([]);
+    // Garante que notificacoes é array
+    const notificacoes = Array.isArray(usuario.notificacoes) ? usuario.notificacoes : [];
+    // Adiciona _id se não existir (para notificações antigas)
+    notificacoes.forEach(n => {
+      if (!n._id) n._id = new mongoose.Types.ObjectId();
+    });
+    // Ordenar por data decrescente
+    notificacoes.sort((a, b) => new Date(b.data) - new Date(a.data));
+    res.json(notificacoes);
+  } catch (error) {
+    res.status(500).json([]);
+  }
+});
+
+// Notificações: marcar como lida
+router.post('/notificacoes/:id/ler', async (req, res) => {
+  try {
+    const usuario = await User.findById(req.user.id);
+    if (!usuario) return res.status(404).json({ success: false });
+
+    // Corrige busca pelo _id da notificação
+    const noti = (usuario.notificacoes || []).find(n => n._id?.toString() === req.params.id);
+    if (noti) {
+      noti.lida = true;
+      await usuario.save();
+      return res.json({ success: true });
+    }
+    res.status(404).json({ success: false });
+  } catch (error) {
+    res.status(500).json({ success: false });
+  }
+});
+
+// Deletar notificação individual
+router.delete('/notificacoes/:id', async (req, res) => {
+  try {
+    const usuario = await User.findById(req.user.id);
+    if (!usuario) return res.status(404).json({ success: false });
+
+    usuario.notificacoes = (usuario.notificacoes || []).filter(n => n._id?.toString() !== req.params.id);
+    await usuario.save();
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ success: false });
+  }
+});
+
+// Limpar todas as notificações
+router.delete('/notificacoes', async (req, res) => {
+  try {
+    const usuario = await User.findById(req.user.id);
+    if (!usuario) return res.status(404).json({ success: false });
+
+    usuario.notificacoes = [];
+    await usuario.save();
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ success: false });
+  }
+});
+
+// Compartilhamento: criar notificação para o amigo
+router.post('/share', async (req, res) => {
+  try {
+    const { amigoId, itemId } = req.body;
+    const usuarioOrigem = await User.findById(req.user.id);
+    const usuarioDestino = await User.findById(amigoId);
+    if (!usuarioDestino) return res.status(404).json({ success: false, message: 'Amigo não encontrado' });
+
+    // Adicionar notificação ao amigo
+    usuarioDestino.notificacoes = usuarioDestino.notificacoes || [];
+    usuarioDestino.notificacoes.push({
+      _id: new mongoose.Types.ObjectId(),
+      mensagem: `${usuarioOrigem.nome} compartilhou um conteúdo com você!`,
+      data: new Date(),
+      lida: false,
+      itemId: itemId || null
+    });
+    await usuarioDestino.save();
+
+    res.json({ success: true, message: 'Compartilhado com sucesso!' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Erro ao compartilhar' });
+  }
+});
+
 module.exports = router;
