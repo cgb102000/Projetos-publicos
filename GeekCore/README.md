@@ -149,7 +149,8 @@ const item = await fetch(`/api/item/${id}`).then(r => r.json());
 
 ```bash
 npm run start:frontend  # Inicia servidor React
-npm run start:backend   # Inicia servidor Express
+npm run start:backend   # Inicia servidor Express (nodemon)
+npm run api             # Inicia só a API (produção)
 npm run build:css      # Compila TailwindCSS
 npm run watch:css      # Watch mode TailwindCSS
 npm run build          # Build de produção
@@ -163,6 +164,30 @@ npm run build          # Build de produção
 - `Login/Register`: Autenticação de usuários
 
 ## Deploy
+
+### Publicação atual
+
+| Parte | Onde | Endereço |
+|---|---|---|
+| Site (React) | GitHub Pages | https://cgb102000.github.io/Projetos-publicos/GeekCore/ |
+| API (Express + MongoDB Atlas) | Vercel (função serverless) | https://geekcore.vercel.app |
+
+**API na Vercel**: `api/index.js` exporta o app Express, e o `vercel.json` manda todas as rotas para ele. A conexão com o MongoDB é aberta na primeira requisição e reaproveitada nas seguintes. O `.vercelignore` deixa de fora o front, o `node_modules` e o `.env`. As variáveis `MONGO_URI` e `JWT_SECRET` ficam no painel da Vercel (Settings → Environment Variables). Para publicar de novo:
+
+```bash
+cd GeekCore
+npx vercel deploy --prod
+```
+
+**Site no GitHub Pages**: o Pages não tem etapa de build, então a pasta `build/` vai versionada. O `index.html` da raiz do GeekCore redireciona para ela. As rotas usam `HashRouter` (`#/login`, `#/detalhes/videos/:id`) para funcionar sem configuração de servidor, e o endereço da API fica em `public/config.js`, que pode ser trocado sem recompilar. Depois de mudar o front:
+
+```bash
+npm run build   # gera build/ com caminhos relativos ("homepage": ".")
+```
+
+No Atlas, o **Network Access** precisa liberar `0.0.0.0/0`, porque a Vercel não tem IP fixo. O CORS libera `https://cgb102000.github.io` e `localhost`; outras origens vão em `CORS_ORIGINS`.
+
+### Servidor próprio
 
 1. Build do projeto:
 ```bash

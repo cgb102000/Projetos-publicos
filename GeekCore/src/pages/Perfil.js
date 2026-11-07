@@ -109,7 +109,7 @@ export function Perfil() {
                             <div className="bg-darker rounded-lg overflow-hidden">
                               <div className="aspect-[2/3] relative">
                                 <img
-                                  src={item.img_url || '/images/placeholder.jpg'}
+                                  src={item.img_url || process.env.PUBLIC_URL + '/images/placeholder.jpg'}
                                   alt={item.titulo}
                                   className="w-full h-full object-cover"
                                   loading="lazy"

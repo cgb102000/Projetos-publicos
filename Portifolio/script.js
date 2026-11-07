@@ -19,13 +19,14 @@ const projetos = [
   {
     nome: 'GeekCore',
     descricao: 'Plataforma fullstack para fãs de filmes e animes, com login, perfis, amizades, favoritos, comentários e compartilhamento de vídeos.',
-    tags: ['React', 'Node.js', 'Express'],
+    tags: ['React', 'Node.js', 'Express', 'MongoDB'],
+    demo: BASE + 'GeekCore/',
     codigo: REPO + 'GeekCore',
   },
   {
     nome: 'GeekHub',
-    descricao: 'Catálogo de filmes e animes com consulta a banco de dados em tempo real.',
-    tags: ['JavaScript', 'Firebase'],
+    descricao: 'Catálogo de filmes e animes que consome a API REST do GeekCore (Express + MongoDB), com busca, categorias e detalhes.',
+    tags: ['JavaScript', 'REST API', 'MongoDB'],
     demo: BASE + 'GeekHub/',
     codigo: REPO + 'GeekHub',
   },

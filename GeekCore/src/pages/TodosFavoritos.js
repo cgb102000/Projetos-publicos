@@ -56,11 +56,11 @@ export function TodosFavoritos() {
                     <div className="bg-dark rounded-lg overflow-hidden transition-transform duration-300 transform hover:scale-105">
                       <div className="relative aspect-[2/3]">
                         <img
-                          src={item.img_url || '/images/placeholder.jpg'}
+                          src={item.img_url || process.env.PUBLIC_URL + '/images/placeholder.jpg'}
                           alt={item.titulo}
                           className="absolute inset-0 w-full h-full object-cover"
                           onError={(e) => {
-                            e.target.src = '/images/placeholder.jpg';
+                            e.target.src = process.env.PUBLIC_URL + '/images/placeholder.jpg';
                           }}
                           loading="lazy"
                         />

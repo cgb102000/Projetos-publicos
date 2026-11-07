@@ -125,42 +125,6 @@ export function Detalhes() {
     }
   };
 
-  function fetchRecommendations(collection) {
-    const carouselTrack = document.querySelector('.carousel-track');
-    if (!carouselTrack) return;
-
-    fetch(`${APP_CONFIG.API_BASE_URL}/api/random/${collection}?limit=12`)
-      .then(response => response.json())
-      .then(data => {
-        carouselTrack.innerHTML = '';
-
-        data.forEach(item => {
-          const card = document.createElement('div');
-          card.className = 'card aspect-[2/3] h-72 relative group';
-          const imageUrl = item.img_url || APP_CONFIG.PLACEHOLDER_IMAGE;
-
-          card.innerHTML = `
-            <img 
-              src="${imageUrl}" 
-              alt="${item.titulo}" 
-              class="w-full h-full object-cover rounded-lg"
-              onerror="this.src='${APP_CONFIG.PLACEHOLDER_IMAGE}'"
-            >
-            <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-75 transition-all duration-300 rounded-lg flex items-center justify-center">
-              <a href="detalhes.html?id=${item._id}&collection=${collection}"
-                 class="bg-primary text-white px-4 py-2 rounded opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-hover transform hover:scale-110">
-                Assistir
-              </a>
-            </div>
-            <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black to-transparent">
-              <h3 class="text-white text-sm font-semibold line-clamp-2">${item.titulo}</h3>
-            </div>
-          `;
-          carouselTrack.appendChild(card);
-        });
-      });
-  }
-
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -323,7 +287,7 @@ export function Detalhes() {
                                   }}
                                 >
                                   <img
-                                    src={amigo.usuario.foto || '/images/default-avatar.png'}
+                                    src={amigo.usuario.foto || process.env.PUBLIC_URL + '/images/default-avatar.png'}
                                     alt={amigo.usuario.nome}
                                     className="w-8 h-8 rounded-full object-cover"
                                   />

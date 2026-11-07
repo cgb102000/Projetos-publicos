@@ -63,7 +63,7 @@ export function EditarPerfil({ usuario }) {
           <div className="flex justify-center mb-6">
             <div className="relative">
               <img
-                src={perfil.foto || '/images/default-avatar.png'}
+                src={perfil.foto || process.env.PUBLIC_URL + '/images/default-avatar.png'}
                 alt="Foto de perfil"
                 className="w-32 h-32 rounded-full object-cover border-4 border-primary"
               />

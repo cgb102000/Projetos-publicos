@@ -1,0 +1,11 @@
+node_modules
+build
+public
+src
+docs
+scripts
+styles
+components
+.env
+.ENV
+*.md

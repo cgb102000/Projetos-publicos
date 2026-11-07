@@ -2,6 +2,7 @@
   "name": "geekcore",
   "version": "1.0.0",
   "description": "API para fornecer filmes e animes para assistir e baixar",
+  "homepage": ".",
   "main": "app.js",
   "scripts": {
     "start": "set PORT=3000 && react-scripts start",
@@ -12,7 +13,8 @@
     "watch:css": "tailwindcss -i ./src/input.css -o ./public/css/tailwind.css --watch",
     "build": "react-scripts build",
     "server": "node server.js",
-    "generate-pdf": "node scripts/convertToPdf.js"
+    "generate-pdf": "node scripts/convertToPdf.js",
+    "api": "node app.js"
   },
   "keywords": [
     "express",

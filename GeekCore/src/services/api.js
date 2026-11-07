@@ -3,7 +3,13 @@ import { adjustBrightness } from '../utils/themeUtils';
 
 const getBaseUrl = () => {
   const hostname = window.location.hostname;
-  return process.env.REACT_APP_API_URL || `http://${hostname}:3001`;
+  if (process.env.REACT_APP_API_URL) return process.env.REACT_APP_API_URL;
+  // Em desenvolvimento a API roda na porta 3001
+  if (['localhost', '127.0.0.1'].includes(hostname)) return `http://${hostname}:3001`;
+  // No GitHub Pages a URL da API vem de public/config.js (pode ser trocada sem recompilar)
+  if (window.GEEKCORE_CONFIG && window.GEEKCORE_CONFIG.API_URL) return window.GEEKCORE_CONFIG.API_URL;
+  // Servido pelo próprio Express: site e API no mesmo endereço
+  return window.location.origin;
 };
 
 const api = axios.create({

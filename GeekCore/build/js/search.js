@@ -41,11 +41,10 @@ function displayResults(data) {
     const card = document.createElement('div');
     card.className = 'card';
     const coverImage = item.img_url || '/images/placeholder.jpg';
-    const collection = item.collection || 'animes';
 
     card.innerHTML = `
       <img src="${coverImage}" alt="${item.titulo}" class="absolute inset-0 w-full h-full object-cover">
-      <a href="detalhes.html?id=${item._id}&collection=${collection}" 
+      <a href="detalhes.html?id=${item._id}&collection=videos" 
          class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-70 opacity-0 hover:opacity-100 transition-all duration-300">
         <span class="watch-button">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

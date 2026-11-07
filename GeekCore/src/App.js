@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { Navbar } from './components/Navbar';
 import { PrivateRoute } from './components/PrivateRoute';
@@ -19,7 +19,7 @@ import { TodosFavoritos } from './pages/TodosFavoritos';
 function App() {
   return (
     <ThemeProvider>
-      <BrowserRouter future={{ 
+      <HashRouter future={{ 
         v7_startTransition: true,
         v7_relativeSplatPath: true 
       }}>
@@ -86,7 +86,7 @@ function App() {
             </div>
           </AlertProvider>
         </AuthProvider>
-      </BrowserRouter>
+      </HashRouter>
     </ThemeProvider>
   );
 }

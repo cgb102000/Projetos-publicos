@@ -1,3 +1,4 @@
+require('./utils/compatNode');
 const express = require('express');
 const escapeRegex = require('./utils/escapeRegex');
 const mongoose = require('mongoose');
@@ -14,17 +15,23 @@ if (!process.env.JWT_SECRET || /^sua_chave/i.test(process.env.JWT_SECRET)) {
 const app = express();
 
 // Middlewares
+// Origens liberadas: front-ends locais, o GeekHub no GitHub Pages e as listadas em CORS_ORIGINS (separadas por vírgula)
+const origensPermitidas = [
+  'https://cgb102000.github.io',
+  ...(process.env.CORS_ORIGINS || '').split(',').map((o) => o.trim()).filter(Boolean)
+];
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost:3001'],
+  origin: (origin, callback) => {
+    const local = !origin || /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
+    callback(null, local || origensPermitidas.includes(origin));
+  },
   credentials: true
 }));
 app.use(express.json()); // Para analisar o corpo das requisições como JSON
 
-// Servir arquivos estáticos (front-end)
-app.use(express.static('public'));
-
-// Servir arquivos estáticos do React build
+// Servir o React build primeiro: o public/index.html é só o template, sem os scripts
 app.use(express.static(path.join(__dirname, 'build')));
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Middleware de log para debug
 const logMiddleware = (req, res, next) => {
@@ -33,6 +40,17 @@ const logMiddleware = (req, res, next) => {
 };
 
 app.use(logMiddleware);
+
+// Garante a conexão com o MongoDB antes das rotas da API (necessário no modo serverless da Vercel)
+app.use('/api', async (req, res, next) => {
+  if (req.path === '/health') return next();
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    res.status(503).json({ message: 'Banco de dados indisponível. Tente novamente em instantes.' });
+  }
+});
 
 // Importar rotas de autenticação
 const authRoutes = require('./routes/authRoutes');
@@ -44,23 +62,26 @@ app.use('/api/auth', authRoutes);
 // const commentRoutes = require('./routes/commentRoutes');
 // app.use('/api/comments', commentRoutes);
 
-// Função para conectar ao MongoDB com tentativas de reconexão
-const connectDB = async () => {
-  try {
-    if (!process.env.MONGO_URI) {
-      throw new Error('MONGO_URI não definida no arquivo .env');
-    }
-
-    const connection = await mongoose.connect(process.env.MONGO_URI); // Conexão com o MongoDB
-    console.log('Conectado ao MongoDB - Banco de dados:', connection.connection.db.databaseName);
-  } catch (err) {
-    console.error('Erro ao conectar no MongoDB:', err.message);
-    setTimeout(connectDB, 5000);
+// Conexão com o MongoDB reaproveitada entre requisições; se falhar, a próxima requisição tenta de novo
+let conexao = null;
+const connectDB = () => {
+  if (!process.env.MONGO_URI) {
+    return Promise.reject(new Error('MONGO_URI não definida no arquivo .env'));
   }
+  if (!conexao) {
+    conexao = mongoose.connect(process.env.MONGO_URI, { serverSelectionTimeoutMS: 10000 })
+      .then((c) => {
+        console.log('Conectado ao MongoDB - Banco de dados:', c.connection.db.databaseName);
+        return c;
+      })
+      .catch((err) => {
+        console.error('Erro ao conectar no MongoDB:', err.message);
+        conexao = null;
+        throw err;
+      });
+  }
+  return conexao;
 };
-
-// Conectar ao MongoDB
-connectDB();
 
 // Middleware para validar ObjectId
 const validateObjectId = (req, res, next) => {
@@ -213,7 +234,9 @@ app.get('/api/category/:category', async (req, res) => {
 
 // Todas as outras requisições GET não tratadas retornarão nosso app React
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+  res.sendFile(path.join(__dirname, 'build', 'index.html'), (err) => {
+    if (err) res.status(404).json({ message: 'Rota não encontrada' });
+  });
 });
 
 // Tratamento de erro para rotas não encontradas (404)
@@ -230,60 +253,21 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Função para encontrar uma porta disponível
-function findAvailablePort(startPort) {
-  return new Promise((resolve, reject) => {
-    const server = require('net').createServer();
-    
-    server.on('error', (err) => {
-      if (err.code === 'EADDRINUSE') {
-        resolve(findAvailablePort(startPort + 1));
-      } else {
-        reject(err);
-      }
-    });
-
-    server.listen(startPort, () => {
-      server.once('close', () => {
-        resolve(startPort);
-      });
-      server.close();
-    });
+// Inicia o servidor local (npm run api / npm run dev). Na Vercel o app é exportado e não chama listen.
+const startServer = () => {
+  const port = process.env.PORT || 3001;
+  const server = app.listen(port, () => {
+    console.log(`Servidor rodando em http://localhost:${port}`);
   });
-}
-
-// Função para matar processo em uma porta específica (Windows)
-async function killProcessOnPort(port) {
-  return new Promise((resolve, reject) => {
-    const exec = require('child_process').exec;
-    exec(`taskkill /F /PID ${port}`, (err, stdout, stderr) => {
-      if (err) {
-        console.log(`Nenhum processo precisou ser finalizado na porta ${port}`);
-      }
-      resolve();
-    });
-  });
-}
-
-// Função para iniciar o servidor
-const startServer = async () => {
-  try {
-    await connectDB(); // Garantir que o MongoDB está conectado antes de iniciar o servidor
-    
-    const port = process.env.PORT || 3001;
-    
-    const server = app.listen(port, () => {
-      console.log(`Servidor rodando em http://localhost:${port}`);
-    });
-
-    server.on('error', (err) => {
-      console.error('Erro no servidor:', err);
-      process.exit(1);
-    });
-  } catch (err) {
-    console.error('Erro ao iniciar aplicação:', err);
+  server.on('error', (err) => {
+    console.error('Erro no servidor:', err);
     process.exit(1);
-  }
+  });
+  connectDB().catch(() => {});
 };
 
-startServer();
+if (require.main === module) {
+  startServer();
+}
+
+module.exports = app;

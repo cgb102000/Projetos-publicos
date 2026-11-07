@@ -232,7 +232,7 @@ export function AbasAmigos() {
             <div key={sol._id} className="flex justify-between items-center bg-darker p-4 rounded">
               <div className="flex items-center space-x-4">
                 <img
-                  src={sol.de.foto || '/images/default-avatar.png'}
+                  src={sol.de.foto || process.env.PUBLIC_URL + '/images/default-avatar.png'}
                   alt={sol.de.nome}
                   className="w-10 h-10 rounded-full"
                 />
@@ -267,7 +267,7 @@ export function AbasAmigos() {
             >
               <div className="relative w-20 h-20 mx-auto mb-2">
                 <img
-                  src={amigo.usuario.foto || '/images/default-avatar.png'}
+                  src={amigo.usuario.foto || process.env.PUBLIC_URL + '/images/default-avatar.png'}
                   alt={amigo.usuario.nome}
                   className="w-full h-full rounded-full object-cover border-2 border-transparent group-hover:border-primary transition-all"
                 />

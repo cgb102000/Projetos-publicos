@@ -1,0 +1,6 @@
+{
+  "framework": null,
+  "buildCommand": "",
+  "installCommand": "npm install --omit=dev --ignore-scripts",
+  "rewrites": [{ "source": "/(.*)", "destination": "/api" }]
+}

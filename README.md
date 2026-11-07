@@ -24,8 +24,8 @@ Olá! Sou o **Caio Gabriel**, QA e desenvolvedor. Aqui reúno os projetos que de
 
 | Projeto | Descrição | Tecnologias | Links |
 |---|---|---|---|
-| **GeekCore** | Plataforma fullstack para fãs de filmes e animes: catálogo, login, perfis, amizades, favoritos, comentários e compartilhamento de vídeos. | React, Node.js, Express | [Código](GeekCore/) |
-| **GeekHub** | Catálogo de filmes e animes com consulta a banco de dados em tempo real. *Catálogo vazio no momento: os dados estão sendo migrados para o MongoDB.* | HTML, CSS, JavaScript, Firebase | 🌐 [Acessar](https://cgb102000.github.io/Projetos-publicos/GeekHub/) · [Código](GeekHub/) |
+| **GeekCore** | Plataforma fullstack para fãs de filmes e animes: catálogo, login, perfis, amizades, favoritos, comentários e compartilhamento de vídeos. | React, Node.js, Express, MongoDB | 🌐 [Acessar](https://cgb102000.github.io/Projetos-publicos/GeekCore/) · [API](https://geekcore.vercel.app/api/recent) · [Código](GeekCore/) |
+| **GeekHub** | Catálogo de filmes e animes que consome a API REST do GeekCore (MongoDB): recentes, busca, filtro por categoria e página de detalhes. | HTML, CSS, JavaScript, REST API | 🌐 [Acessar](https://cgb102000.github.io/Projetos-publicos/GeekHub/) · [Código](GeekHub/) |
 | **FarmaUnix** | Farmácia online com carrinho, cálculo da taxa de entrega pela distância, mapa da rota e pedido pelo WhatsApp. | HTML, CSS, JavaScript, Leaflet, OpenStreetMap | 🌐 [Acessar](https://cgb102000.github.io/Projetos-publicos/FarmaUnix/src/) · [Código](FarmaUnix/) |
 | **VOLT Fitness** | App de treinos: rotina semanal com treino por dia, execução marcando as séries de cada exercício e painel de progresso com sequência de dias e histórico. Login com Google. | Lovable, Login com Google | 🌐 [Acessar](https://voltfitness.lovable.app) |
 | **Portfólio** | Meu portfólio pessoal, com apresentação, projetos e contato. | HTML, CSS, JavaScript | 🌐 [Acessar](https://cgb102000.github.io/Projetos-publicos/Portifolio/) · [Código](Portifolio/) |
