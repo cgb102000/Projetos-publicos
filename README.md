@@ -1,28 +1,59 @@
-## ✨ Meus Projetos Públicos
+# ✨ Meus Projetos
 
-Aqui estão alguns dos meus projetos que você pode explorar:
+Olá! Sou o **Caio Gabriel** e aqui reúno os projetos que desenvolvi: aplicações web, consumo de APIs, ferramentas utilitárias, APIs REST e automação de testes.
 
-### 1. **🎧 Spotify - Consultor de Músicas em API em Tempo Real**  
-Uma plataforma interativa para consultar músicas e álbuns em tempo real.  
-🌐 [Clique aqui para acessar](https://cgb102000.github.io/Projetos-publicos/Spotify/)
+> Os projetos com 🌐 podem ser abertos direto no navegador. Os demais têm o código disponível no repositório.
 
-### 2. **🐲 Pokedex - Consultor de Pokémons em API em Tempo Real**  
-Explore o mundo Pokémon com uma Pokédex interativa que consulta dados em tempo real.  
-🌐 [Clique aqui para acessar](https://cgb102000.github.io/Projetos-publicos/Pokedex/)
+## 📑 Sumário
 
-### 3. **💻 GeekHub - Consulta de Filmes em Banco de Dados em Tempo Real**  
-Descubra filmes e compartilhe conteúdos geeks com uma consulta rápida a banco de dados.  
-🌐 [Clique aqui para acessar](https://cgb102000.github.io/Projetos-publicos/GeekHub/)
+- [Aplicações web](#-aplicações-web)
+- [Consumo de APIs em tempo real](#-consumo-de-apis-em-tempo-real)
+- [Ferramentas](#️-ferramentas)
+- [Back-end e automação](#️-back-end-e-automação)
+- [Estudos](#-estudos)
 
-### 4. **🖼️ Redimensionar Imagens Online**  
-Ferramenta simples e eficiente para redimensionar imagens de maneira prática e rápida.  
-🌐 [Clique aqui para acessar](https://cgb102000.github.io/Projetos-publicos/Redimensionar%20Imagem/)
+---
 
-### 5. **🔢 Contador de Palavras e Caracteres**  
-Ferramenta prática para contar palavras e caracteres de forma rápida e eficiente.  
-🌐 [Clique aqui para acessar](https://cgb102000.github.io/Projetos-publicos/Contador%20de%20caracteres%20e%20palavras/)
+## 💻 Aplicações web
 
-### 6. **🤖 Vertex AI App - Consulta à API do Google para Respostas Inteligentes**  
-Aplicação que utiliza a API do Vertex AI para gerar respostas inteligentes para os usuários.  
-🌐 [Clique aqui para acessar](https://vertexapp-4399c9c295dd.herokuapp.com/)
+| Projeto | Descrição | Tecnologias | Links |
+|---|---|---|---|
+| **GeekCore** | Plataforma fullstack para fãs de filmes e animes: catálogo, login, perfis, amizades, favoritos, comentários e compartilhamento de vídeos. | React, Node.js, Express | [Código](GeekCore/) |
+| **GeekHub** | Catálogo de filmes e animes com consulta a banco de dados em tempo real. | HTML, CSS, JavaScript, Firebase | 🌐 [Acessar](https://cgb102000.github.io/Projetos-publicos/GeekHub/) · [Código](GeekHub/) |
+| **FarmaUnix** | Site de farmácia com vitrine de produtos e fluxo de finalização de compra. | HTML, CSS, JavaScript | 🌐 [Acessar](https://cgb102000.github.io/Projetos-publicos/FarmaUnix/src/) · [Código](FarmaUnix/) |
+| **Portfólio** | Meu portfólio pessoal. | Vue 3, Vite, Materialize | 🌐 [Acessar](https://cgb102000.github.io/Projetos-publicos/Portifolio/) · [Código](Portifolio/) |
+| **Ciclos** | App para acompanhar ciclos de medicamentos: calendário, doses, lembretes no Telegram, controle de estoque e histórico. Instalável no celular (PWA). | Node.js, PostgreSQL, Prisma | Repositório privado |
 
+## 🔌 Consumo de APIs em tempo real
+
+| Projeto | Descrição | Tecnologias | Links |
+|---|---|---|---|
+| **Spotify** | Busca de músicas, artistas e álbuns usando a API oficial do Spotify. | JavaScript, Bootstrap, Spotify Web API | 🌐 [Acessar](https://cgb102000.github.io/Projetos-publicos/Spotify/) · [Código](Spotify/) |
+| **Pokédex** | Pokédex interativa que consulta os dados de cada Pokémon em tempo real. | JavaScript, PokéAPI | 🌐 [Acessar](https://cgb102000.github.io/Projetos-publicos/Pokedex/) · [Código](Pokedex/) |
+
+## 🛠️ Ferramentas
+
+| Projeto | Descrição | Tecnologias | Links |
+|---|---|---|---|
+| **Redimensionar Imagem** | Redimensiona imagens direto no navegador, de forma rápida e prática. | HTML, CSS, JavaScript | 🌐 [Acessar](https://cgb102000.github.io/Projetos-publicos/Redimensionar%20Imagem/) · [Código](Redimensionar%20Imagem/) |
+| **Contador de Palavras e Caracteres** | Conta palavras e caracteres de um texto em tempo real. | HTML, CSS, JavaScript | 🌐 [Acessar](https://cgb102000.github.io/Projetos-publicos/Contador%20de%20caracteres%20e%20palavras/) · [Código](Contador%20de%20caracteres%20e%20palavras/) |
+| **Audio to Text** | Transcreve arquivos de áudio para texto usando o modelo Whisper, da OpenAI. | Python, Flask, Whisper | [Código](Audio%20to%20Text/) |
+
+## ⚙️ Back-end e automação
+
+| Projeto | Descrição | Tecnologias | Links |
+|---|---|---|---|
+| **Task Manager API** | API REST com CRUD de usuários e tarefas, validação, middleware de log e CORS. | Python, FastAPI, SQLAlchemy, SQLite | [Repositório](https://github.com/cgb102000/task_manager) |
+| **Teste automatizado MenuDino** | Teste automatizado que valida o preenchimento de endereço no site MenuDino. | Robot Framework, Playwright | [Repositório](https://github.com/cgb102000/teste-automatizado-menudino) |
+
+## 📚 Estudos
+
+| Projeto | Descrição | Links |
+|---|---|---|
+| **HTML5 e CSS3** | Sites feitos durante o curso de HTML e CSS: CyberNews, Imobiliária, Kaw Bijus, parallax e outros. | 🌐 [Ver sites](https://github.com/cgb102000/html-css#readme) · [Repositório](https://github.com/cgb102000/html-css) |
+
+---
+
+## 📄 Licença
+
+Distribuído sob a licença MIT. Veja o arquivo [LICENSE](LICENSE).
