@@ -100,137 +100,305 @@ input:focus-visible {
 
 /* Destaque */
 .destaque {
-  background: linear-gradient(135deg, var(--vermelho), #ff4d4d);
+  background: radial-gradient(circle at 85% 30%, #ff6b6b 0%, transparent 45%),
+              linear-gradient(135deg, #c8000f 0%, var(--vermelho) 55%, #ff3b3b 100%);
   color: #fff;
-  text-align: center;
-  padding: 48px 0;
+  overflow: hidden;
+}
+
+.destaque-conteudo {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  align-items: center;
+  gap: 32px;
+  padding-top: 48px;
+  padding-bottom: 56px;
+}
+
+.destaque-etiqueta {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-bottom: 16px;
 }
 
 .destaque h1 {
   font-weight: 900;
-  font-size: clamp(1.6rem, 4vw, 2.4rem);
-  margin-bottom: 8px;
+  font-size: clamp(1.8rem, 4.2vw, 2.8rem);
+  line-height: 1.12;
+  margin-bottom: 12px;
 }
 
 .destaque p {
   opacity: 0.95;
+  font-size: 1.05rem;
   margin-bottom: 24px;
+  max-width: 480px;
 }
 
-#filtro {
-  width: 100%;
-  max-width: 480px;
-  padding: 12px 20px;
+.busca {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
   border-radius: 999px;
+  padding: 4px 20px;
+  max-width: 460px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+}
+
+.busca input {
+  flex: 1;
+  min-width: 0;
   border: 0;
+  padding: 10px 0;
   font: inherit;
+  color: var(--texto);
+  background: transparent;
+}
+
+.busca input:focus {
+  outline: none;
+}
+
+.busca:focus-within {
+  outline: 3px solid #ffb3b8;
+}
+
+.destaque-imagem {
+  position: relative;
+  height: 260px;
+}
+
+.destaque-imagem svg {
+  position: absolute;
+  width: 200px;
+  height: auto;
+  filter: drop-shadow(0 16px 24px rgba(0, 0, 0, 0.25));
+}
+
+.destaque-imagem svg:nth-child(1) { left: 0; top: 80px; transform: rotate(-8deg); z-index: 1; }
+.destaque-imagem svg:nth-child(2) { left: 24%; top: -10px; width: 220px; }
+.destaque-imagem svg:nth-child(3) { right: -10px; top: 120px; transform: rotate(6deg); z-index: 2; }
+
+/* Benefícios */
+.beneficios {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: -28px;
+  position: relative;
+  z-index: 2;
+}
+
+.beneficios div {
+  background: #fff;
+  border-radius: var(--raio);
+  padding: 16px 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 14px;
+  align-items: center;
+}
+
+.beneficios span {
+  grid-row: span 2;
+  font-size: 1.8rem;
+}
+
+.beneficios small {
+  color: var(--texto-suave);
 }
 
 main {
   flex: 1;
-  padding-top: 24px;
+  padding-top: 40px;
   padding-bottom: 48px;
+}
+
+.catalogo-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.catalogo-topo h2 {
+  font-size: 1.6rem;
+  font-weight: 900;
+}
+
+.categorias {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.chip {
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: #fff;
+  border: 1px solid var(--borda);
+  color: var(--texto);
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.chip:hover {
+  border-color: var(--vermelho);
+  color: var(--vermelho);
+}
+
+.chip.ativo {
+  background: var(--vermelho);
+  border-color: var(--vermelho);
+  color: #fff;
 }
 
 .aviso {
   text-align: center;
   color: var(--texto-suave);
-  font-size: 0.9rem;
-  margin-bottom: 24px;
+  font-size: 0.85rem;
+  margin-top: 32px;
 }
 
 /* Produtos */
 .produtos {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 20px;
 }
 
 .produto {
   background: #fff;
   border: 1px solid var(--borda);
-  border-radius: var(--raio);
-  padding: 16px;
+  border-radius: 16px;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  gap: 8px;
   transition: box-shadow 0.2s, transform 0.2s;
 }
 
 .produto:hover {
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-  transform: translateY(-2px);
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.1);
+  transform: translateY(-3px);
 }
 
 .produto[hidden] {
   display: none;
 }
 
-.embalagem {
-  height: 140px;
-  border-radius: 8px;
-  background: linear-gradient(135deg, var(--cor), color-mix(in srgb, var(--cor) 60%, #fff));
+.produto-imagem {
+  position: relative;
+  background: linear-gradient(160deg, #fff 0%, color-mix(in srgb, var(--cor) 14%, #fff) 100%);
+  padding: 16px 16px 4px;
+  display: grid;
+  place-items: center;
+}
+
+.produto-imagem svg {
+  width: 100%;
+  max-width: 220px;
+  height: auto;
+  transition: transform 0.3s;
+}
+
+.produto:hover .produto-imagem svg {
+  transform: scale(1.05) rotate(-2deg);
+}
+
+.selo-receita {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #9a3412;
+  background: #ffedd5;
+  border: 1px solid #fed7aa;
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+
+.produto-corpo {
+  padding: 16px 18px 18px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
   gap: 4px;
-  color: #fff;
-  margin-bottom: 4px;
+  flex: 1;
 }
 
-.pilula {
-  font-size: 2.2rem;
-}
-
-.embalagem-nome {
-  font-weight: 900;
-  font-size: 1.3rem;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+.produto-categoria {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--cor);
 }
 
 .produto h3 {
-  font-size: 1.15rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.produto h3 small {
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: var(--texto-suave);
+}
+
+.produto-apresentacao {
+  font-size: 0.85rem;
+  color: var(--texto-suave);
 }
 
 .produto p {
   color: var(--texto-suave);
-  font-size: 0.92rem;
+  font-size: 0.9rem;
   line-height: 1.45;
+  margin-top: 6px;
   flex: 1;
-}
-
-.selo-receita {
-  align-self: flex-start;
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: #9a3412;
-  background: #ffedd5;
-  padding: 2px 8px;
-  border-radius: 999px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .produto-rodape {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 8px;
+  margin-top: 14px;
 }
 
 .produto-rodape strong {
-  font-size: 1.2rem;
+  font-size: 1.35rem;
+  font-weight: 900;
 }
 
 .produto-rodape button {
-  padding: 8px 16px;
-  border-radius: 8px;
+  padding: 10px 18px;
+  border-radius: 10px;
   background: var(--vermelho);
   color: #fff;
   font-weight: 700;
+  transition: background 0.2s;
 }
 
 .produto-rodape button:hover {
   background: var(--vermelho-escuro);
+}
+
+.produto-rodape button.adicionado {
+  background: #1f9d55;
 }
 
 .vazio {
@@ -421,11 +589,74 @@ main {
 }
 
 .rodape {
+  background: #1f2933;
+  color: #cbd2d9;
+  padding: 40px 0 20px;
+}
+
+.rodape-conteudo {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: 24px;
+}
+
+.rodape h3 {
+  color: #fff;
+  font-size: 0.95rem;
+  margin-bottom: 8px;
+}
+
+.rodape p {
+  font-size: 0.9rem;
+}
+
+.rodape a {
+  color: #fff;
+}
+
+.marca-rodape {
+  color: #fff;
+  margin-bottom: 8px;
+  font-size: 1.2rem;
+}
+
+.rodape-credito {
   text-align: center;
-  padding: 24px 16px;
-  color: var(--texto-suave);
-  border-top: 1px solid var(--borda);
-  background: #fff;
+  margin-top: 32px;
+  padding-top: 16px;
+  border-top: 1px solid #323f4b;
+  font-size: 0.8rem;
+  color: #9aa5b1;
+}
+
+@media (max-width: 860px) {
+  .destaque-conteudo {
+    grid-template-columns: 1fr;
+    padding-bottom: 64px;
+  }
+
+  .destaque-imagem {
+    height: 200px;
+    max-width: 420px;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .destaque-imagem svg {
+    width: 150px;
+  }
+
+  .destaque-imagem svg:nth-child(2) {
+    width: 170px;
+  }
+
+  .beneficios {
+    grid-template-columns: 1fr;
+  }
+
+  .rodape-conteudo {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 520px) {
@@ -435,5 +666,20 @@ main {
 
   .produtos {
     grid-template-columns: 1fr;
+  }
+
+  .catalogo-topo h2 {
+    width: 100%;
+  }
+
+  .categorias {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    width: 100%;
+    padding-bottom: 4px;
+  }
+
+  .chip {
+    white-space: nowrap;
   }
 }

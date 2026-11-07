@@ -26,17 +26,34 @@
   </header>
 
   <section class="destaque">
-    <div class="container">
-      <h1>Os melhores remédios com os melhores preços</h1>
-      <p>Escolha os produtos, calcule a entrega e envie seu pedido pelo WhatsApp.</p>
-      <input type="search" id="filtro" placeholder="Buscar produto..." aria-label="Buscar produto">
+    <div class="container destaque-conteudo">
+      <div class="destaque-texto">
+        <span class="destaque-etiqueta">Farmácia do bairro, agora online</span>
+        <h1>Seus remédios com entrega rápida e preço justo</h1>
+        <p>Monte seu pedido, veja a taxa de entrega na hora e finalize pelo WhatsApp.</p>
+        <div class="busca">
+          <span aria-hidden="true">🔍</span>
+          <input type="search" id="filtro" placeholder="Buscar medicamento..." aria-label="Buscar medicamento">
+        </div>
+      </div>
+      <div class="destaque-imagem" id="destaque-imagem" aria-hidden="true"></div>
     </div>
   </section>
 
+  <section class="beneficios container" aria-label="Benefícios">
+    <div><span aria-hidden="true">🛵</span><strong>Entrega na região</strong><small>Até 15 km da loja</small></div>
+    <div><span aria-hidden="true">💬</span><strong>Pedido pelo WhatsApp</strong><small>Sem cadastro</small></div>
+    <div><span aria-hidden="true">📍</span><strong>Taxa calculada na hora</strong><small>A partir de R$ 10</small></div>
+  </section>
+
   <main class="container">
-    <p class="aviso">Site de demonstração (projeto de estudo). Medicamentos marcados exigem receita médica.</p>
+    <div class="catalogo-topo">
+      <h2>Produtos</h2>
+      <div class="categorias" id="categorias" role="group" aria-label="Filtrar por categoria"></div>
+    </div>
     <div class="produtos" id="produtos"></div>
     <p class="vazio" id="sem-resultados" hidden>Nenhum produto encontrado.</p>
+    <p class="aviso">Site de demonstração (projeto de estudo). Medicamentos com o selo "Receita" exigem prescrição médica.</p>
   </main>
 
   <div class="fundo" id="fundo" hidden></div>
@@ -73,10 +90,28 @@
   </aside>
 
   <footer class="rodape">
-    Site criado por Caio Gabriel
+    <div class="container rodape-conteudo">
+      <div>
+        <span class="marca marca-rodape">
+          <img src="../public/images/farmacia.png" alt="" width="32" height="32">
+          <span>Farma <strong>Unix</strong></span>
+        </span>
+        <p>Cuidando da sua saúde perto de você.</p>
+      </div>
+      <div>
+        <h3>Endereço</h3>
+        <p id="endereco-rodape"></p>
+      </div>
+      <div>
+        <h3>Atendimento</h3>
+        <p><a id="whatsapp-rodape" href="#" target="_blank" rel="noopener">Fale pelo WhatsApp</a></p>
+      </div>
+    </div>
+    <p class="rodape-credito">Projeto de estudo criado por Caio Gabriel</p>
   </footer>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <script src="assets/embalagens.js"></script>
   <script src="assets/script.js"></script>
 </body>
 </html>

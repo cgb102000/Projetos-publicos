@@ -3,26 +3,38 @@ const COORDENADAS_LOJA = [-20.7816959, -49.4042847];
 const CIDADE_PADRAO = 'São José do Rio Preto, SP';
 const WHATSAPP = '17992255791';
 
+const CATEGORIAS = ['Todos', 'Dor e febre', 'Gripe e resfriado', 'Digestivo', 'Antibióticos', 'Sono e ansiedade'];
+
 const PRODUTOS = [
-  { id: 'dipirona', nome: 'Dipirona', preco: 10, cor: '#e53935',
+  { id: 'dipirona', nome: 'Dipirona', preco: 10, cor: '#d62828', forma: 'frasco', categoria: 'Dor e febre',
+    dosagem: '500 mg/mL', quantidade: 'Gotas 20 mL',
     descricao: 'Analgésico e antitérmico: alivia dores e reduz a febre.' },
-  { id: 'dorflex', nome: 'Dorflex', preco: 15, cor: '#1e88e5',
+  { id: 'dorflex', nome: 'Dorflex', preco: 15, cor: '#1565c0', forma: 'caixa', categoria: 'Dor e febre',
+    dosagem: 'Analgésico e relaxante', quantidade: '36 comprimidos',
     descricao: 'Analgésico e relaxante muscular, indicado para dores ligadas a contraturas, como a dor de cabeça tensional.' },
-  { id: 'benegrip', nome: 'Benegrip', preco: 20, cor: '#fb8c00',
+  { id: 'benegrip', nome: 'Benegrip', preco: 20, cor: '#ef6c00', forma: 'blister', categoria: 'Gripe e resfriado',
+    dosagem: 'Sintomas da gripe', quantidade: '20 comprimidos',
     descricao: 'Alivia sintomas de gripe e resfriado, como febre, dor de cabeça, congestão nasal e coriza. Para maiores de 12 anos.' },
-  { id: 'buscopan', nome: 'Buscopan', preco: 25, cor: '#43a047',
+  { id: 'buscopan', nome: 'Buscopan', preco: 25, cor: '#2e7d32', forma: 'caixa', categoria: 'Digestivo',
+    dosagem: '10 mg', quantidade: '20 drágeas',
     descricao: 'Atua nas dores abdominais e cólicas, com alívio rápido e prolongado.' },
-  { id: 'engov', nome: 'Engov', preco: 30, cor: '#8e24aa',
+  { id: 'engov', nome: 'Engov', preco: 30, cor: '#7b1fa2', forma: 'blister', categoria: 'Dor e febre',
+    dosagem: 'Dor e mal-estar', quantidade: '6 comprimidos',
     descricao: 'Combinação de analgésico e antialérgico usada para aliviar dor de cabeça e mal-estar.' },
-  { id: 'doril', nome: 'Doril', preco: 35, cor: '#00897b',
+  { id: 'doril', nome: 'Doril', preco: 35, cor: '#00796b', forma: 'caixa', categoria: 'Dor e febre',
+    dosagem: '500 mg', quantidade: '16 comprimidos',
     descricao: 'Alívio de dores leves a moderadas: dor de cabeça, resfriado, dores musculares e dor de dente.' },
-  { id: 'amoxicilina', nome: 'Amoxicilina', preco: 40, cor: '#3949ab', receita: true,
+  { id: 'amoxicilina', nome: 'Amoxicilina', preco: 40, cor: '#283593', forma: 'blister', categoria: 'Antibióticos', receita: true,
+    dosagem: '500 mg', quantidade: '21 cápsulas',
     descricao: 'Antibiótico de amplo espectro para infecções bacterianas causadas por germes sensíveis.' },
-  { id: 'zolpidem', nome: 'Zolpidem', preco: 45, cor: '#5e35b1', receita: true,
+  { id: 'zolpidem', nome: 'Zolpidem', preco: 45, cor: '#4527a0', forma: 'caixa', categoria: 'Sono e ansiedade', receita: true,
+    dosagem: '10 mg', quantidade: '20 comprimidos',
     descricao: 'Age nos centros do sono no cérebro e é prescrito para o tratamento da insônia.' },
-  { id: 'rivotril', nome: 'Rivotril', preco: 50, cor: '#6d4c41', receita: true,
+  { id: 'rivotril', nome: 'Rivotril', preco: 50, cor: '#0277bd', forma: 'frasco', categoria: 'Sono e ansiedade', receita: true,
+    dosagem: '2,5 mg/mL', quantidade: 'Gotas 20 mL',
     descricao: 'Clonazepam, usado em distúrbios de ansiedade, crises epilépticas e distúrbios do equilíbrio.' },
-  { id: 'astro', nome: 'Astro', preco: 55, cor: '#c0ca33', receita: true,
+  { id: 'astro', nome: 'Astro', preco: 55, cor: '#c62828', forma: 'caixa', categoria: 'Antibióticos', receita: true,
+    dosagem: '500 mg', quantidade: '5 comprimidos',
     descricao: 'Azitromicina, antibiótico para infecções respiratórias como sinusite, bronquite e faringite.' },
 ];
 
@@ -39,41 +51,66 @@ let carrinho = carregarCarrinho();
 let entrega = null; // { distancia, taxa } ou { foraDaArea: true }
 
 // ---------- Produtos ----------
+let categoriaAtual = 'Todos';
+
 function renderProdutos() {
   $('produtos').innerHTML = PRODUTOS.map((p) => `
-    <article class="produto" data-nome="${p.nome.toLowerCase()}">
-      <div class="embalagem" style="--cor:${p.cor}" aria-hidden="true">
-        <span class="pilula">💊</span>
-        <span class="embalagem-nome">${p.nome}</span>
+    <article class="produto" data-nome="${p.nome.toLowerCase()}" data-categoria="${p.categoria}" style="--cor:${p.cor}">
+      <div class="produto-imagem">
+        ${window.desenharEmbalagem(p)}
+        ${p.receita ? '<span class="selo-receita">Receita</span>' : ''}
       </div>
-      <h3>${p.nome}</h3>
-      ${p.receita ? '<span class="selo-receita">Venda sob prescrição</span>' : ''}
-      <p>${p.descricao}</p>
-      <div class="produto-rodape">
-        <strong>${moeda(p.preco)}</strong>
-        <button type="button" data-adicionar="${p.id}">Adicionar</button>
+      <div class="produto-corpo">
+        <span class="produto-categoria">${p.categoria}</span>
+        <h3>${p.nome} <small>${p.dosagem}</small></h3>
+        <span class="produto-apresentacao">${p.quantidade}</span>
+        <p>${p.descricao}</p>
+        <div class="produto-rodape">
+          <strong>${moeda(p.preco)}</strong>
+          <button type="button" data-adicionar="${p.id}" aria-label="Adicionar ${p.nome} ao carrinho">Adicionar</button>
+        </div>
       </div>
     </article>`).join('');
 }
 
-$('produtos').addEventListener('click', (e) => {
-  const id = e.target.dataset.adicionar;
-  if (!id) return;
-  alterarQuantidade(id, 1);
-  e.target.textContent = 'Adicionado ✓';
-  setTimeout(() => (e.target.textContent = 'Adicionar'), 1000);
-});
+function renderCategorias() {
+  $('categorias').innerHTML = CATEGORIAS.map((c) => `
+    <button type="button" class="chip${c === categoriaAtual ? ' ativo' : ''}" data-categoria="${c}" aria-pressed="${c === categoriaAtual}">${c}</button>`).join('');
+}
 
-$('filtro').addEventListener('input', (e) => {
-  const termo = e.target.value.trim().toLowerCase();
+function aplicarFiltros() {
+  const termo = $('filtro').value.trim().toLowerCase();
   let visiveis = 0;
   document.querySelectorAll('.produto').forEach((card) => {
-    const mostra = card.dataset.nome.includes(termo);
+    const mostra = card.dataset.nome.includes(termo)
+      && (categoriaAtual === 'Todos' || card.dataset.categoria === categoriaAtual);
     card.hidden = !mostra;
     if (mostra) visiveis++;
   });
   $('sem-resultados').hidden = visiveis > 0;
+}
+
+$('produtos').addEventListener('click', (e) => {
+  const botao = e.target.closest('[data-adicionar]');
+  if (!botao) return;
+  alterarQuantidade(botao.dataset.adicionar, 1);
+  botao.textContent = 'Adicionado ✓';
+  botao.classList.add('adicionado');
+  setTimeout(() => {
+    botao.textContent = 'Adicionar';
+    botao.classList.remove('adicionado');
+  }, 1000);
 });
+
+$('categorias').addEventListener('click', (e) => {
+  const chip = e.target.closest('[data-categoria]');
+  if (!chip) return;
+  categoriaAtual = chip.dataset.categoria;
+  renderCategorias();
+  aplicarFiltros();
+});
+
+$('filtro').addEventListener('input', aplicarFiltros);
 
 // ---------- Carrinho ----------
 function carregarCarrinho() {
@@ -287,5 +324,11 @@ $('finalizar').addEventListener('click', () => {
 });
 
 $('endereco-loja').textContent = ENDERECO_LOJA;
+$('endereco-rodape').textContent = ENDERECO_LOJA;
+$('whatsapp-rodape').href = `https://wa.me/55${WHATSAPP}`;
+$('destaque-imagem').innerHTML = ['dipirona', 'dorflex', 'benegrip']
+  .map((id) => window.desenharEmbalagem(PRODUTOS.find((p) => p.id === id)))
+  .join('');
+renderCategorias();
 renderProdutos();
 renderCarrinho();
