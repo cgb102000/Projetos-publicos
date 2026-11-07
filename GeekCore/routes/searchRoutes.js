@@ -1,4 +1,5 @@
 const express = require('express');
+const escapeRegex = require('../utils/escapeRegex');
 const mongoose = require('mongoose');
 
 // Defina os modelos para Filme e Anime
@@ -22,8 +23,8 @@ router.get('/search', async (req, res) => {
 
   try {
     // Buscando em ambas as coleções: 'filmes' e 'animes'
-    const filmes = await Filme.find({ titulo: { $regex: q, $options: 'i' } });
-    const animes = await Anime.find({ titulo: { $regex: q, $options: 'i' } });
+    const filmes = await Filme.find({ titulo: { $regex: escapeRegex(q), $options: 'i' } });
+    const animes = await Anime.find({ titulo: { $regex: escapeRegex(q), $options: 'i' } });
 
     // Concatenando os resultados de ambas as coleções
     const results = [...filmes, ...animes];

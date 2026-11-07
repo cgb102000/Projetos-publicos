@@ -1,10 +1,15 @@
 const express = require('express');
+const escapeRegex = require('./utils/escapeRegex');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
 const auth = require('./middleware/auth'); // Adicione esta linha
 const User = require('./models/User'); // Importar o modelo User
 require('dotenv').config();
+
+if (!process.env.JWT_SECRET || /^sua_chave/i.test(process.env.JWT_SECRET)) {
+  console.warn('Aviso: defina um JWT_SECRET forte no .env (veja .env.example). O valor atual permite forjar logins.');
+}
 
 const app = express();
 
@@ -102,7 +107,7 @@ app.get('/api/search', async (req, res) => {
 
   try {
     const results = await mongoose.connection.db.collection('videos')
-      .find({ titulo: { $regex: query, $options: 'i' } })
+      .find({ titulo: { $regex: escapeRegex(query.trim()), $options: 'i' } })
       .toArray();
 
     if (results.length > 0) {
@@ -192,7 +197,7 @@ app.get('/api/category/:category', async (req, res) => {
 
   try {
     const results = await mongoose.connection.db.collection('videos')
-      .find({ categoria: { $regex: new RegExp(category, 'i') } })
+      .find({ categoria: { $regex: escapeRegex(category), $options: 'i' } })
       .toArray();
 
     if (results.length > 0) {

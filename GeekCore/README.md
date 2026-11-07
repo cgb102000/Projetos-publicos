@@ -59,8 +59,8 @@ geekcore/
 
 1. Clone o repositório:
 ```bash
-git clone https://github.com/seu-usuario/geekcore.git
-cd geekcore
+git clone https://github.com/cgb102000/Projetos-publicos.git
+cd Projetos-publicos/GeekCore
 ```
 
 2. Instale as dependências:
@@ -68,12 +68,12 @@ cd geekcore
 npm install
 ```
 
-3. Configure as variáveis de ambiente:
-```env
-MONGO_URI=sua_url_mongodb
-JWT_SECRET=seu_jwt_secret
-PORT=3001
+3. Configure as variáveis de ambiente copiando o modelo e preenchendo os valores:
+```bash
+cp .env.example .env
 ```
+
+   > Use o nome `.env` em minúsculas. No Windows `.ENV` funciona, mas em servidores Linux o arquivo não é encontrado.
 
 4. Inicie o servidor de desenvolvimento:
 ```bash

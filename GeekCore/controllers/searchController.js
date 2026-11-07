@@ -1,4 +1,5 @@
 const Movie = require('../models/Movie');
+const escapeRegex = require('../utils/escapeRegex');
 const Anime = require('../models/Anime');
 
 async function searchContent(req, res) {
@@ -6,13 +7,13 @@ async function searchContent(req, res) {
   try {
     const movieResults = await Movie.find({
       $or: [
-        { title: { $regex: query, $options: 'i' } }
+        { title: { $regex: escapeRegex(query), $options: 'i' } }
       ]
     }).select('title category coverImage');  // Selecione apenas os campos necessários
 
     const animeResults = await Anime.find({
       $or: [
-        { title: { $regex: query, $options: 'i' } }
+        { title: { $regex: escapeRegex(query), $options: 'i' } }
       ]
     }).select('title category coverImage');  // Selecione apenas os campos necessários
 
