@@ -21,7 +21,7 @@ Olá! Sou o **Caio Gabriel** e aqui reúno os projetos que desenvolvi: aplicaç�
 | **GeekCore** | Plataforma fullstack para fãs de filmes e animes: catálogo, login, perfis, amizades, favoritos, comentários e compartilhamento de vídeos. | React, Node.js, Express | [Código](GeekCore/) |
 | **GeekHub** | Catálogo de filmes e animes com consulta a banco de dados em tempo real. | HTML, CSS, JavaScript, Firebase | 🌐 [Acessar](https://cgb102000.github.io/Projetos-publicos/GeekHub/) · [Código](GeekHub/) |
 | **FarmaUnix** | Site de farmácia com vitrine de produtos e fluxo de finalização de compra. | HTML, CSS, JavaScript | 🌐 [Acessar](https://cgb102000.github.io/Projetos-publicos/FarmaUnix/src/) · [Código](FarmaUnix/) |
-| **VOLT Fitness** | App de treino inteligente para acompanhar e continuar seus treinos, com login pelo Google. | Lovable, Login com Google | 🌐 [Acessar](https://voltfitness.lovable.app) |
+| **VOLT Fitness** | App de treinos: rotina semanal com treino por dia, execução marcando as séries de cada exercício e painel de progresso com sequência de dias e histórico. Login com Google. | Lovable, Login com Google | 🌐 [Acessar](https://voltfitness.lovable.app) |
 | **Portfólio** | Meu portfólio pessoal, com apresentação, projetos e contato. | HTML, CSS, JavaScript | 🌐 [Acessar](https://cgb102000.github.io/Projetos-publicos/Portifolio/) · [Código](Portifolio/) |
 | **Ciclos** | App para acompanhar ciclos de medicamentos: calendário, doses, lembretes no Telegram, controle de estoque e histórico. Instalável no celular (PWA). | Node.js, PostgreSQL, Prisma | Repositório privado |
 

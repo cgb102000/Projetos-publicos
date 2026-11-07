@@ -12,7 +12,7 @@ const projetos = [
   },
   {
     nome: 'VOLT Fitness',
-    descricao: 'App de treino inteligente para acompanhar e continuar seus treinos, com login pelo Google.',
+    descricao: 'App de treinos com rotina semanal, execução marcando as séries de cada exercício e painel de progresso com sequência de dias e histórico.',
     tags: ['Lovable', 'Login com Google'],
     demo: 'https://voltfitness.lovable.app',
   },
