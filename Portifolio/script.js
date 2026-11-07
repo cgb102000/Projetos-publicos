@@ -62,12 +62,6 @@ const projetos = [
     codigo: REPO + 'Audio%20to%20Text',
   },
   {
-    nome: 'Task Manager API',
-    descricao: 'API REST com CRUD de usuários e tarefas, validação, middleware e CORS.',
-    tags: ['Python', 'FastAPI', 'SQLite'],
-    codigo: 'https://github.com/cgb102000/task_manager',
-  },
-  {
     nome: 'Redimensionar Imagem',
     descricao: 'Redimensiona imagens direto no navegador, de forma rápida e prática.',
     tags: ['HTML', 'CSS', 'JavaScript'],

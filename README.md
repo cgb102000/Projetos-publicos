@@ -1,6 +1,6 @@
 # ✨ Meus Projetos
 
-Olá! Sou o **Caio Gabriel**, QA e desenvolvedor. Aqui reúno os projetos que desenvolvi: automação de testes, aplicações web, consumo de APIs, ferramentas utilitárias e APIs REST.
+Olá! Sou o **Caio Gabriel**, QA e desenvolvedor. Aqui reúno os projetos que desenvolvi: automação de testes, aplicações web, consumo de APIs, e ferramentas utilitárias.
 
 > Os projetos com 🌐 podem ser abertos direto no navegador. Os demais têm o código disponível no repositório.
 
@@ -10,7 +10,6 @@ Olá! Sou o **Caio Gabriel**, QA e desenvolvedor. Aqui reúno os projetos que de
 - [Aplicações web](#-aplicações-web)
 - [Consumo de APIs em tempo real](#-consumo-de-apis-em-tempo-real)
 - [Ferramentas](#️-ferramentas)
-- [Back-end](#️-back-end)
 - [Estudos](#-estudos)
 
 ---
@@ -46,12 +45,6 @@ Olá! Sou o **Caio Gabriel**, QA e desenvolvedor. Aqui reúno os projetos que de
 | **Redimensionar Imagem** | Redimensiona várias imagens no navegador, mantendo a proporção e convertendo para JPEG, PNG ou WebP. | HTML, CSS, JavaScript | 🌐 [Acessar](https://cgb102000.github.io/Projetos-publicos/Redimensionar%20Imagem/) · [Código](Redimensionar%20Imagem/) |
 | **Contador de Palavras e Caracteres** | Conta palavras e caracteres (com e sem espaços) em tempo real. | HTML, CSS, JavaScript | 🌐 [Acessar](https://cgb102000.github.io/Projetos-publicos/Contador%20de%20caracteres%20e%20palavras/) · [Código](Contador%20de%20caracteres%20e%20palavras/) |
 | **Audio to Text** | Transcreve áudios para texto com o Whisper, da OpenAI, rodando localmente. Versões web (Flask) e desktop. | Python, Flask, Whisper | [Código](Audio%20to%20Text/) |
-
-## ⚙️ Back-end
-
-| Projeto | Descrição | Tecnologias | Links |
-|---|---|---|---|
-| **Task Manager API** | API REST com CRUD de usuários e tarefas, validação, middleware de log e CORS. | Python, FastAPI, SQLAlchemy, SQLite | [Repositório](https://github.com/cgb102000/task_manager) |
 
 ## 📚 Estudos
 
