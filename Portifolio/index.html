@@ -1,28 +1,71 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <link rel="icon" href="/Projetos-publicos/Portifolio/favicon.ico">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    
-    <link rel="stylesheet" href="./src/assets/main.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meu Portifólio</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Caio Gabriel | Portfólio</title>
+  <meta name="description" content="Portfólio de Caio Gabriel, desenvolvedor em São José do Rio Preto - SP.">
+  <link rel="icon" href="imagens/giphy.gif">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Video como fundo -->
-    <video autoplay loop muted>
-        <source src="/Projetos-publicos/Portifolio/videos/particulas.mp4" type="video/mp4">
-        Seu navegador não suporta a tag de vídeo.
-    </video>
-    
-    <div id="app"></div>
+  <canvas id="particulas" aria-hidden="true"></canvas>
 
-    <!-- Caminhos atualizados -->
- 
+  <header class="cabecalho">
+    <nav class="nav">
+      <a href="#inicio" class="logo" aria-label="Início">
+        <img src="imagens/giphy.gif" alt="">
+      </a>
+      <button class="menu-botao" aria-label="Abrir menu" aria-expanded="false" aria-controls="menu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="menu" id="menu">
+        <li><a href="#inicio">Início</a></li>
+        <li><a href="#projetos">Projetos</a></li>
+        <li><a href="#contato">Contato</a></li>
+      </ul>
+    </nav>
+  </header>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    <script src="main.js"></script>
+  <main>
+    <section id="inicio" class="inicio">
+      <div class="cartao-perfil">
+        <img class="foto" src="imagens/eu.jpg" alt="Foto de Caio Gabriel" width="120" height="120">
+        <h1>Caio Gabriel</h1>
+        <p class="local">São José do Rio Preto - SP</p>
+        <p class="cargo">Desenvolvedor</p>
+        <ul class="links">
+          <li><a href="https://github.com/cgb102000" target="_blank" rel="noopener">GitHub</a></li>
+          <li><a href="https://www.linkedin.com/in/caio-g-42626a134/" target="_blank" rel="noopener">LinkedIn</a></li>
+          <li><a href="#projetos">Ver projetos</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="projetos" class="secao">
+      <h2 class="titulo-secao">Projetos</h2>
+      <div class="grade-projetos" id="grade-projetos"></div>
+    </section>
+
+    <section id="contato" class="secao">
+      <h2 class="titulo-secao">Contato</h2>
+      <div class="cartao-contato">
+        <p>Quer conversar sobre um projeto ou oportunidade? Me chame por aqui:</p>
+        <ul class="links links-linha">
+          <li><a href="https://www.linkedin.com/in/caio-g-42626a134/" target="_blank" rel="noopener">LinkedIn</a></li>
+          <li><a href="https://github.com/cgb102000" target="_blank" rel="noopener">GitHub</a></li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="rodape">
+    <p>© <span id="ano"></span> Caio Gabriel</p>
+  </footer>
+
+  <script src="script.js"></script>
 </body>
 </html>
