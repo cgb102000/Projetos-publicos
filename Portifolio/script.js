@@ -5,6 +5,12 @@ const REPO = 'https://github.com/cgb102000/Projetos-publicos/tree/main/';
 
 const projetos = [
   {
+    nome: 'Teste automatizado MenuDino',
+    descricao: 'Teste exploratório automatizado que valida o fluxo de preenchimento de endereço no site MenuDino.',
+    tags: ['QA', 'Robot Framework', 'Playwright'],
+    codigo: 'https://github.com/cgb102000/teste-automatizado-menudino',
+  },
+  {
     nome: 'GeekCore',
     descricao: 'Plataforma fullstack para fãs de filmes e animes, com login, perfis, amizades, favoritos, comentários e compartilhamento de vídeos.',
     tags: ['React', 'Node.js', 'Express'],
@@ -40,8 +46,8 @@ const projetos = [
   },
   {
     nome: 'Ciclos',
-    descricao: 'App para acompanhar ciclos de medicamentos, com calendário, lembretes no Telegram, controle de estoque e histórico.',
-    tags: ['Node.js', 'PostgreSQL', 'Prisma', 'PWA'],
+    descricao: 'App para acompanhar ciclos de medicamentos, com calendário, lembretes no Telegram, controle de estoque, histórico e smoke test automatizado da API.',
+    tags: ['Node.js', 'PostgreSQL', 'Prisma', 'PWA', 'Testes de API'],
   },
   {
     nome: 'Audio to Text',
@@ -54,12 +60,6 @@ const projetos = [
     descricao: 'API REST com CRUD de usuários e tarefas, validação, middleware e CORS.',
     tags: ['Python', 'FastAPI', 'SQLite'],
     codigo: 'https://github.com/cgb102000/task_manager',
-  },
-  {
-    nome: 'Teste automatizado MenuDino',
-    descricao: 'Teste automatizado que valida o preenchimento de endereço no site MenuDino.',
-    tags: ['Robot Framework', 'Playwright'],
-    codigo: 'https://github.com/cgb102000/teste-automatizado-menudino',
   },
   {
     nome: 'Redimensionar Imagem',
