@@ -11,6 +11,12 @@ const projetos = [
     codigo: 'https://github.com/cgb102000/teste-automatizado-menudino',
   },
   {
+    nome: 'VOLT Fitness',
+    descricao: 'App de treino inteligente para acompanhar e continuar seus treinos, com login pelo Google.',
+    tags: ['Lovable', 'Login com Google'],
+    demo: 'https://voltfitness.lovable.app',
+  },
+  {
     nome: 'GeekCore',
     descricao: 'Plataforma fullstack para fãs de filmes e animes, com login, perfis, amizades, favoritos, comentários e compartilhamento de vídeos.',
     tags: ['React', 'Node.js', 'Express'],
