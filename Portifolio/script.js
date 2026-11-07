@@ -30,9 +30,9 @@ const projetos = [
     codigo: REPO + 'GeekHub',
   },
   {
-    nome: 'Spotify',
-    descricao: 'Busca de músicas, artistas e álbuns usando a API oficial do Spotify.',
-    tags: ['JavaScript', 'Bootstrap', 'API'],
+    nome: 'Música para Todos',
+    descricao: 'Busca de músicas, artistas e álbuns em tempo real usando a Web API do Spotify.',
+    tags: ['JavaScript', 'Spotify API'],
     demo: BASE + 'Spotify/',
     codigo: REPO + 'Spotify',
   },
@@ -45,8 +45,8 @@ const projetos = [
   },
   {
     nome: 'FarmaUnix',
-    descricao: 'Site de farmácia com vitrine de produtos e fluxo de finalização de compra.',
-    tags: ['HTML', 'CSS', 'JavaScript'],
+    descricao: 'Farmácia online com carrinho, taxa de entrega calculada pela distância, mapa da rota e pedido pelo WhatsApp.',
+    tags: ['JavaScript', 'Leaflet', 'OpenStreetMap'],
     demo: BASE + 'FarmaUnix/src/',
     codigo: REPO + 'FarmaUnix',
   },
