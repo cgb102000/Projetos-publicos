@@ -4,31 +4,66 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Redimensionador de Imagem</title>
+    <meta name="description" content="Redimensione imagens direto no navegador, sem enviar nada para servidores.">
     <link rel="stylesheet" href="source/styles/style.css">
-    <link rel="shortcut icon" href="source/images/icon.png" type="image/x-icon">
+    <link rel="icon" href="source/images/icon.png" type="image/png">
 </head>
 <body>
-    <div class="container">
+    <main class="container">
         <h1>Redimensionador de Imagem</h1>
-        
-        <label for="file-input">Selecione as Imagens:</label>
-        <input type="file" id="file-input" multiple accept="image/*">
-        
-        <label for="width">Novo Tamanho (Largura x Altura):</label>
-        <input type="number" id="width" placeholder="Largura (px)">
-        <span id="x">x</span>
-        <br>
-        <br>
-        <input type="number" id="height" placeholder="Altura (px)">
-        
-        <button id="resize-button">Redimensionar Imagens</button>
-        <p id="status"></p>
-        
+        <p class="subtitulo">As imagens são processadas no seu navegador e não são enviadas para nenhum servidor.</p>
+
+        <form id="form">
+            <label for="file-input">Selecione as imagens</label>
+            <input type="file" id="file-input" multiple accept="image/*">
+
+            <fieldset class="tamanho">
+                <legend>Novo tamanho (px)</legend>
+                <div class="campos-tamanho">
+                    <input type="number" id="width" min="1" max="10000" placeholder="Largura" aria-label="Largura em pixels">
+                    <span aria-hidden="true">×</span>
+                    <input type="number" id="height" min="1" max="10000" placeholder="Altura" aria-label="Altura em pixels">
+                </div>
+                <label class="checkbox">
+                    <input type="checkbox" id="keep-ratio" checked>
+                    Manter proporção (preencha só a largura ou só a altura)
+                </label>
+            </fieldset>
+
+            <div class="opcoes">
+                <div>
+                    <label for="format">Formato</label>
+                    <select id="format">
+                        <option value="original">Mesmo da original</option>
+                        <option value="image/jpeg">JPEG</option>
+                        <option value="image/png">PNG</option>
+                        <option value="image/webp">WebP</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="quality">Qualidade: <output id="quality-value">90%</output></label>
+                    <input type="range" id="quality" min="10" max="100" value="90">
+                </div>
+            </div>
+
+            <button type="submit" id="resize-button">Redimensionar imagens</button>
+        </form>
+
+        <p id="status" role="status" aria-live="polite"></p>
+
+        <section id="results" class="resultados" hidden>
+            <div class="resultados-topo">
+                <h2>Resultado</h2>
+                <button type="button" id="download-all" class="secundario">Baixar todas</button>
+            </div>
+            <ul id="results-list"></ul>
+        </section>
+
         <footer>
-            <p>Desenvolvido por Caio</p>
+            <p>Desenvolvido por Caio Gabriel</p>
         </footer>
-    </div>
-    
+    </main>
+
     <script src="source/scripts/script.js"></script>
 </body>
 </html>
