@@ -1,22 +1,38 @@
 const input = document.querySelector('#input');
 const charactersCount = document.querySelector('#characters-count');
+const charactersNoSpaces = document.querySelector('#characters-no-spaces');
 const wordsCount = document.querySelector('#words-count');
+const clearButton = document.querySelector('#clear');
 
-// Função para atualizar as contagens
-function updateCount() {
-    const text = input.value;
-    
-    // Contagem de caracteres
-    const characters = text.length;
-    charactersCount.textContent = `${characters} caractere(s)`;
+// Conta caracteres "visíveis": emojis e letras acentuadas contam como 1
+const segmenter = 'Segmenter' in Intl ? new Intl.Segmenter('pt-BR', { granularity: 'grapheme' }) : null;
 
-    // Contagem de palavras
-    const words = text.trim().split(/\s+/).filter(word => word !== "").length;
-    wordsCount.textContent = `${words} palavra(s)`;
+function countCharacters(text) {
+    if (segmenter) return [...segmenter.segment(text)].length;
+    return [...text].length;
 }
 
-// Evento para atualizar a contagem ao digitar
-input.addEventListener("input", updateCount);
+function plural(n, singular, pluralForm) {
+    return `${n.toLocaleString('pt-BR')} ${n === 1 ? singular : pluralForm}`;
+}
 
-// Inicializa a contagem ao carregar a página
+function updateCount() {
+    const text = input.value;
+    const characters = countCharacters(text);
+    const noSpaces = countCharacters(text.replace(/\s/g, ''));
+    const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+
+    charactersCount.textContent = plural(characters, 'caractere', 'caracteres');
+    charactersNoSpaces.textContent = plural(noSpaces, 'caractere sem espaços', 'caracteres sem espaços');
+    wordsCount.textContent = plural(words, 'palavra', 'palavras');
+}
+
+input.addEventListener('input', updateCount);
+
+clearButton.addEventListener('click', () => {
+    input.value = '';
+    updateCount();
+    input.focus();
+});
+
 updateCount();
