@@ -30,3 +30,11 @@ static/uploads/
 # Arquivos de transcrição
 *.txt
 .vercel
+
+# Áudios e transcrições locais
+*.ogg
+*.mp3
+*.wav
+*.m4a
+AUDIO*.json
+node_modules/

@@ -1,34 +1,45 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Transcrição de Áudio</title>
-    <link rel="stylesheet" href="../static/css/style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <div class="container">
+    <main class="container">
         <h1>Transcrição de Áudio com Whisper</h1>
-        <p>Selecione um arquivo de áudio para transcrever:</p>
+        <p>Envie um arquivo de áudio e receba o texto. O áudio é apagado do servidor logo após a transcrição.</p>
 
-        <div class="file-input-container">
-            <input type="file" id="audioFile" accept=".mp3, .wav, .ogg, .m4a">
-        </div>
-        
-        <button onclick="transcribeAudio()">Transcrever</button>
-        
-        <div id="status"></div>
-        
-        <h3>Transcrição</h3>
-        <textarea id="transcription" rows="10" readonly></textarea>
+        <form id="form">
+            <label class="arquivo" for="audioFile">
+                <input type="file" id="audioFile" accept=".mp3,.wav,.ogg,.m4a,.webm,.mp4,.flac,audio/*" required>
+                <span id="nome-arquivo">Escolher arquivo de áudio</span>
+            </label>
 
-        <div id="loading" style="display: none;">
-           Obs: Dependendo do tamanho do áudio, a transcrição pode demorar um pouco...
-        </div>
+            <label for="language">Idioma do áudio</label>
+            <select id="language">
+                <option value="">Detectar automaticamente</option>
+                <option value="pt" selected>Português</option>
+                <option value="en">Inglês</option>
+                <option value="es">Espanhol</option>
+            </select>
 
-        <a id="downloadLink" href="#" style="display:none;" download="transcription.txt">Baixar Transcrição</a>
-    </div>
+            <button type="submit" id="botao">Transcrever</button>
+        </form>
 
-    <script src="../static/js/script.js"></script>
+        <p id="status" role="status" aria-live="polite"></p>
+
+        <section id="resultado" hidden>
+            <h2>Transcrição</h2>
+            <textarea id="transcription" rows="10" readonly></textarea>
+            <div class="acoes">
+                <button type="button" id="copiar" class="secundario">Copiar</button>
+                <a id="downloadLink" class="botao-link" href="#" download>Baixar .txt</a>
+            </div>
+        </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>

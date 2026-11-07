@@ -1,154 +1,173 @@
+* {
+    box-sizing: border-box;
+}
+
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #F2F2F2; /* Cor de fundo suave */
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+    background-color: #f2f2f2;
     margin: 0;
-    padding: 0;
+    padding: 24px 16px;
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
     color: #333;
 }
 
 .container {
-    background-color: #ffffff;
-    padding: 40px;
+    background-color: #fff;
+    padding: 36px;
     border-radius: 15px;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
     width: 100%;
-    max-width: 750px;
-    text-align: center;
-    box-sizing: border-box;
-    position: relative;
+    max-width: 720px;
 }
 
 h1 {
-    font-size: 28px;
-    color: #0BD979; /* Cor verde */
-    margin-bottom: 30px;
-    font-weight: 600;
-}
-
-p {
-    font-size: 16px;
-    color: #666;
-    margin-bottom: 20px;
-}
-
-.file-input-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-}
-
-input[type="file"] {
-    display: block;
-    padding: 12px;
-    font-size: 16px;
-    background-color: #F2F2F2;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    width: 90%;
-    max-width: 400px;
-    cursor: pointer;
-    transition: all 0.3s ease;
+    font-size: 1.7rem;
+    color: #089c57;
+    margin: 0 0 12px;
     text-align: center;
 }
 
-input[type="file"]:hover {
-    border-color: #0BD979;
-    background-color: #E9F9E6; /* Verde claro para hover */
+h2 {
+    font-size: 1.15rem;
+    margin: 24px 0 8px;
 }
 
-button {
+p {
+    color: #666;
+    text-align: center;
+    margin: 0 0 24px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+label {
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.arquivo {
     display: block;
-    margin: 20px auto;
-    padding: 12px 25px;
-    font-size: 18px;
-    background-color: #0BD979;
-    color: white;
+    border: 2px dashed #b9e6cf;
+    border-radius: 10px;
+    padding: 24px;
+    text-align: center;
+    cursor: pointer;
+    color: #089c57;
+    background: #f3fbf7;
+    transition: border-color 0.2s, background 0.2s;
+    margin-bottom: 8px;
+}
+
+.arquivo:hover,
+.arquivo:focus-within {
+    border-color: #0bd979;
+    background: #e9f9f0;
+}
+
+.arquivo input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+}
+
+select {
+    font: inherit;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+button,
+.botao-link {
+    font: inherit;
+    font-weight: 600;
+    padding: 12px 24px;
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    background-color: #089c57;
+    color: #fff;
+    text-align: center;
+    text-decoration: none;
+    transition: background 0.2s;
 }
 
-button:hover {
-    background-color: #1D591B; /* Verde escuro */
-    transform: translateY(-2px);
+button:hover,
+.botao-link:hover {
+    background-color: #067a44;
 }
 
-button:active {
-    transform: translateY(2px);
+button:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+button.secundario {
+    background: #e6f4ec;
+    color: #067a44;
+}
+
+button.secundario:hover {
+    background: #d2ecdf;
+}
+
+button:focus-visible,
+.botao-link:focus-visible,
+select:focus-visible {
+    outline: 3px solid #9de8c2;
+    outline-offset: 2px;
+}
+
+form button {
+    margin-top: 8px;
+}
+
+#status {
+    margin: 20px 0 0;
+    font-weight: 600;
+    color: #067a44;
+    min-height: 1.5em;
+}
+
+#status.erro {
+    color: #c62828;
 }
 
 textarea {
     width: 100%;
-    gap: 15px;
-    margin-top: 20px;
+    font: inherit;
+    padding: 12px;
     border: 1px solid #ddd;
     border-radius: 8px;
-    resize: none;
-    font-size: 16px;
+    resize: vertical;
     min-height: 200px;
-    background-color: #F9F9F9;
-    color: #333;
-    box-shadow: inset 0 1px 5px rgba(0, 0, 0, 0.1);
-    text-align: left;
+    background-color: #f9f9f9;
 }
 
-#status {
-    
-    font-size: 16px;
-    color: #63F25E; /* Cor verde para sucesso */
-    font-weight: bold;
+.acoes {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
 }
 
-#loading {
-    font-size: 14px;
-    color: #d9534f; /* Cor vermelha para destaque */
-    font-weight: bold;
-    margin-top: 10px;
+.acoes > * {
+    flex: 1;
 }
 
-#downloadLink {
-    display: block;
-    margin-top: 20px;
-    padding: 12px 25px;
-    text-align: center;
-    text-decoration: none;
-    background-color: #63F25E; /* Verde para download */
-    color: white;
-    border-radius: 8px;
-    font-size: 16px;
-    transition: all 0.3s ease;
-}
-
-#downloadLink:hover {
-    background-color: #4ECB48;
-    transform: translateY(-2px);
-}
-
-#downloadLink:active {
-    transform: translateY(2px);
-}
-
-/* Responsividade */
-@media (max-width: 768px) {
+@media (max-width: 520px) {
     .container {
-        padding: 25px;
+        padding: 24px 16px;
     }
 
     h1 {
-        font-size: 24px;
-    }
-
-    input[type="file"], button {
-        width: 100%;
-    }
-
-    textarea {
-        min-height: 180px;
+        font-size: 1.4rem;
     }
 }

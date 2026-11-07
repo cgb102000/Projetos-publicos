@@ -1,56 +1,69 @@
-from flask import Flask, render_template, request, jsonify
-import whisper
 import os
+import tempfile
 
-# Configuração do diretório de upload
-UPLOAD_FOLDER = os.path.join('static', 'uploads')
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+from flask import Flask, jsonify, render_template, request
+from werkzeug.utils import secure_filename
 
-# Carrega o modelo Whisper apenas uma vez ao iniciar o servidor
-model = whisper.load_model("small", device="cpu")
+EXTENSOES_PERMITIDAS = {".mp3", ".wav", ".ogg", ".m4a", ".webm", ".mp4", ".flac"}
+MODELO = os.getenv("WHISPER_MODEL", "small")
 
 app = Flask(__name__)
+app.config["MAX_CONTENT_LENGTH"] = 50 * 1024 * 1024  # 50 MB
 
-# Página principal
-@app.route('/')
+_modelo = None
+
+
+def obter_modelo():
+    """Carrega o Whisper só na primeira transcrição (o servidor sobe mais rápido)."""
+    global _modelo
+    if _modelo is None:
+        import whisper
+
+        _modelo = whisper.load_model(MODELO, device="cpu")
+    return _modelo
+
+
+@app.route("/")
 def index():
-    return render_template('index.html')
+    return render_template("index.html")
 
-# Endpoint para transcrever áudio
-@app.route('/transcribe', methods=['POST'])
+
+@app.route("/transcribe", methods=["POST"])
 def transcribe():
-    if 'audio' not in request.files:
+    arquivo = request.files.get("audio")
+    if arquivo is None or not arquivo.filename:
         return jsonify({"error": "Nenhum arquivo foi enviado"}), 400
 
-    audio_file = request.files['audio']
-    
-    if audio_file.filename == '':
-        return jsonify({"error": "Nome do arquivo inválido"}), 400
+    nome = secure_filename(arquivo.filename)
+    extensao = os.path.splitext(nome)[1].lower()
+    if extensao not in EXTENSOES_PERMITIDAS:
+        return jsonify({"error": "Formato não suportado. Use MP3, WAV, OGG, M4A, WEBM, MP4 ou FLAC."}), 400
+
+    idioma = request.form.get("language") or None
+
+    # Salva em um arquivo temporário e apaga logo depois da transcrição
+    with tempfile.NamedTemporaryFile(suffix=extensao, delete=False) as temporario:
+        arquivo.save(temporario)
+        caminho = temporario.name
 
     try:
-        # Salva o arquivo no diretório de uploads
-        file_path = os.path.join(UPLOAD_FOLDER, audio_file.filename)
-        audio_file.save(file_path)
-
-        # Faz a transcrição usando o modelo Whisper
-        result = model.transcribe(file_path)
-        transcription_text = result["text"]
-
-        # Salva a transcrição em um arquivo .txt
-        transcription_filename = f"{os.path.splitext(audio_file.filename)[0]}.txt"
-        transcription_path = os.path.join(UPLOAD_FOLDER, transcription_filename)
-
-        with open(transcription_path, "w", encoding="utf-8") as transcription_file:
-            transcription_file.write(transcription_text)
-
-        # Retorna o link do arquivo .txt para o frontend
+        resultado = obter_modelo().transcribe(caminho, language=idioma, fp16=False)
         return jsonify({
-            "transcription": transcription_text,
-            "transcription_url": f"/static/uploads/{transcription_filename}"
+            "transcription": resultado["text"].strip(),
+            "language": resultado.get("language"),
+            "filename": f"{os.path.splitext(nome)[0] or 'transcricao'}.txt",
         })
+    except Exception as erro:  # noqa: BLE001 - devolve a mensagem para a interface
+        app.logger.exception("Falha na transcrição")
+        return jsonify({"error": f"Erro na transcrição: {erro}"}), 500
+    finally:
+        os.remove(caminho)
 
-    except Exception as e:
-        return jsonify({"error": f"Erro na transcrição: {str(e)}"}), 500
 
-if __name__ == '__main__':
-    app.run(debug=True)
+@app.errorhandler(413)
+def arquivo_grande(_erro):
+    return jsonify({"error": "Arquivo muito grande. O limite é 50 MB."}), 413
+
+
+if __name__ == "__main__":
+    app.run(debug=os.getenv("FLASK_DEBUG") == "1", port=int(os.getenv("PORT", "5000")))
