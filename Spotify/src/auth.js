@@ -2,8 +2,14 @@
 const clientId = '11e84b174d2646ce8ee7a9bed8d4cabc';
 const clientSecret = 'd961b8ffd2ff48cb80618e0b12755e09';
 
+// O token do Spotify vale 1 hora: guardamos e renovamos um pouco antes de expirar.
+let tokenAtual = null;
+let expiraEm = 0;
+
 // Função para obter o token de acesso usando `clientId` e `clientSecret`.
 const getToken = async () => {
+    if (tokenAtual && Date.now() < expiraEm) return tokenAtual;
+
     try {
         // Realizando uma solicitação POST à URL da API de token do Spotify.
         const response = await fetch('https://accounts.spotify.com/api/token', {
@@ -24,8 +30,9 @@ const getToken = async () => {
             throw new Error(`Erro ao obter o token de acesso: ${data.error_description}`);
         }
 
-        // Retorna o token de acesso.
-        return data.access_token;
+        tokenAtual = data.access_token;
+        expiraEm = Date.now() + (data.expires_in - 60) * 1000;
+        return tokenAtual;
     } catch (error) {
         console.error('Erro ao obter o token de acesso:', error);
         throw error;

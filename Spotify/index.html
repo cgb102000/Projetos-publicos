@@ -1,77 +1,48 @@
 <!DOCTYPE html>
-<html lang="pt">
-
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Spotify App</title>
-
-    <!-- Incluindo o Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-
-    <!-- Carregando o arquivo de estilo personalizado -->
-    <link rel="stylesheet" href="./src/assets/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Música para Todos</title>
+    <meta name="description" content="Busque músicas, artistas e álbuns em tempo real usando a API do Spotify.">
+    <link rel="icon" href="src/assets/musica.png" type="image/png">
+    <link rel="stylesheet" href="src/assets/style.css">
 </head>
-
 <body>
-    <!-- Cabeçalho -->
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container">
-                <a href="#" class="navbar-brand">Música para Todos</a>
-
-                <!-- Botão de menu para responsividade -->
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-
-                <!-- Menu de navegação -->
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">Início</a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">Novidades</a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">Em Alta</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
+    <header class="topo">
+        <div class="container topo-conteudo">
+            <a href="./" class="marca">
+                <img src="src/assets/musica.png" alt="" width="32" height="32">
+                Música para Todos
+            </a>
+        </div>
     </header>
 
-    <main>
-        <!-- Conteúdo -->
-        <div class="container my-4">
-            <h1 class="text-center mb-4">Spotify App</h1>
-
-            <!-- Formulário de busca -->
-            <form id="searchForm" class="d-flex mb-4 justify-content-center">
-                <input type="text" id="searchInput" class="form-control me-2" placeholder="Digite o nome do artista ou música...">
-                <button type="submit" class="btn btn-primary">Buscar</button>
+    <main class="container">
+        <section class="busca">
+            <h1>Encontre músicas, artistas e álbuns</h1>
+            <form id="searchForm" role="search">
+                <label for="searchInput" class="sr-only">Buscar</label>
+                <input type="search" id="searchInput" placeholder="Digite o nome do artista, música ou álbum..." autocomplete="off" required>
+                <button type="submit">Buscar</button>
             </form>
-
-            <!-- Div para exibir os resultados -->
-            <div id="content" class="row">
-                <!-- Os resultados serão inseridos aqui pelo JavaScript -->
+            <div class="sugestoes">
+                <span>Experimente:</span>
+                <button type="button" class="chip">Legião Urbana</button>
+                <button type="button" class="chip">Anitta</button>
+                <button type="button" class="chip">Coldplay</button>
+                <button type="button" class="chip">Djavan</button>
             </div>
-        </div>
+        </section>
+
+        <p id="status" role="status" aria-live="polite"></p>
+        <div id="content"></div>
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-dark text-white text-center py-3">
-        <div class="container">
-            <p id="paragrafo-footer">&copy; 2024 Música para Todos. Todos os direitos reservados do <span style="color: green;">Spotify</span></p>
-        </div>
+    <footer class="rodape">
+        <p>Dados fornecidos pela Web API do Spotify. Projeto de estudo de Caio Gabriel, sem vínculo com o Spotify.</p>
     </footer>
 
-    <!-- Incluindo o arquivo app.js -->
     <script type="module" src="./app.js"></script>
-
-    <!-- Incluindo o JavaScript do Bootstrap -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
-
 </html>

@@ -1,165 +1,325 @@
-/* Estilização global */
+:root {
+    --fundo: #121212;
+    --superficie: #1c1c1c;
+    --superficie-hover: #2a2a2a;
+    --borda: #2f2f2f;
+    --texto: #ffffff;
+    --texto-suave: #b3b3b3;
+    --verde: #1ed760;
+    --verde-escuro: #1aa34a;
+    --erro: #ff6b6b;
+}
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: Arial, sans-serif; /* Define uma fonte padrão */
-    font-size: 1rem; /* Define o tamanho base da fonte em 1rem (equivale a 16px) */
 }
 
-/* Estilização do cabeçalho */
-.nav-wrapper {
-    background-color: #000; /* Cabeçalho preto */
-    padding: 1rem; /* Padding em rem */
-}
-
-/* Estilização dos botões */
-.btn {
-    background-color: #C70039; /* Vermelho escuro para os botões */
-    color: #fff;
-    border: 0.0625rem solid #000; /* Borda preta nos botões (1px em rem) */
-    transition: background-color 0.2s ease-in-out; /* Transição suave na mudança de cor */
-    font-size: 1rem; /* Define o tamanho da fonte para 1rem */
-}
-
-/* Estilização do hover nos botões */
-.btn:hover {
-    background-color: #8B0000; /* Vermelho bem escuro ao passar o mouse */
-}
-
-/* Sobrescreve o foco e o ativo padrão do Bootstrap */
-.btn:focus, .btn:active {
-    background-color: #8B0000; /* Vermelho bem escuro ao focar ou clicar */
-    color: #fff; /* Mantém a cor branca do texto */
-    border: 0.0625rem solid #000; /* Mantém a borda preta (1px em rem) */
-    outline: none; /* Remove a borda de foco padrão */
-    box-shadow: none; /* Remove a sombra padrão */
-}
-
-/* Estilização do formulário de busca */
-#searchForm {
-    margin-bottom: 1.25rem; /* Margem inferior de 20px equivalente a 1.25rem */
-}
-
-/* Estilização do card */
-.card {
-    width: 100%; /* Ajusta a largura do card para 100% do contêiner pai */
-    max-width: 18.75rem; /* Limita a largura máxima do card a 300px (em rem) */
-    height: 31.25rem; /* Altura de 500px equivalente a 31.25rem */
-    margin: 0.625rem; /* Ajusta o espaçamento entre os cards para 10px equivalente a 0.625rem */
-    box-shadow: 0 0.125rem 0.3125rem rgba(0, 0, 0, 0.2); /* Sombra suave */
-    transition: transform 0.2s;
+body {
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+    background: var(--fundo);
+    color: var(--texto);
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+}
+
+.container {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 16px;
+}
+
+/* Topo */
+.topo {
+    background: #000;
+    border-bottom: 1px solid var(--borda);
+}
+
+.topo-conteudo {
+    height: 64px;
+    display: flex;
+    align-items: center;
+}
+
+.marca {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 1.15rem;
+}
+
+.marca img {
+    border-radius: 6px;
+}
+
+main {
+    flex: 1;
+    padding-bottom: 48px;
+}
+
+/* Busca */
+.busca {
+    text-align: center;
+    padding: 48px 0 24px;
+}
+
+.busca h1 {
+    font-size: clamp(1.5rem, 4vw, 2.3rem);
+    margin-bottom: 24px;
+}
+
+#searchForm {
+    display: flex;
+    gap: 8px;
+    max-width: 640px;
+    margin: 0 auto;
+}
+
+#searchForm input {
+    flex: 1;
+    min-width: 0;
+    font: inherit;
+    padding: 14px 20px;
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background: #fff;
+    color: #121212;
+}
+
+#searchForm input:focus {
+    outline: none;
+    border-color: var(--verde);
+}
+
+button {
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    border: 0;
+}
+
+#searchForm button {
+    padding: 0 28px;
+    border-radius: 999px;
+    background: var(--verde);
+    color: #000;
+}
+
+#searchForm button:hover {
+    background: var(--verde-escuro);
+}
+
+#searchForm button:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+button:focus-visible,
+a:focus-visible {
+    outline: 3px solid var(--verde);
+    outline-offset: 2px;
+}
+
+.sugestoes {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 16px;
+    color: var(--texto-suave);
+    font-size: 0.9rem;
+}
+
+.chip {
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: var(--superficie);
+    color: var(--texto);
+    font-weight: 600;
+    font-size: 0.85rem;
+    border: 1px solid var(--borda);
+}
+
+.chip:hover {
+    background: var(--superficie-hover);
+}
+
+#status {
+    text-align: center;
+    color: var(--texto-suave);
+    min-height: 1.5em;
+    margin-bottom: 8px;
+}
+
+#status.erro {
+    color: var(--erro);
+}
+
+/* Resultados */
+.resultado {
+    margin-top: 32px;
+}
+
+.resultado h2 {
+    font-size: 1.4rem;
+    margin-bottom: 16px;
+}
+
+.lista-musicas {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.musica {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 8px 12px;
+    border-radius: 8px;
+}
+
+.musica:hover {
+    background: var(--superficie);
+}
+
+.musica img,
+.musica .sem-imagem {
+    width: 48px;
+    height: 48px;
+    border-radius: 4px;
+    flex-shrink: 0;
+    object-fit: cover;
+}
+
+.musica-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.musica-info strong,
+.musica-info span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.musica-info span,
+.duracao {
+    color: var(--texto-suave);
+    font-size: 0.9rem;
+}
+
+.musica a {
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--texto-suave);
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.musica a:hover {
+    border-color: var(--verde);
+    color: var(--verde);
+}
+
+.grade {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 16px;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 14px;
+    border-radius: 10px;
+    background: var(--superficie);
+    transition: background 0.2s;
 }
 
 .card:hover {
-    transform: scale(1.05);
+    background: var(--superficie-hover);
 }
 
-/* Estilização do conteúdo principal */
-main {
-    width: 80%; /* Largura do main ajustada */
-    margin: auto; /* Centraliza o main */
-    padding: 1.25rem; /* Padding de 20px equivalente a 1.25rem */
-    border-radius: 0.5rem; /* Borda arredondada de 8px equivalente a 0.5rem */
-    background-color: #fff;
-    box-shadow: 0 0.125rem 0.3125rem rgba(0, 0, 0, 0.2); /* Sombra suave */
-    min-height: calc(100vh - 3.125rem); /* Ajusta a altura do main para 100% da tela menos o tamanho do footer */
-    display: flex;
-    flex-wrap: wrap; /* Permite que os cards sejam alinhados corretamente */
-    justify-content: center; /* Centraliza os cards */
+.card img,
+.card .sem-imagem {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 6px;
+    margin-bottom: 8px;
 }
 
-/* Estilização do conteúdo interno do card */
-.card-body {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+.card .redonda {
+    border-radius: 50%;
 }
 
-.card-body h5,
-.card-body p {
-    margin-bottom: 0.625rem; /* Margem inferior de 10px equivalente a 0.625rem */
-    font-size: 1.125rem; /* Aumenta o tamanho da fonte para 1.125rem */
+.card strong {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.card-body .btn {
-    margin-top: auto;
+.card span {
+    color: var(--texto-suave);
+    font-size: 0.85rem;
 }
 
-/* Estilização do botão primário */
-.btn.btn-primary {
-    background-color: #C70039; /* Vermelho escuro */
-    color: #fff;
-    border-color: #000;
-    transition: background-color 0.2s ease-in-out;
-    font-size: 1.125rem; /* Aumenta o tamanho da fonte para 1.125rem */
+.sem-imagem {
+    display: grid;
+    place-items: center;
+    background: var(--superficie-hover);
+    color: var(--texto-suave);
+    font-size: 1.5rem;
 }
 
-/* Estilização de hover no botão primário */
-.btn.btn-primary:hover {
-    background-color: #8B0000; /* Vermelho bem escuro */
-}
-
-/* Estilização de foco no botão primário */
-.btn.btn-primary:focus,
-.btn.btn-primary:active {
-    background-color: #8B0000;
-    border-color: #000;
-    outline: none;
-    box-shadow: none;
-}
-
-/* Estilização das imagens nos cards */
-.card-img-top,
-.card-img {
-    width: 100%; /* A largura da imagem será igual à largura do card */
-    height: 12.5rem; /* Altura de 200px equivalente a 12.5rem */
-    object-fit: cover; /* Ajusta a imagem para cobrir toda a área do card */
-}
-
-/* Estilização do footer */
-footer {
-    background-color: #000; /* Fundo preto */
-    color: #fff; /* Texto branco */
-    padding: 0.625rem 1.25rem; /* Padding para espaçamento */
-    text-align: center; /* Centraliza o texto */
-    position: fixed; /* Define a posição como fixa */
-    bottom: 0; /* Posiciona o footer na parte inferior da página */
-    width: 100%; /* Define a largura do footer para 100% */
-    font-size: 1.125rem; /* Aumenta o tamanho da fonte para 1.125rem */
-    box-shadow: 0 -0.125rem 0.3125rem rgba(0, 0, 0, 0.2); /* Sombra para o footer */
-}
-
-/* Estilização adicional para responsividade */
-@media (max-width: 768px) {
-    /* Ajuste para telas menores */
-    main {
-        width: 100%; /* Ajusta a largura de main para 100% */
-        padding: 0.625rem; /* Menor padding para telas menores */
-    }
-
-    /* Ajuste o tamanho da fonte para telas menores */
-    .card-body h5,
-    .card-body p {
-        font-size: 1.5rem; /* Aumenta o tamanho da fonte para 1.5rem */
-    }
-    
-    .btn {
-        font-size: 1.5rem; /* Aumenta o tamanho da fonte dos botões */
-    }
-
-    /* Ajusta o tamanho das imagens nos cards */
-    .card-img-top,
-    .card-img {
-        height: 9.375rem; /* Altura de 150px equivalente a 9.375rem */
-    }
-}
-
-.text-center mb-4 {
+/* Rodapé */
+.rodape {
+    border-top: 1px solid var(--borda);
+    padding: 20px 16px;
     text-align: center;
-    margin-bottom: 1rem;
-    font-size: 10vh;
+    color: var(--texto-suave);
+    font-size: 0.85rem;
+}
+
+@media (max-width: 560px) {
+    #searchForm {
+        flex-direction: column;
+    }
+
+    #searchForm button {
+        padding: 12px;
+    }
+
+    .duracao {
+        display: none;
+    }
+
+    .grade {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
 }
