@@ -219,7 +219,8 @@ app.get('/api/category/:category', async (req, res) => {
 
   try {
     const results = await mongoose.connection.db.collection('videos')
-      .find({ categoria: { $regex: escapeRegex(category), $options: 'i' } })
+      // Categoria exata: "ação" não pode casar com "animação"
+      .find({ categoria: { $regex: `^${escapeRegex(category)}$`, $options: 'i' } })
       .toArray();
 
     if (results.length > 0) {

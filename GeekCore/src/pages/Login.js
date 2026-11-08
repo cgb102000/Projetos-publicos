@@ -34,54 +34,47 @@ export function Login() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-darker">
-      <div className="bg-dark p-8 rounded-lg shadow-xl w-96">
-        <h1 className="text-2xl font-bold text-light mb-6">Login</h1>
-        
-        {error && (
-          <div className="bg-red-500 text-white p-3 rounded mb-4">
-            {error}
-          </div>
-        )}
+    <div className="gc-auth">
+      <div className="gc-panel">
+        <h1>Entrar</h1>
+        <p className="sub">Bem-vindo de volta ao GeekCore.</p>
 
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
+        {error && <div className="gc-erro" role="alert">{error}</div>}
+
+        <form onSubmit={handleSubmit} style={{ display: 'grid', gap: 16 }}>
+          <div>
+            <label htmlFor="login-email">Email</label>
             <input
+              id="login-email"
               type="email"
-              placeholder="Email"
+              autoComplete="email"
               value={email}
               onChange={e => setEmail(e.target.value)}
-              className="w-full p-3 rounded bg-darker text-light"
+              className="gc-input"
               required
             />
           </div>
-
-          <div className="mb-6">
+          <div>
+            <label htmlFor="login-senha">Senha</label>
             <input
+              id="login-senha"
               type="password"
-              placeholder="Senha"
+              autoComplete="current-password"
               value={senha}
               onChange={e => setSenha(e.target.value)}
-              className="w-full p-3 rounded bg-darker text-light"
+              className="gc-input"
               required
               minLength={6}
             />
           </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-primary text-white p-3 rounded hover:bg-hover transition-colors disabled:opacity-50"
-          >
-            {loading ? 'Carregando...' : 'Entrar'}
+          <button type="submit" disabled={loading} className="gc-btn" style={{ width: '100%', marginTop: 4 }}>
+            {loading ? 'Entrando…' : 'Entrar'}
           </button>
         </form>
 
-        <p className="text-light text-center mt-4">
+        <p className="sub" style={{ margin: '20px 0 0', textAlign: 'center' }}>
           Não tem uma conta?{' '}
-          <Link to="/register" className="text-primary hover:text-hover">
-            Cadastre-se
-          </Link>
+          <Link to="/register" className="text-primary" style={{ fontWeight: 700 }}>Cadastre-se</Link>
         </p>
       </div>
     </div>

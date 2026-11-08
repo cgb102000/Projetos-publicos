@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { AuthContext } from '../contexts/AuthContext';
 import { Card } from '../components/Card';
 import api from '../services/api';
+import { Container } from '../components/Container';
 
 export function Search() {
   const [searchParams] = useSearchParams();
@@ -30,7 +31,17 @@ export function Search() {
         throw new Error('Servidor indisponível. Tente novamente em alguns instantes.');
       }
 
-      const response = await api.get(`/api/search?q=${encodeURIComponent(query)}`);
+      let response;
+      try {
+        response = await api.get(`/api/search?q=${encodeURIComponent(query)}`);
+      } catch (err) {
+        // A API responde 404 quando a busca não encontra nada
+        if (err.response?.status === 404) {
+          setResults([]);
+          return;
+        }
+        throw err;
+      }
       
       if (!response.data) {
         throw new Error('Nenhum resultado encontrado');
@@ -52,42 +63,35 @@ export function Search() {
     }
   }
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <p className="text-red-500">{error}</p>
-      </div>
-    );
-  }
-
   return (
-    <div className="content-section pt-20 animate-fadeIn">
-      <h1 className="section-title">
-        Resultados para: {query}
-      </h1>
-      
-      {results.length === 0 ? (
-        <p className="text-light text-center text-lg">Nenhum resultado encontrado.</p>
-      ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-          {results.map(item => (
-            <Card 
-              key={item._id} 
-              item={item} 
-              isAuthenticated={isAuthenticated}
-              onFavorite={handleFavorite}
-            />
+    <Container>
+      <h1 className="gc-section-title">Resultados para “{query}”</h1>
+      {loading ? (
+        <div className="gc-grid">
+          {Array.from({ length: 6 }, (_, i) => (
+            <div key={i}>
+              <div className="gc-skel" style={{ aspectRatio: '2 / 3' }} />
+              <div className="gc-skel" style={{ height: 14, marginTop: 10, width: '80%' }} />
+            </div>
           ))}
         </div>
+      ) : error ? (
+        <p className="gc-section-sub" style={{ marginTop: 0 }}>{error}</p>
+      ) : results.length === 0 ? (
+        <div className="gc-panel" style={{ textAlign: 'center' }}>
+          <p style={{ margin: 0, fontWeight: 700 }}>Nada encontrado para “{query}”.</p>
+          <p className="gc-section-sub" style={{ margin: '6px 0 0' }}>Confira a grafia ou tente outro título.</p>
+        </div>
+      ) : (
+        <>
+          <p className="gc-section-sub">{results.length} {results.length === 1 ? 'título encontrado' : 'títulos encontrados'}</p>
+          <div className="gc-grid">
+            {results.map(item => (
+              <Card key={item._id} item={item} />
+            ))}
+          </div>
+        </>
       )}
-    </div>
+    </Container>
   );
 }

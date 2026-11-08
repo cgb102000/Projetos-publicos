@@ -327,6 +327,24 @@ export const contentService = {
       console.error('Erro ao buscar conteúdo:', error.message);
       return [];
     }
+  },
+
+  async getCategories() {
+    try {
+      const { data } = await api.get('/api/categories');
+      return Array.isArray(data) ? data : [];
+    } catch (error) {
+      return [];
+    }
+  },
+
+  async getByCategory(categoria) {
+    try {
+      const { data } = await api.get(`/api/category/${encodeURIComponent(categoria)}`);
+      return Array.isArray(data) ? data : [];
+    } catch (error) {
+      return [];
+    }
   }
 };
 

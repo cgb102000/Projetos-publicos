@@ -37,73 +37,47 @@ export function Register() {
     }
   };
 
+  const campos = [
+    { name: 'nome', label: 'Nome', type: 'text', autoComplete: 'name' },
+    { name: 'email', label: 'Email', type: 'email', autoComplete: 'email' },
+    { name: 'senha', label: 'Senha', type: 'password', autoComplete: 'new-password', minLength: 6 },
+    { name: 'confirmSenha', label: 'Confirmar senha', type: 'password', autoComplete: 'new-password', minLength: 6 },
+  ];
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-darker">
-      <div className="bg-dark p-8 rounded-lg shadow-xl w-96">
-        <h1 className="text-2xl font-bold text-light mb-6">Criar Conta</h1>
-        
-        {error && (
-          <div className="bg-red-500 text-white p-3 rounded mb-4">{error}</div>
-        )}
+    <div className="gc-auth">
+      <div className="gc-panel">
+        <h1>Criar conta</h1>
+        <p className="sub">Salve favoritos, adicione amigos e compartilhe títulos.</p>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="text"
-            name="nome"
-            placeholder="Nome"
-            value={formData.nome}
-            onChange={handleChange}
-            className="w-full p-3 rounded bg-darker text-light"
-            required
-          />
+        {error && <div className="gc-erro" role="alert">{error}</div>}
 
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={formData.email}
-            onChange={handleChange}
-            className="w-full p-3 rounded bg-darker text-light"
-            required
-          />
-
-          <input
-            type="password"
-            name="senha"
-            placeholder="Senha"
-            value={formData.senha}
-            onChange={handleChange}
-            className="w-full p-3 rounded bg-darker text-light"
-            required
-            minLength={6}
-          />
-
-          <input
-            type="password"
-            name="confirmSenha"
-            placeholder="Confirmar Senha"
-            value={formData.confirmSenha}
-            onChange={handleChange}
-            className="w-full p-3 rounded bg-darker text-light"
-            required
-            minLength={6}
-          />
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-primary text-white p-3 rounded hover:bg-hover transition-colors disabled:opacity-50"
-          >
-            {loading ? 'Cadastrando...' : 'Cadastrar'}
+        <form onSubmit={handleSubmit} style={{ display: 'grid', gap: 16 }}>
+          {campos.map((c) => (
+            <div key={c.name}>
+              <label htmlFor={`reg-${c.name}`}>{c.label}</label>
+              <input
+                id={`reg-${c.name}`}
+                name={c.name}
+                type={c.type}
+                autoComplete={c.autoComplete}
+                minLength={c.minLength}
+                value={formData[c.name]}
+                onChange={handleChange}
+                className="gc-input"
+                required
+              />
+            </div>
+          ))}
+          <button type="submit" disabled={loading} className="gc-btn" style={{ width: '100%', marginTop: 4 }}>
+            {loading ? 'Criando conta…' : 'Criar conta'}
           </button>
-
-          <p className="text-light text-center mt-4">
-            Já tem uma conta?{' '}
-            <Link to="/login" className="text-primary hover:text-hover">
-              Fazer login
-            </Link>
-          </p>
         </form>
+
+        <p className="sub" style={{ margin: '20px 0 0', textAlign: 'center' }}>
+          Já tem uma conta?{' '}
+          <Link to="/login" className="text-primary" style={{ fontWeight: 700 }}>Entrar</Link>
+        </p>
       </div>
     </div>
   );

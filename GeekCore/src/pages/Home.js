@@ -1,176 +1,100 @@
-import { useState, useEffect, useContext } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { AuthContext } from '../contexts/AuthContext';
-import { contentService, authService } from '../services/api';
-import { Card } from '../components/Card';
-import { Alert } from '../components/Alert'; // Certifique-se de importar o componente Alert
+import { useState, useEffect } from 'react';
+import { contentService } from '../services/api';
 import { Footer } from '../components/Footer';
+import { Hero } from '../components/Hero';
+import { Row, RowSkeleton } from '../components/Row';
+
+const NOMES_CATEGORIA = {
+  shonen: 'Shonen: ação e amizade',
+  'ação': 'Ação e aventura',
+  drama: 'Drama',
+  fantasia: 'Fantasia',
+  suspense: 'Suspense e mistério',
+  'ficção científica': 'Ficção científica',
+  terror: 'Terror',
+  'comédia': 'Comédia',
+  'animação': 'Animação',
+  romance: 'Romance',
+};
+
+function embaralhar(lista) {
+  return [...lista].sort(() => Math.random() - 0.5);
+}
 
 export function Home() {
-  const [recentItems, setRecentItems] = useState([]);
+  const [recentes, setRecentes] = useState([]);
+  const [destaques, setDestaques] = useState([]);
+  const [fileiras, setFileiras] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [alert, setAlert] = useState({ show: false, message: '', type: '' });
-  const { isAuthenticated } = useContext(AuthContext);
-  const navigate = useNavigate();
-  const [featuredItem, setFeaturedItem] = useState(null);
+  const [erro, setErro] = useState(null);
 
-  useEffect(() => {
-    loadRecentItems();
-    loadFeaturedItem();
-  }, []);
-
-  async function loadRecentItems() {
+  async function carregar() {
     try {
       setLoading(true);
-      setError(null);
+      setErro(null);
+      const [itensRecentes, categorias] = await Promise.all([
+        contentService.getRecentContent(),
+        contentService.getCategories(),
+      ]);
+      if (!itensRecentes.length) {
+        setErro('Não foi possível carregar o catálogo. A API pode estar iniciando; tente de novo em alguns segundos.');
+        return;
+      }
+      setRecentes(itensRecentes);
 
-      const items = await contentService.getRecentContent();
-      setRecentItems(items);
-    } catch (error) {
-      console.error('Erro ao carregar itens:', error);
-      setError(error.message || 'Erro ao carregar itens. Tente novamente mais tarde.');
+      // Destaques: até 6 títulos, priorizando os que têm imagem de capa
+      const comCapa = embaralhar(itensRecentes.filter((i) => i.img_capa_url));
+      const semCapa = embaralhar(itensRecentes.filter((i) => !i.img_capa_url));
+      setDestaques([...comCapa, ...semCapa].slice(0, 6));
+
+      const porCategoria = await Promise.all(
+        categorias.map(async (c) => ({ categoria: c, itens: await contentService.getByCategory(c) }))
+      );
+      setFileiras(
+        porCategoria
+          .filter((f) => f.itens.length >= 2)
+          .sort((a, b) => b.itens.length - a.itens.length)
+      );
     } finally {
       setLoading(false);
     }
   }
 
-  async function loadFeaturedItem() {
-    try {
-      const items = await contentService.getRecommendations();
-      const itemsWithCover = items.filter(item => item.img_capa_url);
-
-      if (itemsWithCover.length > 0) {
-        const randomIndex = Math.floor(Math.random() * itemsWithCover.length);
-        setFeaturedItem(itemsWithCover[randomIndex]);
-      }
-    } catch (error) {
-      console.error('Erro ao carregar destaque:', error);
-    }
-  }
-
-  const handleFavorite = async (item) => {
-    try {
-      // Salvar tema atual
-      const temaAtual = document.documentElement.style.getPropertyValue('--color-primary');
-      
-      const response = await authService.toggleFavorite(item._id, item.collection);
-
-      if (response.success) {
-        // Recarregar itens preservando o tema
-        await loadRecentItems();
-        
-        // Reaplicar tema após atualização
-        if (temaAtual) {
-          document.documentElement.style.setProperty('--color-primary', temaAtual);
-          document.documentElement.style.setProperty('--color-hover', temaAtual);
-        }
-        
-        setAlert({
-          show: true,
-          message: response.isFavorito 
-            ? '❤️ Adicionado aos favoritos'
-            : '💔 Removido dos favoritos',
-          type: response.isFavorito ? 'info' : 'warning'
-        });
-
-        setTimeout(() => setAlert({ show: false, message: '', type: '' }), 3000);
-      }
-    } catch (error) {
-      setAlert({
-        show: true,
-        message: 'Erro ao atualizar favoritos',
-        type: 'error'
-      });
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
+  useEffect(() => { carregar(); }, []);
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <div className="content-section pt-20 animate-fadeIn flex-grow">
-        {alert.show && (
-          <Alert
-            message={alert.message}
-            type={alert.type}
-            onClose={() => setAlert({ show: false, message: '', type: '' })}
-          />
-        )}
-        {error ? (
-          <div className="flex flex-col items-center justify-center min-h-[50vh] text-center">
-            <p className="text-red-500 mb-4">{error}</p>
-            <button 
-              onClick={() => {
-                setError(null);
-                loadRecentItems();
-              }}
-              className="bg-primary text-white px-4 py-2 rounded hover:bg-hover"
-            >
-              Tentar Novamente
-            </button>
+    <div className="gc-page">
+      <main className="animate-fadeIn">
+        {erro ? (
+          <div className="gc-container" style={{ paddingTop: 140, textAlign: 'center' }}>
+            <p className="gc-section-sub" style={{ margin: '0 0 16px' }}>{erro}</p>
+            <button type="button" className="gc-btn" onClick={carregar}>Tentar novamente</button>
           </div>
         ) : (
           <>
-            {/* Hero Section */}
-            <section className="mb-16">
-              <h2 className="section-title"></h2>
-              <div className="relative h-[70vh] rounded-lg overflow-hidden mb-12 hero-section">
-                {featuredItem && featuredItem.img_capa_url && (
-                  <Link 
-                    to={`/detalhes/videos/${featuredItem._id}`}
-                    className="block w-full h-full"
-                  >
-                    <img 
-                      src={featuredItem.img_capa_url}
-                      alt={featuredItem.titulo}
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-darker via-transparent to-transparent">
-                      <div className="absolute bottom-0 left-0 p-8">
-                        <h1 className="text-5xl font-bold text-white mb-4">{featuredItem.titulo}</h1>
-                        <div className="flex items-center space-x-2 nav-button bg-primary text-white px-6 py-3 rounded-full hover:bg-hover transition-all duration-300 w-fit">
-                          <span>Assistir Agora</span>
-                          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                          </svg>
-                        </div>
-                        {featuredItem.descricao && (
-                          <p className="text-white mt-4 max-w-2xl line-clamp-2">
-                            {featuredItem.descricao}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  </Link>
-                )}
-              </div>
-            </section>
-
-            <section className="mb-16">
-              <h2 className="section-title">Conteúdo Recente</h2>
-              {recentItems.length === 0 ? (
-                <p className="text-center text-gray-500">Nenhum item recente encontrado.</p>
+            <Hero items={destaques} />
+            <div className="gc-container" style={{ marginTop: -24, position: 'relative', zIndex: 2 }}>
+              {loading && !recentes.length ? (
+                <>
+                  <RowSkeleton />
+                  <RowSkeleton />
+                </>
               ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                  {recentItems.map(item => (
-                    <Card 
-                      key={item._id} 
-                      item={item}
+                <>
+                  <Row title="Adicionados recentemente" items={recentes} />
+                  {fileiras.map((f) => (
+                    <Row
+                      key={f.categoria}
+                      title={NOMES_CATEGORIA[f.categoria.toLowerCase()] || f.categoria.charAt(0).toUpperCase() + f.categoria.slice(1)}
+                      items={f.itens}
                     />
                   ))}
-                </div>
+                </>
               )}
-            </section>
+            </div>
           </>
         )}
-      </div>
+      </main>
       <Footer />
     </div>
   );

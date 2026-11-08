@@ -1,25 +1,20 @@
+import { Link } from 'react-router-dom';
+
 export function Footer() {
   return (
-    <footer className="bg-darker mt-auto py-8 border-t border-gray-800">
-      <div className="container mx-auto px-4">
-        <div className="flex flex-col items-center gap-6">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold text-primary">GeekCore</h2>
-            <p className="text-gray-400 mt-2">Sua plataforma de entretenimento Geek!</p>
-          </div>
-          
-          <div className="text-center max-w-2xl">
-            <h3 className="text-xl font-semibold text-light mb-2">Sobre Nós</h3>
-            <p className="text-gray-400">
-              GeekCore é sua plataforma para explorar os melhores filmes e animes. 
-              Junte-se a nós e descubra um mundo de entretenimento!
-            </p>
-          </div>
-
-          <div className="text-gray-500 text-sm">
-            &copy; {new Date().getFullYear()} Site criado por Caio Gabriel.
-          </div>
+    <footer className="gc-footer">
+      <div className="gc-container inner">
+        <div>
+          <Link to="/" className="gc-logo">Geek<span>Core</span></Link>
+          <p>Filmes, séries e animes para descobrir e compartilhar com os amigos.</p>
         </div>
+        <nav aria-label="Rodapé">
+          <Link to="/">Início</Link>
+          <Link to="/favoritos">Favoritos</Link>
+          <Link to="/perfil">Meu perfil</Link>
+          <a href="https://github.com/cgb102000/Projetos-publicos/tree/main/GeekCore" target="_blank" rel="noopener noreferrer">Código no GitHub</a>
+        </nav>
+        <p style={{ width: '100%' }}>&copy; {new Date().getFullYear()} GeekCore · criado por Caio Gabriel</p>
       </div>
     </footer>
   );

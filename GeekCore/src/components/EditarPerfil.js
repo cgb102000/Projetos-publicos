@@ -9,6 +9,7 @@ import { useTheme } from '../contexts/ThemeContext';
 // Avatares padrão (public/images/avatars). O caminho relativo é o que fica salvo no banco.
 const AVATARES = Array.from({ length: 8 }, (_, i) => `images/avatars/avatar-${i + 1}.svg`);
 const AVATAR_VAZIO = process.env.PUBLIC_URL + '/images/default-avatar.svg';
+const CORES = ['#ef4444', '#f97316', '#eab308', '#22c55e', '#14b8a6', '#3b82f6', '#8b5cf6', '#ec4899'];
 
 export function EditarPerfil({ usuario }) {
   const defaultProfile = {
@@ -89,8 +90,8 @@ export function EditarPerfil({ usuario }) {
 
   return (
     <div className="space-y-6">
-      <div className="bg-darker rounded-lg p-6">
-        <h2 className="text-2xl font-bold mb-6">Informações do Perfil</h2>
+      <div className="gc-panel">
+        <h2 className="gc-section-title">Informações do perfil</h2>
         <div className="space-y-4">
           <div className="flex justify-center mb-6">
             <div className="relative">
@@ -155,7 +156,7 @@ export function EditarPerfil({ usuario }) {
                 type="text"
                 value={perfil.nome}
                 onChange={(e) => setPerfil({ ...perfil, nome: e.target.value })}
-                className="w-full p-3 rounded bg-dark text-light"
+                className="gc-input"
               />
             </div>
 
@@ -164,29 +165,47 @@ export function EditarPerfil({ usuario }) {
               <textarea
                 value={perfil.descricao}
                 onChange={(e) => setPerfil({ ...perfil, descricao: e.target.value })}
-                className="w-full p-3 rounded bg-dark text-light h-32"
+                className="gc-input" style={{ minHeight: 120 }}
                 placeholder="Conte um pouco sobre você..."
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">Cor do Tema</label>
-              <input
-                type="color"
-                value={perfil.tema_cor}
-                onChange={(e) => {
-                  setPerfil({ ...perfil, tema_cor: e.target.value });
-                  setThemeColor(e.target.value); // Atualizar cor em tempo real
-                }}
-                className="w-full h-12 p-1 rounded bg-dark cursor-pointer"
-              />
+              <p className="block text-sm font-medium mb-2">Cor do tema</p>
+              <div className="gc-swatches">
+                {CORES.map((cor) => (
+                  <button
+                    key={cor}
+                    type="button"
+                    className={`gc-swatch${perfil.tema_cor?.toLowerCase() === cor ? ' ativo' : ''}`}
+                    style={{ background: cor }}
+                    aria-label={`Usar a cor ${cor}`}
+                    aria-pressed={perfil.tema_cor?.toLowerCase() === cor}
+                    onClick={() => {
+                      setPerfil({ ...perfil, tema_cor: cor });
+                      setThemeColor(cor);
+                    }}
+                  />
+                ))}
+                <label className={`gc-swatch gc-swatch-custom${CORES.includes(perfil.tema_cor?.toLowerCase()) ? '' : ' ativo'}`} title="Cor personalizada">
+                  <input
+                    type="color"
+                    value={perfil.tema_cor}
+                    aria-label="Escolher cor personalizada"
+                    onChange={(e) => {
+                      setPerfil({ ...perfil, tema_cor: e.target.value });
+                      setThemeColor(e.target.value);
+                    }}
+                  />
+                </label>
+              </div>
             </div>
           </div>
 
           <button
             onClick={handleSave}
             disabled={loading || processandoFoto}
-            className="w-full py-3 bg-primary text-white rounded hover:bg-hover"
+            className="gc-btn" style={{ width: '100%' }}
           >
             {loading ? 'Salvando...' : 'Salvar Alterações'}
           </button>

@@ -1,5 +1,5 @@
 import { useContext, useState, useRef, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { FriendsDropdown } from './FriendsDropdown';
@@ -15,6 +15,7 @@ export function Navbar() {
   const [notifications, setNotifications] = useState([]);
   const [loadingNotifications, setLoadingNotifications] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [buscaAberta, setBuscaAberta] = useState(false);
   const navigate = useNavigate();
   const { isDarkMode, setIsDarkMode, resetToDefaultTheme } = useTheme();
   const dropdownRef = useRef(null);
@@ -113,6 +114,7 @@ export function Navbar() {
     if (searchQuery.trim()) {
       navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
       setSearchQuery('');
+      setBuscaAberta(false);
     }
   };
 
@@ -157,51 +159,61 @@ export function Navbar() {
     } catch {}
   };
 
-  return (
-    <nav className="fixed top-0 w-full bg-darker bg-opacity-95 z-50 py-4">
-      <div className="container mx-auto flex flex-wrap items-center justify-between">
-        <Link to="/" className="text-primary text-2xl font-bold title-hover shrink-0">
-          GeekCore
-        </Link>
+  const linkClasse = ({ isActive }) => `gc-nav-link${isActive ? ' ativo' : ''}`;
 
-        <div className="flex-1 flex justify-center px-2 md:px-4 max-w-xl mx-auto">
-          <form onSubmit={handleSearch} className="flex w-full">
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Buscar filmes ou animes..."
-              className="w-full py-2 px-3 md:px-4 rounded-l-full bg-dark text-light border border-gray-700 focus:outline-none focus:border-primary hover:border-hover transition-all text-sm md:text-base"
-            />
-            <button
-              type="submit"
-              className="button-base rounded-r-full px-4 md:px-6 py-2 text-sm md:text-base shrink-0"
-            >
-              Buscar
-            </button>
-          </form>
+  return (
+    <nav className="gc-nav">
+      <div className="gc-container gc-nav-inner">
+        <Link to="/" className="gc-logo" aria-label="GeekCore, página inicial">Geek<span>Core</span></Link>
+
+        <div className="gc-nav-links">
+          <NavLink to="/" end className={linkClasse}>Início</NavLink>
+          {isAuthenticated && <NavLink to="/favoritos" className={linkClasse}>Favoritos</NavLink>}
+          {isAuthenticated && <NavLink to="/perfil" className={linkClasse}>Perfil</NavLink>}
         </div>
 
-        <div className="flex items-center space-x-4">
+        <form onSubmit={handleSearch} className="gc-search desktop" role="search">
+            <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" /></svg>
+            <input
+              type="search"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Buscar filmes, séries e animes"
+              aria-label="Buscar"
+              className="gc-input"
+            />
+          </form>
+
+        <div className="gc-nav-actions">
+          <button
+            type="button"
+            className="gc-icon-btn gc-only-mobile"
+            onClick={() => setBuscaAberta((v) => !v)}
+            aria-label="Abrir busca"
+            aria-expanded={buscaAberta}
+          >
+            <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" /></svg>
+          </button>
           {isAuthenticated && (
             <div className="relative" ref={notificationsRef}>
               <button
                 onClick={() => setShowNotifications(v => !v)}
-                className="p-2 rounded-full hover:bg-gray-700 transition-all relative"
+                className="gc-icon-btn"
                 title="Notificações"
+                aria-label="Notificações"
               >
-                <svg className="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
                     d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                 </svg>
                 {unreadCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs rounded-full px-1.5 py-0.5">
+                  <span className="absolute top-0 right-0 bg-primary text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] px-1 flex items-center justify-center">
                     {unreadCount}
                   </span>
                 )}
               </button>
               {showNotifications && (
-                <div className="absolute right-0 mt-2 w-80 max-w-xs rounded-md shadow-lg bg-darker border border-gray-700 z-50 animate-fadeInDown">
+                <div className="absolute right-0 mt-2 w-80 max-w-[calc(100vw-24px)] rounded-xl shadow-2xl bg-darker border border-gray-700 overflow-hidden z-50 animate-fadeInDown">
                   <div className="p-4 border-b border-gray-700 font-bold text-light flex items-center justify-between">
                     <span>Notificações</span>
                     {notifications.length > 0 && (
@@ -264,104 +276,49 @@ export function Navbar() {
             </div>
           )}
           <button
+            type="button"
             onClick={handleThemeToggle}
-            className="p-2 rounded-full hover:bg-gray-700 transition-all"
+            className="gc-icon-btn"
             title={isDarkMode ? 'Mudar para modo claro' : 'Mudar para modo escuro'}
+            aria-label={isDarkMode ? 'Mudar para modo claro' : 'Mudar para modo escuro'}
           >
             {isDarkMode ? (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-6 h-6 text-yellow-400"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M12 3v1m0 16v1m8-8h1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M12 8a4 4 0 100 8 4 4 0 000-8z"
-                />
-              </svg>
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 3v1m0 16v1m8-8h1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M12 8a4 4 0 100 8 4 4 0 000-8z" /></svg>
             ) : (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-6 h-6 text-gray-400"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
-              </svg>
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" /></svg>
             )}
           </button>
-          <div className="flex items-center space-x-4">
-            {isAuthenticated ? (
-              <div className="relative">
-                <div className="flex items-center space-x-4">
-                  <button
-                    ref={buttonRef}
-                    onClick={() => setIsProfileOpen(!isProfileOpen)}
-                    className="nav-link flex items-center space-x-2 text-light group"
-                  >
-                    <div className="relative w-10 h-10 rounded-full overflow-hidden border-2 profile-avatar-border transition-colors">
-                      {user?.foto ? (
-                        <img
-                          src={user.foto}
-                          alt={user.nome}
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            e.target.onerror = null;
-                            e.target.src = process.env.PUBLIC_URL + '/images/default-avatar.svg';
-                          }}
-                          loading="eager"
-                        />
-                      ) : (
-                        <img
-                          src={process.env.PUBLIC_URL + '/images/default-avatar.svg'}
-                          alt="Avatar padrão"
-                          className="w-full h-full object-cover"
-                        />
-                      )}
-                    </div>
-                    <span className="hidden md:inline">Meu Perfil</span>
-                    <svg
-                      className={`w-4 h-4 transition-transform duration-200 ${
-                        isProfileOpen ? 'rotate-180' : ''
-                      }`}
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </button>
-                  <button
-                    onClick={handleLogout}
-                    className="nav-link flex items-center space-x-2 text-light hover:bg-hover rounded-md px-3 py-2 transition-colors"
-                    title="Sair"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="w-6 h-6"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 01-3-3h4a3 3 0 013 3v1"
-                      />
-                    </svg>
-                    <span className="hidden md:inline">Sair</span>
-                  </button>
-                </div>
 
+          {isAuthenticated ? (
+            <div className="relative flex items-center gap-1">
+              <button
+                ref={buttonRef}
+                type="button"
+                onClick={() => setIsProfileOpen(!isProfileOpen)}
+                className="flex items-center gap-1 pl-1 text-light group"
+                aria-label="Menu do perfil"
+                aria-expanded={isProfileOpen}
+              >
+                <div className="relative w-9 h-9 rounded-full overflow-hidden border-2 profile-avatar-border">
+                  <img
+                    src={user?.foto || process.env.PUBLIC_URL + '/images/default-avatar.svg'}
+                    alt={user?.nome || 'Meu perfil'}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = process.env.PUBLIC_URL + '/images/default-avatar.svg';
+                    }}
+                  />
+                </div>
+                <svg className={`w-4 h-4 transition-transform duration-200 ${isProfileOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" /></svg>
+              </button>
+              <button type="button" onClick={handleLogout} className="gc-icon-btn" title="Sair" aria-label="Sair">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+              </button>
                 {isProfileOpen && (
                   <div
                     ref={dropdownRef}
-                    className="absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-darker border border-gray-700 z-50 animate-fadeInDown"
+                    className="absolute right-0 top-full mt-2 w-56 rounded-xl shadow-2xl py-1 bg-darker border border-gray-700 z-50 animate-fadeInDown"
                   >
                     <div className="absolute -top-2 right-4 w-4 h-4 bg-darker border-l border-t border-gray-700 transform rotate-45"></div>
 
@@ -410,21 +367,29 @@ export function Navbar() {
                     </div>
                   </div>
                 )}
-              </div>
-            ) : (
-              <>
-                <Link to="/login" className="nav-link text-light">
-                  Login
-                </Link>
-                <Link
-                  to="/register"
-                  className="nav-button bg-primary text-white px-4 py-2 rounded transition-colors"
-                >
-                  Cadastrar
-                </Link>
-              </>
-            )}
-          </div>
+            </div>
+          ) : (
+            <>
+              <Link to="/login" className="gc-nav-link">Entrar</Link>
+              <Link to="/register" className="gc-btn gc-nav-cta" style={{ padding: '8px 16px' }}>Criar conta</Link>
+            </>
+          )}
+        </div>
+      </div>
+
+      <div className={`gc-search-mobile${buscaAberta ? ' aberto' : ''}`}>
+        <div className="gc-container">
+          <form onSubmit={handleSearch} className="gc-search" role="search">
+            <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" /></svg>
+            <input
+              type="search"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Buscar filmes, séries e animes"
+              aria-label="Buscar"
+              className="gc-input"
+            />
+          </form>
         </div>
       </div>
     </nav>

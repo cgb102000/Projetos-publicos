@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../contexts/AuthContext';
 import { contentService, authService, amigoService } from '../services/api';
-import { Carousel } from '../components/Carousel';
+import { Row } from '../components/Row';
 import { Alert } from '../components/Alert';
 import { Footer } from '../components/Footer';
 import { Comments } from '../components/Comments';
@@ -47,7 +47,7 @@ export function Detalhes() {
         setItem({ ...itemData, isFavorited });
 
         const recommendationsData = await contentService.getRecommendations();
-        setRecommendations(recommendationsData.filter(rec => rec._id !== id).slice(0, 6));
+        setRecommendations(recommendationsData.filter(rec => rec._id !== id).slice(0, 12));
       } catch (error) {
         console.error('Erro ao carregar conteúdo:', error);
         setError('Erro ao carregar conteúdo. Tente novamente mais tarde.');
@@ -133,9 +133,12 @@ export function Detalhes() {
     );
   }
 
+  const linkAssistir = [item?.url, item?.link].find((l) => /^https?:\/\//.test(l || ''));
+  const generos = Array.isArray(item?.generos) ? item.generos : [];
+
   return (
-    <div className="flex flex-col min-h-screen">
-      <div className="min-h-screen bg-darker animate-fadeIn relative flex-grow">
+    <div className="gc-page">
+      <main className="animate-fadeIn">
         {alert.show && (
           <Alert
             message={alert.message}
@@ -151,95 +154,69 @@ export function Detalhes() {
           />
         )}
 
-        <div className="content-section pt-20">
           {error ? (
-            <div className="text-center text-red-500 p-4">{error}</div>
+            <div className="gc-container" style={{ paddingTop: 140, textAlign: 'center' }}>
+              <p className="gc-section-sub">{error}</p>
+            </div>
           ) : item ? (
             <>
-              <div className="flex flex-col md:flex-row gap-8">
-                <div className="w-full md:w-1/3 netflix-card">
-                  <img 
-                    src={item.img_url} 
-                    alt={item.titulo}
-                    className="w-full rounded-lg shadow-2xl"
-                  />
-                </div>
-                
-                <div className="flex-1">
-                  <h1 className="text-4xl font-bold text-primary mb-4">{item.titulo}</h1>
-                  {item.categoria && (
-                    <span className="bg-primary text-white px-4 py-2 rounded-full text-sm font-bold mb-4 inline-block">
-                      {item.categoria}
-                    </span>
-                  )}
-                  {item.descricao && (
-                    <p className="text-light text-lg mb-8 mt-4">{item.descricao}</p>
-                  )}
-                  
-                  <div className="flex items-center gap-4 mb-6">
-                    <a
-                      href={item.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="nav-button bg-primary text-white px-6 py-3 rounded hover:bg-hover transition-all inline-flex items-center gap-2"
-                    >
-                      <span>Assistir Agora</span>
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
-                      </svg>
-                    </a>
-                    {isAuthenticated && (
-                      <button
-                        onClick={() => setShowShareModal(true)}
-                        className="nav-button bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700 transition-all inline-flex items-center gap-2"
-                        title="Compartilhar com um amigo"
-                      >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 8a3 3 0 11-6 0 3 3 0 016 0zm6 11a9 9 0 10-18 0h18zm-6-5v2m0 0h-2m2 0h2" />
-                        </svg>
-                        <span>Compartilhar</span>
-                      </button>
-                    )}
-                  </div>
-
-                  <div className="flex items-center gap-6 mt-4">
-                    {isAuthenticated && (
-                      <button
-                        onClick={handleFavorite}
-                        className="group flex flex-col items-center transition-all duration-300"
-                        title={item.isFavorited ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
-                      >
-                        <div
-                          className={`p-3 rounded-full border-2 transition-all duration-300 ${
-                            item.isFavorited
-                              ? 'text-white border-[color:var(--color-primary)] bg-[color:var(--color-primary)] hover:bg-[color:var(--color-hover)] hover:border-[color:var(--color-hover)]'
-                              : 'bg-transparent border-[color:var(--color-primary)] text-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)] hover:text-white'
-                          }`}
-                        >
-                          <svg
-                            className={`w-6 h-6 transition-transform duration-300 ${
-                              item.isFavorited ? 'heart-beat' : ''
-                            }`}
-                            fill={item.isFavorited ? 'currentColor' : 'none'}
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                            />
-                          </svg>
-                        </div>
-                        <span className="text-sm mt-1 text-gray-300">
-                          {item.isFavorited ? 'Favoritado' : 'Favoritar'}
-                        </span>
-                      </button>
-                    )}
-                  </div>
-                </div>
+              <div className="gc-det-hero" aria-hidden="true">
+                <img
+                  src={item.img_capa_url || item.img_url}
+                  alt=""
+                  className={item.img_capa_url ? '' : 'desfocado'}
+                  onError={(e) => { e.target.onerror = null; e.target.src = item.img_url; e.target.classList.add('desfocado'); }}
+                />
               </div>
+
+              <div className="gc-container">
+                <div className="gc-det-body">
+                  <img
+                    src={item.img_url || process.env.PUBLIC_URL + '/images/sem-capa.svg'}
+                    alt={`Pôster de ${item.titulo}`}
+                    className="gc-det-poster"
+                    onError={(e) => { e.target.onerror = null; e.target.src = process.env.PUBLIC_URL + '/images/sem-capa.svg'; }}
+                  />
+
+                  <div className="gc-det-info">
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                      {item.categoria && <span className="gc-chip gc-chip-primary">{item.categoria}</span>}
+                      {generos.map((g) => <span key={g} className="gc-chip">{g}</span>)}
+                    </div>
+                    <h1>{item.titulo}</h1>
+                    {item.descricao && <p className="gc-det-desc">{item.descricao}</p>}
+
+                    <div className="gc-det-acoes">
+                      {linkAssistir && (
+                        <a href={linkAssistir} target="_blank" rel="noopener noreferrer" className="gc-btn">
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
+                          Assistir
+                        </a>
+                      )}
+                      {isAuthenticated ? (
+                        <>
+                          <button
+                            type="button"
+                            onClick={handleFavorite}
+                            className={`gc-btn ${item.isFavorited ? 'favoritado' : 'gc-btn-ghost'}`}
+                            aria-pressed={item.isFavorited}
+                          >
+                            <svg className={item.isFavorited ? 'heart-beat' : ''} width="18" height="18" viewBox="0 0 24 24" fill={item.isFavorited ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
+                            {item.isFavorited ? 'Nos favoritos' : 'Favoritar'}
+                          </button>
+                          <button type="button" onClick={() => setShowShareModal(true)} className="gc-btn gc-btn-ghost">
+                            <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M8.684 13.342C8.886 12.938 9 12.482 9 12s-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" /></svg>
+                            Compartilhar
+                          </button>
+                        </>
+                      ) : (
+                        <button type="button" onClick={() => navigate('/login')} className="gc-btn gc-btn-ghost">
+                          Entre para favoritar
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
 
               {/* Modal Compartilhar com amigos */}
               {showShareModal && (
@@ -308,17 +285,17 @@ export function Detalhes() {
                 </div>
               )}
 
-              {recommendations.length > 0 && (
-                <div className="mt-12">
-                  <Carousel items={recommendations} title="Recomendações" />
-                </div>
-              )}
+                {recommendations.length > 0 && (
+                  <Row title="Você também pode gostar" items={recommendations} />
+                )}
+
+                <section className="gc-section">
+                  <Comments videoId={id} />
+                </section>
+              </div>
             </>
           ) : null}
-        </div>
-
-        <Comments videoId={id} />
-      </div>
+      </main>
       <Footer />
     </div>
   );

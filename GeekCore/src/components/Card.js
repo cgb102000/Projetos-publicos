@@ -1,28 +1,25 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+const SEM_CAPA = process.env.PUBLIC_URL + '/images/sem-capa.svg';
+
+// Card de pôster com título e categoria visíveis (também no celular, onde não há hover)
 export function Card({ item }) {
   return (
-    <Link 
-      to={`/detalhes/videos/${item._id}`}
-      className="card"
-    >
-      <img 
-        src={item.img_url || process.env.PUBLIC_URL + '/images/sem-capa.svg'}
-        onError={(e) => { e.target.onerror = null; e.target.src = process.env.PUBLIC_URL + '/images/sem-capa.svg'; }} 
-        alt={item.titulo}
-        className="w-full h-full object-cover"
-      />
-      <div className="card-overlay">
-        <h3 className="card-title mb-3">{item.titulo}</h3>
-        <div className="watch-button">
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
-              d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
-          </svg>
-          <span>Assistir</span>
-        </div>
+    <Link to={`/detalhes/videos/${item._id}`} className="gc-card" title={item.titulo}>
+      <div className="gc-card-img">
+        <img
+          src={item.img_url || SEM_CAPA}
+          onError={(e) => { e.target.onerror = null; e.target.src = SEM_CAPA; }}
+          alt={item.titulo}
+          loading="lazy"
+        />
+        <span className="gc-card-play" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
+        </span>
       </div>
+      <h3 className="gc-card-title">{item.titulo}</h3>
+      {item.categoria && <p className="gc-card-meta">{item.categoria}</p>}
     </Link>
   );
 }
