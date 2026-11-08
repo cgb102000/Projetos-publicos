@@ -27,7 +27,8 @@ app.use(cors({
   },
   credentials: true
 }));
-app.use(express.json()); // Para analisar o corpo das requisições como JSON
+// Limite de 3 MB: a foto de perfil vai em base64 no JSON (o padrão de 100 KB recusava qualquer foto)
+app.use(express.json({ limit: '3mb' }));
 
 // Servir o React build primeiro: o public/index.html é só o template, sem os scripts
 app.use(express.static(path.join(__dirname, 'build')));
@@ -247,7 +248,10 @@ app.use((req, res) => {
 // Middleware global para tratar erros
 app.use((err, req, res, next) => {
   console.error('Erro:', err);
-  res.status(500).json({ 
+  if (err.type === 'entity.too.large') {
+    return res.status(413).json({ message: 'Imagem muito grande. Máximo permitido: 2MB' });
+  }
+  res.status(err.status || 500).json({ 
     message: err.message || 'Erro interno do servidor',
     path: req.path
   });

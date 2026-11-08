@@ -17,7 +17,11 @@ router.post('/register', async (req, res) => {
       expiresIn: '7d'
     });
 
-    res.status(201).json({ user, token });
+    // Nunca devolver o hash da senha
+    const userResponse = user.toObject();
+    delete userResponse.senha;
+
+    res.status(201).json({ user: userResponse, token });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -250,8 +254,16 @@ router.put('/perfil', async (req, res) => {
     if (nome) user.nome = nome;
     if (descricao !== undefined) user.descricao = descricao;
     if (tema_cor) user.tema_cor = tema_cor;
-    if (foto && foto.startsWith('data:image')) {
-      user.foto = foto;
+    // Foto: imagem enviada (data URL), um dos avatares padrão ou vazio para remover
+    if (foto !== undefined) {
+      const avatarPadrao = /^images\/avatars\/avatar-\d{1,2}\.svg$/;
+      if (!foto) {
+        user.foto = '';
+      } else if (typeof foto === 'string' && (/^data:image\/(png|jpe?g|webp|gif);base64,/.test(foto) || avatarPadrao.test(foto))) {
+        user.foto = foto;
+      } else {
+        return res.status(400).json({ message: 'Formato de foto inválido' });
+      }
     }
 
     await user.save();

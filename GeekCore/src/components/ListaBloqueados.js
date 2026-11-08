@@ -71,7 +71,7 @@ export function ListaBloqueados() {
             >
               <div className="flex items-center space-x-4">
                 <img
-                  src={usuario.foto || process.env.PUBLIC_URL + '/images/default-avatar.png'}
+                  src={usuario.foto || process.env.PUBLIC_URL + '/images/default-avatar.svg'}
                   alt={usuario.nome}
                   className="w-12 h-12 rounded-full object-cover"
                 />

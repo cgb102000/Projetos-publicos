@@ -32,7 +32,7 @@ export function VisualizarPerfil({ usuario }) {
             style={{ borderColor: usuario.tema_cor }}
           >
             <img
-              src={usuario.foto || process.env.PUBLIC_URL + '/images/default-avatar.png'}
+              src={usuario.foto || process.env.PUBLIC_URL + '/images/default-avatar.svg'}
               alt={usuario.nome}
               className="w-full h-full object-cover"
             />

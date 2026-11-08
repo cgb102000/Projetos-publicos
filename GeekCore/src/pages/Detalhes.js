@@ -287,7 +287,7 @@ export function Detalhes() {
                                   }}
                                 >
                                   <img
-                                    src={amigo.usuario.foto || process.env.PUBLIC_URL + '/images/default-avatar.png'}
+                                    src={amigo.usuario.foto || process.env.PUBLIC_URL + '/images/default-avatar.svg'}
                                     alt={amigo.usuario.nome}
                                     className="w-8 h-8 rounded-full object-cover"
                                   />

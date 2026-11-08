@@ -311,13 +311,13 @@ export function Navbar() {
                           className="w-full h-full object-cover"
                           onError={(e) => {
                             e.target.onerror = null;
-                            e.target.src = process.env.PUBLIC_URL + '/images/default-avatar.png';
+                            e.target.src = process.env.PUBLIC_URL + '/images/default-avatar.svg';
                           }}
                           loading="eager"
                         />
                       ) : (
                         <img
-                          src={process.env.PUBLIC_URL + '/images/default-avatar.png'}
+                          src={process.env.PUBLIC_URL + '/images/default-avatar.svg'}
                           alt="Avatar padrão"
                           className="w-full h-full object-cover"
                         />

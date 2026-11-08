@@ -8,7 +8,8 @@ export function Card({ item }) {
       className="card"
     >
       <img 
-        src={item.img_url} 
+        src={item.img_url || process.env.PUBLIC_URL + '/images/sem-capa.svg'}
+        onError={(e) => { e.target.onerror = null; e.target.src = process.env.PUBLIC_URL + '/images/sem-capa.svg'; }} 
         alt={item.titulo}
         className="w-full h-full object-cover"
       />

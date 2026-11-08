@@ -15,7 +15,7 @@ const getBaseUrl = () => {
 
 const api = axios.create({
   baseURL: getBaseUrl(),
-  timeout: 3000, // Reduzido de 5000 para 3000ms
+  timeout: 20000, // Envio de foto e "acordar" da função na Vercel podem passar de 3 s
   headers: {
     'Content-Type': 'application/json'
   },
