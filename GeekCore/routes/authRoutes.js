@@ -200,7 +200,9 @@ router.get('/perfil', async (req, res) => {
       email: user.email,
       descricao: user.descricao || '',
       foto: user.foto || '',
-      tema_cor: user.tema_cor || '#ef4444'
+      tema_cor: user.tema_cor || '#ef4444',
+      data_criacao: user.data_criacao,
+      total_amigos: user.amigos?.length || 0
     });
   } catch (error) {
     res.status(500).json({ message: 'Erro ao buscar perfil do usuário' });
@@ -253,7 +255,12 @@ router.put('/perfil', async (req, res) => {
     // Atualizar campos
     if (nome) user.nome = nome;
     if (descricao !== undefined) user.descricao = descricao;
-    if (tema_cor) user.tema_cor = tema_cor;
+    if (tema_cor) {
+      if (!/^#[0-9a-fA-F]{6}$/.test(tema_cor)) {
+        return res.status(400).json({ message: 'Cor do tema inválida' });
+      }
+      user.tema_cor = tema_cor;
+    }
     // Foto: imagem enviada (data URL), um dos avatares padrão ou vazio para remover
     if (foto !== undefined) {
       const avatarPadrao = /^images\/avatars\/avatar-\d{1,2}\.svg$/;

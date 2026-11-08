@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { nomeCategoria, TIPOS } from '../utils/catalogo';
 
 const SEM_CAPA = process.env.PUBLIC_URL + '/images/sem-capa.svg';
 
@@ -19,7 +20,11 @@ export function Card({ item }) {
         </span>
       </div>
       <h3 className="gc-card-title">{item.titulo}</h3>
-      {item.categoria && <p className="gc-card-meta">{item.categoria}</p>}
+      {(item.tipo || item.categoria) && (
+        <p className="gc-card-meta">
+          {[TIPOS.find((t) => t.id === item.tipo)?.nome.replace(/s$/, ''), item.categoria && nomeCategoria(item.categoria)].filter(Boolean).join(' · ')}
+        </p>
+      )}
     </Link>
   );
 }

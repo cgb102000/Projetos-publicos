@@ -53,6 +53,12 @@ const userSchema = new mongoose.Schema({
     type: String, 
     default: '' 
   },
+  // Cor de destaque escolhida pelo usuário (antes não existia no schema e era descartada ao salvar)
+  tema_cor: {
+    type: String,
+    default: '#ef4444',
+    match: [/^#[0-9a-fA-F]{6}$/, 'Cor do tema inválida']
+  },
   favoritos: [favoritoSchema],
   data_criacao: {
     type: Date,

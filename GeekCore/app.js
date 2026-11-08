@@ -234,6 +234,33 @@ app.get('/api/category/:category', async (req, res) => {
   }
 });
 
+// Catálogo com filtros opcionais: /api/catalogo?tipo=anime&categoria=shonen
+const TIPOS = ['filme', 'série', 'anime'];
+app.get('/api/catalogo', async (req, res) => {
+  const { tipo, categoria } = req.query;
+  const filtro = {};
+  if (tipo) {
+    if (typeof tipo !== 'string' || !TIPOS.includes(tipo.toLowerCase())) {
+      return res.status(400).json({ message: `Tipo inválido. Use: ${TIPOS.join(', ')}` });
+    }
+    filtro.tipo = tipo.toLowerCase();
+  }
+  if (categoria) {
+    if (typeof categoria !== 'string') return res.status(400).json({ message: 'Categoria inválida' });
+    filtro.categoria = { $regex: `^${escapeRegex(categoria)}$`, $options: 'i' };
+  }
+  try {
+    const itens = await mongoose.connection.db.collection('videos')
+      .find(filtro)
+      .sort({ titulo: 1 })
+      .toArray();
+    res.json(itens);
+  } catch (err) {
+    console.error('Erro ao buscar catálogo:', err.message);
+    res.status(500).json({ message: 'Erro ao buscar catálogo' });
+  }
+});
+
 // Todas as outras requisições GET não tratadas retornarão nosso app React
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'build', 'index.html'), (err) => {

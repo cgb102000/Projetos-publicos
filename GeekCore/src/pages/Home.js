@@ -3,19 +3,7 @@ import { contentService } from '../services/api';
 import { Footer } from '../components/Footer';
 import { Hero } from '../components/Hero';
 import { Row, RowSkeleton } from '../components/Row';
-
-const NOMES_CATEGORIA = {
-  shonen: 'Shonen: ação e amizade',
-  'ação': 'Ação e aventura',
-  drama: 'Drama',
-  fantasia: 'Fantasia',
-  suspense: 'Suspense e mistério',
-  'ficção científica': 'Ficção científica',
-  terror: 'Terror',
-  'comédia': 'Comédia',
-  'animação': 'Animação',
-  romance: 'Romance',
-};
+import { TIPOS, nomeCategoria, linkExplorar } from '../utils/catalogo';
 
 function embaralhar(lista) {
   return [...lista].sort(() => Math.random() - 0.5);
@@ -25,6 +13,7 @@ export function Home() {
   const [recentes, setRecentes] = useState([]);
   const [destaques, setDestaques] = useState([]);
   const [fileiras, setFileiras] = useState([]);
+  const [porTipo, setPorTipo] = useState([]);
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState(null);
 
@@ -46,6 +35,11 @@ export function Home() {
       const comCapa = embaralhar(itensRecentes.filter((i) => i.img_capa_url));
       const semCapa = embaralhar(itensRecentes.filter((i) => !i.img_capa_url));
       setDestaques([...comCapa, ...semCapa].slice(0, 6));
+
+      const tipos = await Promise.all(
+        TIPOS.map(async (t) => ({ ...t, itens: await contentService.getCatalogo({ tipo: t.id }).catch(() => []) }))
+      );
+      setPorTipo(tipos.filter((t) => t.itens.length >= 2));
 
       const porCategoria = await Promise.all(
         categorias.map(async (c) => ({ categoria: c, itens: await contentService.getByCategory(c) }))
@@ -81,12 +75,16 @@ export function Home() {
                 </>
               ) : (
                 <>
-                  <Row title="Adicionados recentemente" items={recentes} />
+                  <Row title="Adicionados recentemente" items={recentes} link={linkExplorar()} />
+                  {porTipo.map((t) => (
+                    <Row key={t.id} title={t.nome} items={t.itens} link={linkExplorar({ tipo: t.id })} />
+                  ))}
                   {fileiras.map((f) => (
                     <Row
                       key={f.categoria}
-                      title={NOMES_CATEGORIA[f.categoria.toLowerCase()] || f.categoria.charAt(0).toUpperCase() + f.categoria.slice(1)}
+                      title={nomeCategoria(f.categoria)}
                       items={f.itens}
+                      link={linkExplorar({ categoria: f.categoria })}
                     />
                   ))}
                 </>

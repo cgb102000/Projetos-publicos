@@ -119,6 +119,8 @@ GET /api/item/:id
 GET /api/random
 GET /api/recent
 GET /api/categories
+GET /api/category/:categoria          # categoria exata
+GET /api/catalogo?tipo=&categoria=    # tipo: filme, série ou anime (ambos opcionais)
 ```
 
 #### Social

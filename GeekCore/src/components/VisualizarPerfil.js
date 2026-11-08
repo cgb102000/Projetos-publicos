@@ -1,155 +1,106 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { authService } from '../services/api';
+import { Card } from './Card';
 
-export function VisualizarPerfil({ usuario }) {
+const AVATAR_VAZIO = process.env.PUBLIC_URL + '/images/default-avatar.svg';
+
+function formatarData(data) {
+  if (!data) return null;
+  const d = new Date(data);
+  return Number.isNaN(d.getTime()) ? null : d.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+}
+
+export function VisualizarPerfil({ usuario: usuarioSalvo, onEditar }) {
   const [favoritos, setFavoritos] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [atual, setAtual] = useState(null);
+  // Os dados salvos no login ficam desatualizados; busca o perfil atual na API
+  const usuario = { ...usuarioSalvo, ...atual };
+  const cor = usuario?.tema_cor || 'var(--color-primary)';
+  const totalAmigos = atual?.total_amigos ?? usuarioSalvo?.amigos?.length ?? 0;
 
   useEffect(() => {
-    const carregarFavoritos = async () => {
-      try {
-        setLoading(true);
-        const data = await authService.getFavorites();
-        setFavoritos(data);
-      } catch (error) {
-        console.error('Erro ao carregar favoritos:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    carregarFavoritos();
+    authService.getUserProfile().then(setAtual).catch(() => {});
   }, []);
 
+  useEffect(() => {
+    authService.getFavorites()
+      .then((data) => setFavoritos(Array.isArray(data) ? data : []))
+      .catch(() => setFavoritos([]))
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (!usuarioSalvo && !atual) return null;
+  const membroDesde = formatarData(usuario.data_criacao);
+
   return (
-    <div className="bg-darker rounded-lg p-6 max-w-4xl mx-auto">
-      {/* Seção do Perfil */}
-      <div className="flex flex-col md:flex-row gap-8 items-start">
-        <div className="flex flex-col items-center space-y-4 md:w-1/3">
-          <div 
-            className="w-40 h-40 rounded-full overflow-hidden border-4 transition-colors duration-300" 
-            style={{ borderColor: usuario.tema_cor }}
-          >
-            <img
-              src={usuario.foto || process.env.PUBLIC_URL + '/images/default-avatar.svg'}
-              alt={usuario.nome}
-              className="w-full h-full object-cover"
-            />
+    <div className="gc-perfil">
+      <section className="gc-perfil-card">
+        <div className="gc-perfil-capa" style={{ '--cor-perfil': cor }} />
+        <div className="gc-perfil-topo">
+          <img
+            className="gc-perfil-avatar"
+            src={usuario.foto || AVATAR_VAZIO}
+            alt={`Foto de ${usuario.nome}`}
+            style={{ borderColor: cor }}
+            onError={(e) => { e.target.onerror = null; e.target.src = AVATAR_VAZIO; }}
+          />
+          <div className="gc-perfil-id">
+            <h1>{usuario.nome}</h1>
+            {membroDesde && <p>Membro desde {membroDesde}</p>}
           </div>
-          
-          <h1 className="text-2xl font-bold text-white text-center">{usuario.nome}</h1>
-          
-          <div className="flex items-center space-x-4 text-gray-400 text-sm">
-            <span>Membro desde: {new Date(usuario.data_criacao).toLocaleDateString()}</span>
-            <span>•</span>
-            <span>{usuario.amigos?.length || 0} amigos</span>
+          {onEditar && (
+            <button type="button" className="gc-btn gc-btn-ghost" onClick={onEditar}>
+              <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+              Editar perfil
+            </button>
+          )}
+        </div>
+
+        <div className="gc-perfil-stats">
+          <div><strong>{favoritos.length}</strong><span>{favoritos.length === 1 ? 'Favorito' : 'Favoritos'}</span></div>
+          <div><strong>{totalAmigos}</strong><span>{totalAmigos === 1 ? 'Amigo' : 'Amigos'}</span></div>
+          <div>
+            <strong><span className="gc-perfil-cor" style={{ background: cor }} /></strong>
+            <span>Cor do tema</span>
           </div>
-
-          {/* Mostrar cor favorita apenas se existir */}
-          {usuario.tema_cor && (
-            <div className="flex items-center space-x-2 text-sm bg-darker rounded-lg p-2">
-              <span className="text-gray-400">Cor favorita:</span>
-              <div className="flex items-center space-x-2">
-                <div 
-                  className="w-6 h-6 rounded-full border border-gray-600 transition-colors duration-300"
-                  style={{ backgroundColor: usuario.tema_cor }}
-                  title="Cor personalizada"
-                />
-                <span className="text-gray-300">{usuario.tema_cor}</span>
-              </div>
-            </div>
-          )}
         </div>
 
-        <div className="md:w-2/3 space-y-6">
-          {usuario.descricao && (
-            <div className="bg-dark p-4 rounded-lg">
-              <h2 
-                className="text-lg font-semibold mb-2" 
-                style={{ color: usuario.tema_cor }}
-              >
-                Sobre
-              </h2>
-              <p className="text-gray-300">{usuario.descricao}</p>
-            </div>
+        <div className="gc-perfil-sobre">
+          <h2>Sobre</h2>
+          {usuario.descricao ? (
+            <p>{usuario.descricao}</p>
+          ) : (
+            <p className="vazio">
+              Você ainda não escreveu nada sobre você.
+              {onEditar && <> <button type="button" className="gc-link" onClick={onEditar}>Adicionar uma descrição</button></>}
+            </p>
           )}
         </div>
-      </div>
+      </section>
 
-      {/* Seção de Favoritos */}
-      <div className="mt-8">
-        <div className="flex justify-between items-center mb-4">
-          <h2 
-            className="text-xl font-semibold"
-            style={{ color: usuario.tema_cor }}
-          >
-            Favoritos
-          </h2>
-          {favoritos.length > 5 && (
-            <Link
-              to="/favoritos"
-              className="text-sm hover:opacity-80 transition-colors duration-300 flex items-center"
-              style={{ color: usuario.tema_cor }}
-            >
-              Ver todos
-              <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-              </svg>
-            </Link>
-          )}
+      <section className="gc-section">
+        <div className="gc-row-cabecalho">
+          <h2 className="gc-section-title">Meus favoritos</h2>
+          {favoritos.length > 0 && <Link to="/favoritos" className="gc-ver-tudo">Ver todos <span aria-hidden="true">→</span></Link>}
         </div>
-        
         {loading ? (
-          <div className="flex justify-center py-8">
-            <div 
-              className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2"
-              style={{ borderColor: usuario.tema_cor }}
-            />
+          <div className="gc-grid">
+            {Array.from({ length: 5 }, (_, i) => <div key={i} className="gc-skel" style={{ aspectRatio: '2 / 3' }} />)}
           </div>
         ) : favoritos.length > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-            {favoritos.slice(0, 5).map(item => (
-              <Link
-                key={item._id}
-                to={`/detalhes/${item.tipo}/${item._id}`}
-                className="block group"
-              >
-                <div className="bg-dark rounded-lg overflow-hidden transition-transform duration-300 transform hover:scale-105">
-                  <div className="relative aspect-[2/3]">
-                    <img
-                      src={item.img_url || process.env.PUBLIC_URL + '/images/placeholder.jpg'}
-                      alt={item.titulo}
-                      className="absolute inset-0 w-full h-full object-cover"
-                      onError={(e) => {
-                        e.target.src = process.env.PUBLIC_URL + '/images/placeholder.jpg';
-                      }}
-                      loading="lazy"
-                    />
-                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-300 flex items-center justify-center">
-                      <span className="text-white opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
-                        Ver Detalhes
-                      </span>
-                    </div>
-                  </div>
-                  <div className="p-3">
-                    <h3 className="text-sm font-medium text-gray-200 line-clamp-2">
-                      {item.titulo}
-                    </h3>
-                    <p className="text-xs text-gray-400 mt-1">
-                      {item.tipo?.charAt(0).toUpperCase() + item.tipo?.slice(1)}
-                    </p>
-                  </div>
-                </div>
-              </Link>
-            ))}
+          <div className="gc-grid">
+            {favoritos.slice(0, 10).map((item) => <Card key={item._id} item={item} />)}
           </div>
         ) : (
-          <div className="text-center text-gray-400 py-8">
-            Nenhum item favorito encontrado
+          <div className="gc-panel gc-vazio">
+            <p className="titulo">Nenhum favorito ainda</p>
+            <p>Abra um título e toque em “Favoritar” para guardar aqui.</p>
+            <Link to="/explorar" className="gc-btn">Explorar o catálogo</Link>
           </div>
         )}
-      </div>
+      </section>
     </div>
   );
 }

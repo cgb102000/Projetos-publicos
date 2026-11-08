@@ -1,8 +1,9 @@
 import { useRef, useState, useEffect, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import { Card } from './Card';
 
 // Fileira horizontal de cards com rolagem por arrasto/toque e setas no desktop
-export function Row({ title, subtitle, items }) {
+export function Row({ title, subtitle, items, link }) {
   const trackRef = useRef(null);
   const [podeVoltar, setPodeVoltar] = useState(false);
   const [podeAvancar, setPodeAvancar] = useState(false);
@@ -29,7 +30,10 @@ export function Row({ title, subtitle, items }) {
 
   return (
     <section className="gc-section">
-      <h2 className="gc-section-title">{title}</h2>
+      <div className="gc-row-cabecalho">
+        <h2 className="gc-section-title">{title}</h2>
+        {link && <Link to={link} className="gc-ver-tudo">Ver tudo <span aria-hidden="true">→</span></Link>}
+      </div>
       {subtitle && <p className="gc-section-sub">{subtitle}</p>}
       <div className="gc-row">
         {podeVoltar && (

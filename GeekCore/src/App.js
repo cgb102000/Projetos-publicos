@@ -15,6 +15,7 @@ import { AlertProvider } from './contexts/AlertContext';
 import { PerfilAmigo } from './pages/PerfilAmigo';
 import { ListaBloqueados } from './pages/ListaBloqueados';
 import { TodosFavoritos } from './pages/TodosFavoritos';
+import { Explorar } from './pages/Explorar';
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/search" element={<Search />} />
+                <Route path="/explorar" element={<Explorar />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route 

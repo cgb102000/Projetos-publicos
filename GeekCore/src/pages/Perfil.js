@@ -58,7 +58,7 @@ export function Perfil() {
           ))}
         </div>
 
-        {activeTab === 'ver' && <VisualizarPerfil usuario={user} />}
+        {activeTab === 'ver' && <VisualizarPerfil usuario={user} onEditar={() => setActiveTab('editar')} />}
         {activeTab === 'editar' && <EditarPerfil usuario={user} />}
         {activeTab === 'amigos' && <AbasAmigos />}
         {activeTab === 'favoritos' && (

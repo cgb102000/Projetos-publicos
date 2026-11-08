@@ -338,6 +338,14 @@ export const contentService = {
     }
   },
 
+  async getCatalogo({ tipo, categoria } = {}) {
+    const params = new URLSearchParams();
+    if (tipo) params.set('tipo', tipo);
+    if (categoria) params.set('categoria', categoria);
+    const { data } = await api.get(`/api/catalogo?${params.toString()}`);
+    return Array.isArray(data) ? data : [];
+  },
+
   async getByCategory(categoria) {
     try {
       const { data } = await api.get(`/api/category/${encodeURIComponent(categoria)}`);

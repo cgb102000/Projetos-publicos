@@ -5,6 +5,7 @@ import { useTheme } from '../contexts/ThemeContext';
 import { FriendsDropdown } from './FriendsDropdown';
 import { adjustBrightness } from '../utils/themeUtils';
 import { amigoService } from '../services/api';
+import { MenuExplorar, MenuMobile } from './MenuExplorar';
 
 export function Navbar() {
   const { isAuthenticated, user, dispatch } = useContext(AuthContext);
@@ -16,6 +17,7 @@ export function Navbar() {
   const [loadingNotifications, setLoadingNotifications] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const [buscaAberta, setBuscaAberta] = useState(false);
+  const [menuAberto, setMenuAberto] = useState(false);
   const navigate = useNavigate();
   const { isDarkMode, setIsDarkMode, resetToDefaultTheme } = useTheme();
   const dropdownRef = useRef(null);
@@ -164,10 +166,14 @@ export function Navbar() {
   return (
     <nav className="gc-nav">
       <div className="gc-container gc-nav-inner">
+        <button type="button" className="gc-icon-btn gc-only-mobile" onClick={() => setMenuAberto(true)} aria-label="Abrir menu" style={{ marginLeft: -8 }}>
+          <svg width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
+        </button>
         <Link to="/" className="gc-logo" aria-label="GeekCore, página inicial">Geek<span>Core</span></Link>
 
         <div className="gc-nav-links">
           <NavLink to="/" end className={linkClasse}>Início</NavLink>
+          <MenuExplorar />
           {isAuthenticated && <NavLink to="/favoritos" className={linkClasse}>Favoritos</NavLink>}
           {isAuthenticated && <NavLink to="/perfil" className={linkClasse}>Perfil</NavLink>}
         </div>
@@ -376,6 +382,8 @@ export function Navbar() {
           )}
         </div>
       </div>
+
+      <MenuMobile aberto={menuAberto} onFechar={() => setMenuAberto(false)} isAuthenticated={isAuthenticated} />
 
       <div className={`gc-search-mobile${buscaAberta ? ' aberto' : ''}`}>
         <div className="gc-container">

@@ -10,6 +10,7 @@ const videoSchema = new mongoose.Schema({
   img_url: String,
   img_capa_url: String,
   categoria: String,
+  tipo: { type: String, enum: ['filme', 'série', 'anime'] },
   generos: [String],
   data_adicao: {
     type: Date,
