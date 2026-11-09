@@ -24,6 +24,7 @@ Olá! Sou o **Caio Gabriel**, QA e desenvolvedor. Aqui reúno os projetos que de
 
 | Projeto | Descrição | Tecnologias | Links |
 |---|---|---|---|
+| **Faturô** | Sistema de gestão para pequenos negócios: caixa, mesas com QR Code, produtos e estoque, clientes, equipe com permissões, dashboard com DRE comparado ao período anterior, relatórios em PDF/CSV e dicas geradas por IA. | React, MUI, Node.js, Express, MongoDB, OpenRouter | 🌐 [Acessar](https://faturo-frontend.vercel.app/home) · Repositório privado |
 | **GeekCore** | Plataforma fullstack para fãs de filmes e animes: catálogo, login, perfis, amizades, favoritos, comentários e compartilhamento de vídeos. | React, Node.js, Express, MongoDB | 🌐 [Acessar](https://cgb102000.github.io/Projetos-publicos/GeekCore/) · [API](https://geekcore.vercel.app/api/recent) · [Código](GeekCore/) |
 | **GeekHub** | Catálogo de filmes e animes que consome a API REST do GeekCore (MongoDB): recentes, busca, filtro por categoria e página de detalhes. | HTML, CSS, JavaScript, REST API | 🌐 [Acessar](https://cgb102000.github.io/Projetos-publicos/GeekHub/) · [Código](GeekHub/) |
 | **FarmaUnix** | Farmácia online com carrinho, cálculo da taxa de entrega pela distância, mapa da rota e pedido pelo WhatsApp. | HTML, CSS, JavaScript, Leaflet, OpenStreetMap | 🌐 [Acessar](https://cgb102000.github.io/Projetos-publicos/FarmaUnix/src/) · [Código](FarmaUnix/) |

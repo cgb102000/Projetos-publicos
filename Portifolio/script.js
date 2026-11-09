@@ -11,6 +11,12 @@ const projetos = [
     codigo: 'https://github.com/cgb102000/teste-automatizado-menudino',
   },
   {
+    nome: 'Faturô',
+    descricao: 'Sistema de gestão para pequenos negócios: caixa, mesas com QR Code, estoque, clientes, equipe com permissões, dashboard com DRE e dicas geradas por IA.',
+    tags: ['React', 'Node.js', 'MongoDB', 'IA'],
+    demo: 'https://faturo-frontend.vercel.app/home',
+  },
+  {
     nome: 'VOLT Fitness',
     descricao: 'App de treinos com rotina semanal, execução marcando as séries de cada exercício e painel de progresso com sequência de dias e histórico.',
     tags: ['Lovable', 'Login com Google'],
