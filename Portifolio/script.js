@@ -17,6 +17,12 @@ const projetos = [
     demo: 'https://faturo-frontend.vercel.app/home',
   },
   {
+    nome: 'NutriVision AI',
+    descricao: 'Tire uma foto da refeição e a IA estima calorias e macronutrientes. Diário nutricional, metas diárias, sequência de dias e pontos. Login com Google.',
+    tags: ['React', 'Supabase', 'IA', 'Vercel'],
+    demo: 'https://nutri-vision-umber.vercel.app',
+  },
+  {
     nome: 'VOLT Fitness',
     descricao: 'App de treinos com rotina semanal, execução marcando as séries de cada exercício e painel de progresso com sequência de dias e histórico.',
     tags: ['Lovable', 'Login com Google'],
